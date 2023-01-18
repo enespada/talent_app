@@ -1,149 +1,115 @@
-// import 'dart:io';
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:talent_app/widgets/widgets.dart';
 
-// import 'package:flutter_mvvm/view/common/resources/app_colors.dart';
-// import 'package:talent_app/app_colors.dart';
-// import '../../model/user.dart';
-// import '../base/resource_state.dart';
-// import '../di/app_modules.dart';
-// import '../viewmodel/viewmodels.dart';
-// import 'edit_picture_button.dart';
-// import 'error/error_overlay.dart';
-// import 'loading/loading_overlay.dart';
+import '../models/models.dart';
+import '../style/app_colors.dart';
 
-// class Avatar extends StatefulWidget {
-//   final double size;
-//   final UserApp? user;
+class Avatar extends StatefulWidget {
+  final double size;
+  // final UserApp? user;
+  final ImageProvider<Object> image;
 
-//   const Avatar({
-//     Key? key,
-//     required this.size,
-//     this.user,
-//   }) : super(key: key);
+  const Avatar({
+    Key? key,
+    required this.size,
+    // this.user,
+    required this.image,
+  }) : super(key: key);
 
-//   @override
-//   State<Avatar> createState() => _AvatarState();
-// }
+  @override
+  State<Avatar> createState() => _AvatarState();
+}
 
-// class _AvatarState extends State<Avatar> {
-//   final _viewModel = inject<AuthViewModel>();
-//   XFile? _file;
+class _AvatarState extends State<Avatar> {
+  // final _viewModel = inject<AuthViewModel>();
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _viewModel.uploadImgState.stream.listen((state) {
-//       switch (state.status) {
-//         case Status.LOADING:
-//           LoadingOverlay.of(context).show();
-//           break;
-//         case Status.COMPLETED:
-//           LoadingOverlay.of(context).hide();
-//           widget.user?.imgSrc = "profile.png";
-//           _viewModel.registerUser(widget.user!);
-//           break;
-//         case Status.ERROR:
-//           LoadingOverlay.of(context).hide();
-//           ErrorOverlay.of(context).show(state.error);
-//           break;
-//         default:
-//           LoadingOverlay.of(context).hide();
-//           break;
-//       }
-//     });
-//   }
+  //XFile con la nueva imagen seleccionada si la hubiera
+  XFile? _file;
 
-//   Future<void> _pickImage() async {
-//     final ImagePicker picker = ImagePicker();
-//     // Pick an image
-//     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-//     setState(() {
-//       _file = image;
-//     });
-//   }
+  @override
+  void initState() {
+    super.initState();
+    // _viewModel.uploadImgState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       widget.user?.imgSrc = "profile.png";
+    //       _viewModel.registerUser(widget.user!);
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+  }
 
-//   Future<String> urlImag(String id) async {
-//     try {
-//       final storageRef = await FirebaseStorage.instance
-//           .refFromURL("gs://talentapp-dev-c0fad.appspot.com/$id/profile.png")
-//           .getDownloadURL();
-//       return storageRef.toString();
-//     } catch (e) {
-//       final storageRef = await FirebaseStorage.instance
-//           .refFromURL(
-//               "gs://talentapp-dev-c0fad.appspot.com/default_images/profile.png")
-//           .getDownloadURL();
-//       return storageRef.toString();
-//     }
-//   }
+  //Metodo para seleccionar una imagen de la galeria
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    _file = image;
+    setState(() {});
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       height: widget.size,
-//       width: widget.size,
-//       // color: Colors.red,
-//       child: Stack(
-//         children: [
-//           //------------------------------Foto--------------------------------
-//           Center(
-//             child: Container(
-//               height: widget.size - widget.size * 0.25,
-//               width: widget.size - widget.size * 0.25,
-//               margin: const EdgeInsets.all(20),
-//               child: ClipRRect(
-//                 borderRadius: BorderRadius.circular(20),
-//                 child: (_file == null)
-//                     ? FutureBuilder(
-//                         future: urlImag(widget.user?.id ?? ""),
-//                         builder: (_, AsyncSnapshot<String> snapshot) {
-//                           if (snapshot.hasData) {
-//                             return Image(
-//                               image: CachedNetworkImageProvider(snapshot.data!),
-//                               fit: BoxFit.cover,
-//                             );
-//                           } else {
-//                             return const Image(
-//                               image: AssetImage('assets/images/profile.png'),
-//                               fit: BoxFit.cover,
-//                             );
-//                           }
-//                         })
-//                     : ClipRRect(
-//                         borderRadius: BorderRadius.circular(20),
-//                         child: Image.file(
-//                           File(_file!.path),
-//                           height: 200,
-//                           width: 200,
-//                           fit: BoxFit.cover,
-//                         ),
-//                       ),
-//               ),
-//             ),
-//           ),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: widget.size,
+      width: widget.size,
+      child: Stack(
+        children: [
+          //------------------------------Foto--------------------------------
+          Center(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              height: widget.size - widget.size * 0.25,
+              width: widget.size - widget.size * 0.25,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(widget.size),
+                child: (_file == null)
+                    ? Image(
+                        image: widget.image,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.file(
+                        File(_file!.path),
+                        height: widget.size,
+                        width: widget.size,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ),
 
-//           //-----------------------Boton de editar foto-------------------------
-//           Positioned(
-//             right: -widget.size * 0.05,
-//             bottom: -widget.size * 0.05,
-//             child: EditPictureButton(
-//               size: widget.size * 0.25,
-//               onPressed: () async {
-//                 await _pickImage();
-//                 _viewModel.uploadImageProfile(_file!.path, widget.user!.id!);
-//               },
-//               child: Icon(
-//                 Icons.edit_outlined,
-//                 color: AppColors.greyscale5,
-//                 size: widget.size * 0.15,
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+          //-----------------------Boton de editar foto-------------------------
+          Positioned(
+            right: -widget.size * 0.05,
+            bottom: -widget.size * 0.05,
+            child: EditPictureButton(
+              size: widget.size * 0.25,
+              onPressed: () async {
+                await _pickImage();
+                //TODO: guardar imagen en firebase
+                // _viewModel.uploadImageProfile(_file!.path, widget.user!.id!);
+              },
+              child: Icon(
+                Icons.edit_outlined,
+                color: AppColors.greyscale5,
+                size: widget.size * 0.15,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

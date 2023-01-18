@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:talent_app/screens/explorer/explorer_home_screen.dart';
-import 'package:talent_app/screens/home/home_screen.dart';
-import 'package:talent_app/screens/profile/profile_screen.dart';
-import 'package:talent_app/utils/localization.dart';
+import 'package:provider/provider.dart';
+import 'package:talent_app/screens/profile/settings_screen.dart';
+
+import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/auth_service.dart';
+import 'package:talent_app/utils/utils.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,21 +13,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Talent App',
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        Localization.delegate,
-        // GlobalMaterialLocalizations.delegate,
-        // GlobalWidgetsLocalizations.delegate,
-        // GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => AuthService(),
+        ),
       ],
-      initialRoute: HomeScreen.routeName,
-      routes: {
-        HomeScreen.routeName: (context) => const HomeScreen(),
-        ExplorerHomeScreen.routeName: (context) => ExplorerHomeScreen(),
-        ProfileScreen.routeName: (context) => const ProfileScreen(),
-      },
+      child: MaterialApp(
+        title: 'Talent App',
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          Localization.delegate,
+          // GlobalMaterialLocalizations.delegate,
+          // GlobalWidgetsLocalizations.delegate,
+          // GlobalCupertinoLocalizations.delegate,
+        ],
+        initialRoute: HomeScreen.routeName,
+        routes: {
+          //explorer
+          ExplorerHomeScreen.routeName: (context) => ExplorerHomeScreen(),
+          //home
+          HomeScreen.routeName: (context) => const HomeScreen(),
+          //profile
+          ProfileScreen.routeName: (context) => const ProfileScreen(),
+          EditProfileScreen.routeName: (context) => const EditProfileScreen(),
+          SettingsScreen.routeName: (context) => const SettingsScreen(),
+        },
+      ),
     );
   }
 }

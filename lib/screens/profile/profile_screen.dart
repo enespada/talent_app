@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/services.dart';
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
-import 'package:talent_app/widgets/blue_text_button.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
 //WallHomePage
@@ -48,6 +50,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'assets/images/gridImage.png',
           fit: BoxFit.cover,
         ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
+        Image.asset(
+          'assets/images/gridImage.png',
+          fit: BoxFit.cover,
+        ),
       ],
     ),
     _PublicationsGrid(
@@ -70,21 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
   }
 
-  Future<String> urlImag(String id) async {
-    try {
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL("gs://talentapp-dev-c0fad.appspot.com/$id/profile.png")
-          .getDownloadURL();
-      return storageRef.toString();
-    } catch (e) {
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL(
-              "gs://talentapp-dev-c0fad.appspot.com/default_images/profile.png")
-          .getDownloadURL();
-      return storageRef.toString();
-    }
-  }
-
   @override
   void dispose() {
     // _viewModel.dispose();
@@ -94,14 +109,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+    final AuthService authService = Provider.of<AuthService>(context);
 
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.all(25),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     //------------------------Mi perfil-------------------------
@@ -116,15 +133,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // context.navigateTo(NotificationsPage());
-                          },
-                          child: Icon(
-                            Icons.notifications_outlined,
-                            size: responsive.widthPercent(7),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     context.navigateTo(NotificationsPage());
+                        //   },
+                        //   child: Icon(
+                        //     Icons.notifications_outlined,
+                        //     size: responsive.widthPercent(7),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SizedBox(height: responsive.heightPercent(2)),
@@ -133,43 +150,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if (userApp?.id != null)
-                          FutureBuilder(
-                            future: urlImag(userApp?.id ?? ''),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> snapshot) {
-                              return Container(
-                                margin: EdgeInsets.only(
-                                  bottom: responsive.heightPercent(4),
-                                  right: responsive.heightPercent(3),
-                                  top: responsive.heightPercent(4),
+                        //-------------------Foto perfil------------------------
+                        FutureBuilder(
+                          future: authService.urlImag(userApp?.id ?? ''),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String> snapshot) {
+                            return Container(
+                              margin: EdgeInsets.only(
+                                bottom: responsive.heightPercent(4),
+                                right: responsive.heightPercent(3),
+                                top: responsive.heightPercent(4),
+                              ),
+                              height: responsive.widthPercent(22),
+                              width: responsive.widthPercent(22),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.whiteColor,
+                                  width: 1,
                                 ),
-                                height: responsive.widthPercent(22),
-                                width: responsive.widthPercent(22),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.whiteColor,
-                                    width: 1,
-                                  ),
-                                  shape: BoxShape.circle,
-                                  image: snapshot.hasData
-                                      ? DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              snapshot.data!),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : const DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/profile.png'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
-                              );
-                            },
-                          ),
+                                shape: BoxShape.circle,
+                                image: (snapshot.hasData && snapshot.data != '')
+                                    ? DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                            snapshot.data!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/profile.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            );
+                          },
+                        ),
+                        //---------------Nombre, editar, ajustes---------------
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            //-------------------Nombre------------------------
                             Text(
                               userApp?.fullname ?? 'Pepe',
                               style: TextStyle(
@@ -178,6 +197,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+
+                            //-------------------Deporte------------------------
                             Text(
                               '${toBeginningOfSentenceCase(sportTypeName)} ${toBeginningOfSentenceCase(modalityName)} | ${userApp?.country}',
                               style: TextStyle(
@@ -185,24 +206,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontSize: responsive.widthPercent(3.5),
                               ),
                             ),
-                            SizedBox(
-                              height: responsive.heightPercent(1),
-                            ),
+                            SizedBox(height: responsive.heightPercent(1)),
+
+                            //----------------Editar y ajustes-------------------
                             Row(
                               children: [
+                                //----------------Editar-----------------------
                                 BlueTextButton(
-                                    title: Localization.of(context)
-                                        .string('wall_home_primary_button'),
-                                    fontSize: responsive.widthPercent(4),
-                                    onPressed: () {
-                                      // context.navigateTo(
-                                      //     WallProfilePage(userApp: userApp));
-                                    }),
+                                  title: Localization.of(context)
+                                      .string('wall_home_primary_button'),
+                                  fontSize: responsive.widthPercent(4),
+                                  onPressed: () {
+                                    // context.navigateTo(
+                                    //     WallProfilePage(userApp: userApp));
+                                    Navigator.pushNamed(
+                                        context, EditProfileScreen.routeName);
+                                  },
+                                ),
                                 SizedBox(width: responsive.widthPercent(4)),
+
+                                //----------------Ajustes----------------------
                                 MaterialButton(
                                   onPressed: () {
-                                    // context
-                                    //     .navigateTo(const WallSettingsPage());
+                                    Navigator.pushNamed(
+                                        context, SettingsScreen.routeName);
                                   },
                                   elevation: 0,
                                   color: AppColors.greyscale0,
@@ -233,6 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     //-----------Seguidores, siguiendo, publicaciones-------------
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
                           // onTap: () =>
@@ -295,7 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: responsive.heightPercent(2)),
+                    SizedBox(height: responsive.heightPercent(1.5)),
 
                     //--------------Publicaciones, retos y guardados------------
                     Column(
@@ -359,9 +387,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const Divider(),
                       ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: responsive.heightPercent(2)),
-                      height: responsive.heightPercent(50),
+                    SizedBox(height: responsive.heightPercent(1.5)),
+
+                    SizedBox(
+                      height: responsive.heightPercent(45),
                       child: _pages[_selectedPage],
                     ),
                   ],
@@ -396,9 +425,9 @@ class _PublicationsGrid extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
 
     return GridView.builder(
+      physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: responsive.widthPercent(2),

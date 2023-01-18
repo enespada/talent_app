@@ -1,4 +1,7 @@
+export 'package:talent_app/widgets/avatar.dart';
+export 'package:talent_app/widgets/blue_text_button.dart';
+export 'package:talent_app/widgets/carousel_images.dart';
+export 'package:talent_app/widgets/custom_app_bar.dart';
 export 'package:talent_app/widgets/custom_bottom_navigation_bar.dart';
 export 'package:talent_app/widgets/edit_picture_button.dart';
-export 'package:talent_app/widgets/avatar.dart';
 export 'package:talent_app/widgets/publication.dart';

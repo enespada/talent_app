@@ -1,573 +1,582 @@
-// import 'dart:collection';
+// ignore_for_file: unnecessary_new
 
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-// import 'package:flutter_mvvm/view/common/localization/localization.dart';
-// import 'package:flutter_mvvm/view/common/resources/app_colors.dart';
-// import 'package:flutter_mvvm/view/common/resources/app_dimens.dart';
-// import 'package:flutter_mvvm/view/common/resources/app_styles.dart';
-// import 'package:flutter_mvvm/view/common/resources/responsive.dart';
-// import 'package:flutter_mvvm/view/di/app_modules.dart';
-// import 'package:flutter_mvvm/view/viewmodel/user_view_model.dart';
-// import 'package:flutter_mvvm/view/widget/widgets.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:flutter_mvvm/model/sport.dart';
-// import 'package:flutter_mvvm/model/user.dart';
-// import 'package:flutter_mvvm/view/base/resource_state.dart';
-// import 'package:flutter_mvvm/view/viewmodel/viewmodels.dart';
-// import 'package:flutter_mvvm/view/widget/error/error_overlay.dart';
-// import 'package:flutter_mvvm/view/widget/loading/loading_overlay.dart';
-////WallProfilePage
-// class WallProfilePage extends StatefulWidget {
-//   // static const List<String> _examples = [
-//   //   'Ejemplo1',
-//   //   'Ejemplo2',
-//   //   'Ejemplo3',
-//   // ];
+import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/auth_service.dart';
+import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/widgets/yellow_text_button.dart';
 
-//   const WallProfilePage({Key? key, this.user}) : super(key: key);
-//   final UserApp? user;
+import '../../utils/utils.dart';
+import '../../widgets/widgets.dart';
 
-//   @override
-//   State<WallProfilePage> createState() => _WallProfilePageState();
-// }
+//WallProfilePage
+class EditProfileScreen extends StatefulWidget {
+  // static const List<String> _examples = [
+  //   'Ejemplo1',
+  //   'Ejemplo2',
+  //   'Ejemplo3',
+  // ];
+  static const String routeName = 'edit_profile_screen';
+  final UserApp? user;
 
-// class _WallProfilePageState extends State<WallProfilePage> {
-//   final _userViewModel = inject<UserViewModel>();
-//   final _authViewModel = inject<AuthViewModel>();
-//   List<DocumentReference>? _listSport;
-//   List<DocumentSnapshot>? _sports;
-//   List<DocumentSnapshot>? _modalities;
+  const EditProfileScreen({
+    Key? key,
+    this.user,
+  }) : super(key: key);
 
-//   TextEditingController? _controllerName;
-//   TextEditingController? _controllerUser;
-//   TextEditingController? _controllerAge;
-//   TextEditingController? _controllerBio;
-//   TextEditingController? _controllerEmail;
-//   TextEditingController? _controllerPhone;
-//   DocumentSnapshot? _sport; //user.sport
-//   DocumentSnapshot? _modality; //user.modality
-//   // String _example = WallProfilePage._examples[0];
-//   UserApp? _user;
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
 
-//   @override
-//   void initState() {
-//     super.initState();
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  // final _userViewModel = inject<UserViewModel>();
+  // final _authViewModel = inject<AuthViewModel>();
+  List<DocumentReference>? _listSport;
+  List<DocumentSnapshot>? _sports;
+  List<DocumentSnapshot>? _modalities;
 
-//     _userViewModel.getUserState.stream.listen((state) {
-//       switch (state.status) {
-//         case Status.LOADING:
-//           LoadingOverlay.of(context).show();
-//           break;
-//         case Status.COMPLETED:
-//           LoadingOverlay.of(context).hide();
-//           setState(() {
-//             _user = state.data;
-//           });
-//           break;
-//         case Status.ERROR:
-//           LoadingOverlay.of(context).hide();
-//           ErrorOverlay.of(context).show(state.error);
-//           break;
-//         default:
-//           LoadingOverlay.of(context).hide();
-//           break;
-//       }
-//     });
+  TextEditingController? _controllerName;
+  TextEditingController? _controllerUser;
+  TextEditingController? _controllerAge;
+  TextEditingController? _controllerBio;
+  TextEditingController? _controllerEmail;
+  TextEditingController? _controllerPhone;
+  DocumentSnapshot? _sport;
+  DocumentSnapshot? _modality;
+  UserApp? _userApp;
 
-//     //-------------------------------getSports---------------------------------
-//     _authViewModel.getModalitiesState.stream.listen((state) {
-//       switch (state.status) {
-//         case Status.LOADING:
-//           LoadingOverlay.of(context).show();
-//           break;
-//         case Status.COMPLETED:
-//           LoadingOverlay.of(context).hide();
-//           _modalities = state.data;
-//           setState(() {});
-//           break;
-//         case Status.ERROR:
-//           LoadingOverlay.of(context).hide();
-//           ErrorOverlay.of(context).show(state.error);
-//           break;
-//         default:
-//           LoadingOverlay.of(context).hide();
-//           break;
-//       }
-//     });
+  @override
+  void initState() {
+    super.initState();
 
-//     _authViewModel.getSportsState.stream.listen((state) async {
-//       switch (state.status) {
-//         case Status.LOADING:
-//           LoadingOverlay.of(context).show();
-//           break;
-//         case Status.COMPLETED:
-//           LoadingOverlay.of(context).hide();
-//           _sports = state.data;
-//           await initData();
-//           setState(() {});
-//           _authViewModel.getModalitiesBySport(_sport!.reference);
-//           // for (var sport in _listSport!) {
-//           //   _sports?.add(sport);
-//           //
-//           //   _authViewModel.getModalities();
-//           //   // if (sport.name == _sport) {
-//           //   //   _modalities = sport.modalities;
-//           //   // }
-//           // }
-//           // setState(() {});
-//           break;
-//         case Status.ERROR:
-//           LoadingOverlay.of(context).hide();
-//           ErrorOverlay.of(context).show(state.error);
-//           break;
-//         default:
-//           LoadingOverlay.of(context).hide();
-//           break;
-//       }
-//     });
-//     _authViewModel.getSports();
+    // _userViewModel.getUserState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       setState(() {
+    //         _user = state.data;
+    //       });
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
 
-//     //-------------------------------UpdateUser---------------------------------
-//     _authViewModel.registerUserState.stream.listen((state) {
-//       switch (state.status) {
-//         case Status.LOADING:
-//           LoadingOverlay.of(context).show();
-//           break;
-//         case Status.COMPLETED:
-//           LoadingOverlay.of(context).hide();
-//           _userViewModel.getUser();
-//           break;
-//         case Status.ERROR:
-//           LoadingOverlay.of(context).hide();
-//           ErrorOverlay.of(context).show(state.error);
-//           break;
-//         default:
-//           LoadingOverlay.of(context).hide();
-//           break;
-//       }
-//     });
-//   }
+    //-------------------------------getSports---------------------------------
+    // _authViewModel.getModalitiesState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       _modalities = state.data;
+    //       setState(() {});
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
 
-//   Future<void> _saveUserData() async {
-//     _user?.fullname = _controllerName?.text;
-//     _user?.userName = _controllerUser?.text;
-//     _user?.birthday = _controllerAge?.text;
-//     _user?.bio = _controllerBio?.text;
-//     _user?.email = _controllerEmail?.text;
-//     _user?.phone = _controllerPhone?.text;
-//     _user?.sportType = _sport?.reference;
-//     _user?.modality = _modality?.reference;
-//   }
+    // _authViewModel.getSportsState.stream.listen((state) async {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       _sports = state.data;
+    //       await initData();
+    //       setState(() {});
+    //       _authViewModel.getModalitiesBySport(_sport!.reference);
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+    // _authViewModel.getSports();
 
-//   Future<void> initData() async {
-//     _user = widget.user;
-//     _sport = await _user!.sportType!.get();
-//     _modality = await _user!.modality!.get();
+    //-------------------------------UpdateUser---------------------------------
+    // _authViewModel.registerUserState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       _userViewModel.getUser();
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+  }
 
-//     _controllerName = new TextEditingController(text: '${_user?.fullname}');
+  Future<void> _saveUserData() async {
+    _userApp?.fullname = _controllerName?.text;
+    _userApp?.userName = _controllerUser?.text;
+    _userApp?.birthday = _controllerAge?.text;
+    _userApp?.bio = _controllerBio?.text;
+    _userApp?.email = _controllerEmail?.text;
+    _userApp?.phone = _controllerPhone?.text;
+    _userApp?.sportType = _sport?.reference;
+    _userApp?.modality = _modality?.reference;
+  }
 
-//     _controllerUser = new TextEditingController(text: '${_user?.userName}');
+  Future<void> initData() async {
+    _userApp = widget.user;
+    _sport = await _userApp!.sportType!.get();
+    _modality = await _userApp!.modality!.get();
 
-//     _controllerAge = new TextEditingController(text: '${_user?.birthday}');
+    _controllerName = new TextEditingController(text: '${_userApp?.fullname}');
+    _controllerUser = new TextEditingController(text: '${_userApp?.userName}');
+    _controllerAge = new TextEditingController(text: '${_userApp?.birthday}');
+    _controllerBio = new TextEditingController(text: '${_userApp?.bio}');
+    _controllerEmail = new TextEditingController(text: '${_userApp?.email}');
+    _controllerPhone = new TextEditingController(text: '${_userApp?.phone}');
+  }
 
-//     _controllerBio = new TextEditingController(text: '${_user?.bio}');
+  @override
+  void dispose() {
+    // _userViewModel.dispose();
+    // _authViewModel.dispose();
+    super.dispose();
+  }
 
-//     _controllerEmail = new TextEditingController(text: '${_user?.email}');
+  @override
+  Widget build(BuildContext context) {
+    final AuthService authService = Provider.of(context);
 
-//     _controllerPhone = new TextEditingController(text: '${_user?.phone}');
-//   }
+    final Responsive responsive = Responsive.of(context);
+    final double spaceBetweenFacts = responsive.heightPercent(2.5);
+    final double avatarSize = responsive.heightPercent(20); //200
+    ImageProvider<Object> avatarImage =
+        const AssetImage('assets/images/profile.png');
+    FutureBuilder(
+      future: authService.urlImag(_userApp?.id ?? ''),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.data != '') return Container();
+        avatarImage = CachedNetworkImageProvider(snapshot.data!);
+        return Container();
+      },
+    );
 
-//   @override
-//   void dispose() {
-//     _userViewModel.dispose();
-//     _authViewModel.dispose();
-//     super.dispose();
-//   }
+    return Scaffold(
+      backgroundColor: AppColors.whiteBackground,
+      //-------------------------------body-------------------------------------
+      body: SafeArea(
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: FocusScope.of(context).unfocus,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    //--------------------Mi perfil y flecha atras------------------
+                    CustomAppBar(
+                      title:
+                          Localization.of(context).string('wall_profile_title'),
+                      style: TextStyle(
+                        fontSize: responsive.widthPercent(7),
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blackColor,
+                      ),
+                      iconColor: AppColors.blueColor,
+                    ),
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
-//     final double spaceBetweenFacts = responsive.heightPercent(2.5);
+                    //-----------------------Info mi perfil-------------------------
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //-------------------------Foto-----------------------------
+                          Center(
+                            child: Avatar(
+                              size: avatarSize,
+                              // user: _userApp,
+                              image: avatarImage,
+                            ),
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
 
-//     return Scaffold(
-//       backgroundColor: AppColors.whiteColor,
-//       //-------------------------------body-------------------------------------
-//       body: SafeArea(
-//         child: Stack(
-//           children: [
-//             GestureDetector(
-//               onTap: FocusScope.of(context).unfocus,
-//               child: SingleChildScrollView(
-//                 physics: const BouncingScrollPhysics(),
-//                 child: Column(
-//                   children: [
-//                     //--------------------Mi perfil y flecha atras------------------
-//                     CustomAppBar(
-//                       title:
-//                           Localization.of(context).string('wall_profile_title'),
-//                       responsive: Responsive.of(context),
-//                       style: TextStyle(
-//                         fontSize: responsive.widthPercent(7),
-//                         fontWeight: FontWeight.bold,
-//                         color: AppColors.blackColor,
-//                       ),
-//                       iconColor: AppColors.brandColor,
-//                     ),
+                          //-------------------Datos principales----------------------
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_name'),
+                            textEditingController: _controllerName,
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_user'),
+                            textEditingController: _controllerUser,
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_age'),
+                            textEditingController: _controllerAge,
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_bio'),
+                            textEditingController: _controllerBio,
+                          ),
+                          SizedBox(height: spaceBetweenFacts + 30),
 
-//                     //-----------------------Info mi perfil-------------------------
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 25),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           //-------------------------Foto-----------------------------
-//                           Center(
-//                               child: Avatar(
-//                             size: 200,
-//                             user: _user,
-//                           )),
-//                           SizedBox(height: spaceBetweenFacts),
+                          //----------------Información personal----------------------
+                          Text(
+                            Localization.of(context)
+                                .string('wall_profile_personal_info'),
+                            style: TextStyle(
+                              color: AppColors.greyscale5,
+                              fontSize: responsive.widthPercent(5),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_email'),
+                            textEditingController: _controllerEmail,
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileFact(
+                            text: Localization.of(context)
+                                .string('wall_profile_phone'),
+                            textEditingController: _controllerPhone,
+                          ),
+                          SizedBox(height: spaceBetweenFacts + 30),
 
-//                           //-------------------Datos principales----------------------
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_name'),
-//                             textEditingController: _controllerName,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_user'),
-//                             textEditingController: _controllerUser,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_age'),
-//                             textEditingController: _controllerAge,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_bio'),
-//                             textEditingController: _controllerBio,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts + 30),
+                          //-------------------Categoría deportiva--------------------
+                          Text(
+                            Localization.of(context)
+                                .string('wall_profile_sport_category'),
+                            // style:
+                            //     AppStyles.ligthTextTheme.displaySmall!.copyWith(
+                            //   fontWeight: FontWeight.bold,
+                            // ),
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
 
-//                           //----------------Información personal----------------------
-//                           Text(
-//                             Localization.of(context)
-//                                 .string('wall_profile_personal_info'),
-//                             style:
-//                                 AppStyles.ligthTextTheme.displaySmall!.copyWith(
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_email'),
-//                             textEditingController: _controllerEmail,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileFact(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_phone'),
-//                             textEditingController: _controllerPhone,
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts + 30),
+                          _WallProfileDropdownFactSports(
+                            text: Localization.of(context)
+                                .string('wall_profile_sport'),
+                            dropdownOptions: _sports ?? [],
+                            dropdownValue: _sport, //${user.sport}
+                            onChanged: (newValue) {
+                              // _sport = newValue;
+                              // _authViewModel
+                              //     .getModalitiesBySport(newValue!.reference);
+                              // setState(() {
+                              //   // _setModalities(_sport!);
+                              // });
+                            },
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
+                          _WallProfileDropdownFactModalities(
+                            text: Localization.of(context)
+                                .string('wall_profile_modality'),
+                            dropdownOptions: _modalities ?? [],
+                            dropdownValue: _modality, //${user.modality}
+                            onChanged: (newValue) {
+                              _modality = newValue;
+                              setState(() {});
+                            },
+                          ),
 
-//                           //-------------------Categoría deportiva--------------------
-//                           Text(
-//                             Localization.of(context)
-//                                 .string('wall_profile_sport_category'),
-//                             style:
-//                                 AppStyles.ligthTextTheme.displaySmall!.copyWith(
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
+                          SizedBox(height: spaceBetweenFacts + 30),
 
-//                           _WallProfileDropdownFactSports(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_sport'),
-//                             dropdownOptions: _sports ?? [],
-//                             dropdownValue: _sport, //${user.sport}
-//                             onChanged: (newValue) {
-//                               _sport = newValue;
-//                               _authViewModel.getModalitiesBySport(newValue!.reference);
-//                               // setState(() {
-//                               //   // _setModalities(_sport!);
-//                               // });
-//                             },
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
-//                           _WallProfileDropdownFactModalities(
-//                             text: Localization.of(context)
-//                                 .string('wall_profile_modality'),
-//                             dropdownOptions: _modalities ?? [],
-//                             dropdownValue: _modality, //${user.modality}
-//                             onChanged: (newValue) {
-//                               _modality = newValue;
-//                               setState(() {});
-//                             },
-//                           ),
+                          //---------------------Guardar cambios---------------------
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: YellowTextButton(
+                                title: Localization.of(context)
+                                    .string('wall_profile_save_changes'),
+                                onPressed: () async {
+                                  // await _saveUserData();
+                                  // _authViewModel.registerUser(_userApp!);
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: spaceBetweenFacts),
 
-//                           SizedBox(height: spaceBetweenFacts + 30),
+                          //--------------------Descartar cambios--------------------
+                          GestureDetector(
+                            onTap: () async {
+                              // await initData();
+                              // _userViewModel.getUser();
+                            },
+                            child: SizedBox(
+                              width: responsive.width,
+                              child: Text(
+                                Localization.of(context)
+                                    .string('wall_profile_discard'),
+                                style: GoogleFonts.urbanist(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                  color: AppColors.blackColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: spaceBetweenFacts + 90),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      //-------------------------CustomBottomNavigationBar-----------------------
+      bottomNavigationBar: const CustomBottomNavigationBar(
+        selectedIndex: 4,
+      ),
+    );
+  }
 
-//                           //---------------------Guardar cambios---------------------
-//                           Align(
-//                             alignment: Alignment.bottomCenter,
-//                             child: Padding(
-//                               padding:
-//                                   const EdgeInsets.symmetric(horizontal: 10),
-//                               child: TalentPrimaryButton(
-//                                 title: Localization.of(context)
-//                                     .string('wall_profile_save_changes'),
-//                                 onPressed: () async {
-//                                   await _saveUserData();
-//                                   _authViewModel.registerUser(_user!);
-//                                 },
-//                               ),
-//                             ),
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts),
+  // Future<bool> _getSportsAndModalities() async {
+  //   final firebase = FirebaseFirestore.instance;
+  //   try {
+  //     await initData();
+  //
+  //     final sports = await firebase.collection("sports").get();
+  //     _sports = sports.docs;
+  //
+  //     final modalities = await firebase.collection("modalities").where("sport", isEqualTo: _sport!.reference).get();
+  //     _modalities = modalities.docs;
+  //
+  //     return true;
+  //   } catch (e) {
+  //     throw RemoteErrorMapper.getException(e);
+  //   }
+  // }
+}
 
-//                           //--------------------Descartar cambios--------------------
-//                           GestureDetector(
-//                             onTap: () async {
-//                               await initData();
-//                               _userViewModel.getUser();
-//                             },
-//                             child: SizedBox(
-//                               width: responsive.width,
-//                               child: Text(
-//                                 Localization.of(context)
-//                                     .string('wall_profile_discard'),
-//                                 style: GoogleFonts.urbanist(
-//                                   fontWeight: FontWeight.w700,
-//                                   fontSize: 18,
-//                                   color: AppColors.blackColor,
-//                                   decoration: TextDecoration.underline,
-//                                 ),
-//                                 textAlign: TextAlign.center,
-//                               ),
-//                             ),
-//                           ),
-//                           SizedBox(height: spaceBetweenFacts + 90),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             const Align(
-//               alignment: Alignment.bottomCenter,
-//               child: WhiteBottomNavigationBar(),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+class _WallProfileFact extends StatefulWidget {
+  final String text;
+  final TextEditingController? textEditingController;
 
-//   // Future<bool> _getSportsAndModalities() async {
-//   //   final firebase = FirebaseFirestore.instance;
-//   //   try {
-//   //     await initData();
-//   //
-//   //     final sports = await firebase.collection("sports").get();
-//   //     _sports = sports.docs;
-//   //
-//   //     final modalities = await firebase.collection("modalities").where("sport", isEqualTo: _sport!.reference).get();
-//   //     _modalities = modalities.docs;
-//   //
-//   //     return true;
-//   //   } catch (e) {
-//   //     throw RemoteErrorMapper.getException(e);
-//   //   }
-//   // }
-// }
+  const _WallProfileFact({
+    Key? key,
+    this.text = '',
+    this.textEditingController,
+  }) : super(key: key);
 
-// class _WallProfileFact extends StatefulWidget {
-//   final String text;
-//   final TextEditingController? textEditingController;
+  @override
+  State<_WallProfileFact> createState() => _WallProfileFactState();
+}
 
-//   const _WallProfileFact({
-//     Key? key,
-//     this.text = '',
-//     this.textEditingController,
-//   }) : super(key: key);
+class _WallProfileFactState extends State<_WallProfileFact> {
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
 
-//   @override
-//   State<_WallProfileFact> createState() => _WallProfileFactState();
-// }
+    return Row(
+      children: [
+        SizedBox(
+          width: responsive.widthPercent(20),
+          child: Text(
+            widget.text,
+            style: const TextStyle(color: AppColors.mediunLightGrey),
+          ),
+        ),
+        SizedBox(width: responsive.widthPercent(8)),
+        Expanded(
+          child: TextFormField(
+            controller: widget.textEditingController,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.darkGrey,
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+            ),
+            onChanged: (String newValue) {
+              setState(() {});
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-// class _WallProfileFactState extends State<_WallProfileFact> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
+class _WallProfileDropdownFactSports extends StatelessWidget {
+  final String text;
+  final List<DocumentSnapshot> dropdownOptions;
+  final void Function(DocumentSnapshot?)? onChanged;
+  DocumentSnapshot? dropdownValue;
 
-//     return Row(
-//       children: [
-//         SizedBox(
-//           width: responsive.widthPercent(20),
-//           child: Text(
-//             widget.text,
-//             style: const TextStyle(color: AppColors.mediunLightGrey),
-//           ),
-//         ),
-//         SizedBox(width: responsive.widthPercent(8)),
-//         Expanded(
-//           child: TextFormField(
-//             controller: widget.textEditingController,
-//             style: const TextStyle(
-//               fontSize: AppDimens.textMidMedium,
-//               fontWeight: FontWeight.bold,
-//               color: AppColors.darkGrey,
-//             ),
-//             decoration: const InputDecoration(
-//               border: InputBorder.none,
-//             ),
-//             onChanged: (String newValue) {
-//               setState(() {});
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+  _WallProfileDropdownFactSports({
+    Key? key,
+    required this.text,
+    required this.onChanged,
+    required this.dropdownValue,
+    required this.dropdownOptions,
+  }) : super(key: key);
 
-// class _WallProfileDropdownFactSports extends StatelessWidget {
-//   final String text;
-//   final List<DocumentSnapshot> dropdownOptions;
-//   final void Function(DocumentSnapshot?)? onChanged;
-//   DocumentSnapshot? dropdownValue;
+  List<DropdownMenuItem<DocumentSnapshot>> dropdownMenuItems = [];
 
-//   _WallProfileDropdownFactSports({
-//     Key? key,
-//     required this.text,
-//     required this.onChanged,
-//     required this.dropdownValue,
-//     required this.dropdownOptions,
-//   }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    for (var doc in dropdownOptions) {
+      // String name =
+      //     SportType.fromJson(doc.data() as Map<String, dynamic>).name!;
+      String name =
+          'SportType.fromJson(doc.data() as Map<String, dynamic>).name!';
+      dropdownMenuItems.add(
+        DropdownMenuItem(
+          value: doc,
+          child: Text(toBeginningOfSentenceCase(name)!),
+        ),
+      );
+    }
 
-//   List<DropdownMenuItem<DocumentSnapshot>> dropdownMenuItems = [];
+    final DocumentSnapshot? value = (dropdownValue != null)
+        ? dropdownOptions.firstWhere((doc) => doc.id == dropdownValue?.id)
+        : null;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
-//     for (var doc in dropdownOptions) {
-//       String name = SportType.fromJson(doc.data() as Map<String, dynamic>).name!;
-//       dropdownMenuItems.add(
-//         DropdownMenuItem(
-//           value: doc,
-//           child: Text(toBeginningOfSentenceCase(name)!),
-//         ),
-//       );
-//     }
+    return Row(
+      children: [
+        SizedBox(
+          width: responsive.widthPercent(20),
+          child: Text(
+            text,
+            style: const TextStyle(color: AppColors.mediunLightGrey),
+          ),
+        ),
+        SizedBox(width: responsive.widthPercent(8)),
+        Expanded(
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<DocumentSnapshot>(
+              dropdownColor: AppColors.whiteColor,
+              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(15),
+              value: value,
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.coinGrey,
+              ),
+              items: dropdownMenuItems,
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-//     final DocumentSnapshot? value = (dropdownValue != null) ? dropdownOptions.firstWhere((doc) => doc.id == dropdownValue?.id) : null;
+class _WallProfileDropdownFactModalities extends StatelessWidget {
+  final String text;
+  final List<DocumentSnapshot> dropdownOptions;
+  final void Function(DocumentSnapshot?)? onChanged;
+  DocumentSnapshot? dropdownValue;
 
-//     return Row(
-//       children: [
-//         SizedBox(
-//           width: responsive.widthPercent(20),
-//           child: Text(
-//             text,
-//             style: const TextStyle(color: AppColors.mediunLightGrey),
-//           ),
-//         ),
-//         SizedBox(width: responsive.widthPercent(8)),
-//         Expanded(
-//           child: DropdownButtonHideUnderline(
-//             child: DropdownButton<DocumentSnapshot>(
-//               dropdownColor: AppColors.whiteColor,
-//               focusColor: AppColors.darkGrey.withOpacity(0.03),
-//               borderRadius: BorderRadius.circular(15),
-//               value: value,
-//               icon: const Icon(
-//                 Icons.keyboard_arrow_down,
-//                 color: AppColors.coinGrey,
-//               ),
-//               items: dropdownMenuItems,
-//               onChanged: onChanged,
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+  _WallProfileDropdownFactModalities({
+    Key? key,
+    required this.text,
+    required this.onChanged,
+    required this.dropdownValue,
+    required this.dropdownOptions,
+  }) : super(key: key);
 
-// class _WallProfileDropdownFactModalities extends StatelessWidget {
-//   final String text;
-//   final List<DocumentSnapshot> dropdownOptions;
-//   final void Function(DocumentSnapshot?)? onChanged;
-//   DocumentSnapshot? dropdownValue;
+  List<DropdownMenuItem<DocumentSnapshot>> dropdownMenuItems = [];
 
-//   _WallProfileDropdownFactModalities({
-//     Key? key,
-//     required this.text,
-//     required this.onChanged,
-//     required this.dropdownValue,
-//     required this.dropdownOptions,
-//   }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    for (var doc in dropdownOptions) {
+      // String name = Modality.fromJson(doc.data() as Map<String, dynamic>).name!;
+      String name =
+          'Modality.fromJson(doc.data() as Map<String, dynamic>).name!';
+      dropdownMenuItems.add(
+        DropdownMenuItem(
+          value: doc,
+          child: Text(toBeginningOfSentenceCase(name)!),
+        ),
+      );
+    }
 
-//   List<DropdownMenuItem<DocumentSnapshot>> dropdownMenuItems = [];
+    DocumentSnapshot? value;
+    if (dropdownValue != null &&
+        dropdownOptions.any((doc) => doc.id == dropdownValue!.id)) {
+      value = dropdownOptions.firstWhere((doc) => doc.id == dropdownValue?.id);
+    } else if (dropdownOptions.isNotEmpty) {
+      value = dropdownOptions[0];
+    }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
-//     for (var doc in dropdownOptions) {
-//       String name = Modality.fromJson(doc.data() as Map<String, dynamic>).name!;
-//       dropdownMenuItems.add(
-//         DropdownMenuItem(
-//           value: doc,
-//           child: Text(toBeginningOfSentenceCase(name)!),
-//         ),
-//       );
-//     }
-
-//     DocumentSnapshot? value;
-//     if (dropdownValue != null && dropdownOptions.any((doc) => doc.id == dropdownValue!.id)) {
-//       value = dropdownOptions.firstWhere((doc) => doc.id == dropdownValue?.id);
-//     } else if (dropdownOptions.isNotEmpty) {
-//       value = dropdownOptions[0];
-//     }
-
-//     return Row(
-//       children: [
-//         SizedBox(
-//           width: responsive.widthPercent(20),
-//           child: Text(
-//             text,
-//             style: const TextStyle(color: AppColors.mediunLightGrey),
-//           ),
-//         ),
-//         SizedBox(width: responsive.widthPercent(8)),
-//         Expanded(
-//           child: DropdownButtonHideUnderline(
-//             child: DropdownButton<DocumentSnapshot>(
-//               dropdownColor: AppColors.whiteColor,
-//               focusColor: AppColors.darkGrey.withOpacity(0.03),
-//               borderRadius: BorderRadius.circular(15),
-//               value: value,
-//               icon: const Icon(
-//                 Icons.keyboard_arrow_down,
-//                 color: AppColors.coinGrey,
-//               ),
-//               items: dropdownMenuItems,
-//               onChanged: onChanged,
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+    return Row(
+      children: [
+        SizedBox(
+          width: responsive.widthPercent(20),
+          child: Text(
+            text,
+            style: const TextStyle(color: AppColors.mediunLightGrey),
+          ),
+        ),
+        SizedBox(width: responsive.widthPercent(8)),
+        Expanded(
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<DocumentSnapshot>(
+              dropdownColor: AppColors.whiteColor,
+              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(15),
+              value: value,
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.coinGrey,
+              ),
+              items: dropdownMenuItems,
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

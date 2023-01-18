@@ -40,7 +40,7 @@ class EditPictureButton extends StatelessWidget {
         height: size,
         width: size,
         decoration: const BoxDecoration(
-          color: AppColors.brandYellow,
+          color: AppColors.yellowColor,
           shape: BoxShape.circle,
           // boxShadow: [
           //   BoxShadow(
