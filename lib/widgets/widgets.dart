@@ -1,4 +1,4 @@
-export 'package:talent_app/widgets/avatar.dart';
+export 'package:talent_app/widgets/circle_editable_avatar.dart';
 export 'package:talent_app/widgets/blue_text_button.dart';
 export 'package:talent_app/widgets/carousel_images.dart';
 export 'package:talent_app/widgets/custom_app_bar.dart';

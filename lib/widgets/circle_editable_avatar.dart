@@ -6,12 +6,12 @@ import 'package:talent_app/widgets/widgets.dart';
 import '../models/models.dart';
 import '../style/app_colors.dart';
 
-class Avatar extends StatefulWidget {
+class CircleEditableAvatar extends StatefulWidget {
   final double size;
   // final UserApp? user;
   final ImageProvider<Object> image;
 
-  const Avatar({
+  const CircleEditableAvatar({
     Key? key,
     required this.size,
     // this.user,
@@ -19,10 +19,10 @@ class Avatar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<Avatar> createState() => _AvatarState();
+  State<CircleEditableAvatar> createState() => _CircleEditableAvatarState();
 }
 
-class _AvatarState extends State<Avatar> {
+class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
   // final _viewModel = inject<AuthViewModel>();
 
   //XFile con la nueva imagen seleccionada si la hubiera
@@ -62,7 +62,7 @@ class _AvatarState extends State<Avatar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.size,
       width: widget.size,
       child: Stack(

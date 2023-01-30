@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:talent_app/screens/explorer/explorer_home_screen.dart';
+import 'package:talent_app/screens/explorer/explorer_screen.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/profile/profile_screen.dart';
@@ -126,7 +126,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             // context.navigatePopReplacing(ExplorerHomePage());
             Navigator.pushReplacementNamed(
               context,
-              ExplorerHomeScreen.routeName,
+              ExplorerScreen.routeName,
             );
             break;
           case 3:

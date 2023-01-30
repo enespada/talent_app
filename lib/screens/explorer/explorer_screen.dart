@@ -1,11 +1,14 @@
 // ignore_for_file: unnecessary_new
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:talent_app/services/search_service.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-class ExplorerHomeScreen extends StatelessWidget {
+//ExplorerHomeScreen
+class ExplorerScreen extends StatelessWidget {
   static const String routeName = 'explorer_screen';
 
   final pageController = new PageController();
@@ -17,48 +20,102 @@ class ExplorerHomeScreen extends StatelessWidget {
   ];
   final values = {'selectedPageIndex': 0};
 
-  ExplorerHomeScreen({Key? key}) : super(key: key);
+  ExplorerScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+    final SearchService searchService = Provider.of<SearchService>(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.greyscale5,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _ExplorerHomeAppBar(
-              title: Localization.of(context).string('explorer_home_title'),
-              responsive: responsive,
-            ),
-            const SizedBox(height: 15),
-            // _ExplorerHomeNavigationBar(
-            //   pageController: pageController,
-            //   values: values,
-            //   responsive: responsive,
-            // )
-            const SizedBox(height: 15),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.only(
-                  top: responsive.heightPercent(2),
-                  left: responsive.widthPercent(4),
-                  right: responsive.widthPercent(4),
-                ),
-                child: PageView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: pageController,
-                  children: _pages,
-                ),
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        backgroundColor: AppColors.whiteBackground,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  //----------------------------Buscar--------------------------------
+                  Container(
+                    height: responsive.heightPercent(7.2),
+                    width: responsive.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => FocusScope.of(context)
+                                  .requestFocus(searchService.focusNode),
+                              child: Icon(
+                                Icons.search,
+                                size: responsive.widthPercent(7),
+                              ),
+                            ),
+                            SizedBox(width: responsive.widthPercent(3.5)),
+                            SizedBox(
+                              height: responsive.heightPercent(7.2),
+                              width: responsive.widthPercent(67),
+                              child: Center(
+                                child: TextField(
+                                  controller: searchService.tec,
+                                  focusNode: searchService.focusNode,
+                                  cursorColor: AppColors.greyscale5,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    hintText: Localization.of(context)
+                                        .string('explorer_screen_search'),
+                                    hintStyle: const TextStyle(
+                                        color: AppColors.greyscale3),
+                                    labelStyle: const TextStyle(
+                                        overflow: TextOverflow.ellipsis),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                  onTap: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(searchService.focusNode);
+                                  },
+                                  onChanged: (String value) {
+                                    // tec.text = value;
+                                    searchService.suggestUsers();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: responsive.heightPercent(4)),
+
+                  //--------------------------Lista---------------------------------
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: searchService.suggestedUsers.length,
+                  //     itemBuilder: (context, index) {
+                  //       return ListTile(
+                  //         title: Text('Hola $index'),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
-      ),
-      //----------------------CustomBottomNavigationBar--------------------------
-      bottomNavigationBar: const CustomBottomNavigationBar(
-        selectedIndex: 1,
+        //----------------------CustomBottomNavigationBar--------------------------
+        bottomNavigationBar: const CustomBottomNavigationBar(
+          selectedIndex: 1,
+        ),
       ),
     );
   }

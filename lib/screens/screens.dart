@@ -1,5 +1,5 @@
 //explorer
-export 'package:talent_app/screens/explorer/explorer_home_screen.dart';
+export 'package:talent_app/screens/explorer/explorer_screen.dart';
 
 //home
 export 'package:talent_app/screens/home/challenges_page.dart';

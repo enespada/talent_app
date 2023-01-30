@@ -174,10 +174,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthService authService = Provider.of(context);
-
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenFacts = responsive.heightPercent(2.5);
+
+    final AuthService authService = Provider.of(context);
     final double avatarSize = responsive.heightPercent(20); //200
     ImageProvider<Object> avatarImage =
         const AssetImage('assets/images/profile.png');
@@ -222,7 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           //-------------------------Foto-----------------------------
                           Center(
-                            child: Avatar(
+                            child: CircleEditableAvatar(
                               size: avatarSize,
                               // user: _userApp,
                               image: avatarImage,

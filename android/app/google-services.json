@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "106218873843",
+    "project_id": "talent-app-f191f",
+    "storage_bucket": "talent-app-f191f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106218873843:android:fba78aa986d58ac6e66886",
+        "android_client_info": {
+          "package_name": "com.enriqueespada.talent_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106218873843-3sgr97r8p06962nsagv18v80h2i2g4fh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.enriqueespada.talent_app",
+            "certificate_hash": "3b94b8d5a42513c42ecc7934ccd896280e5d7204"
+          }
+        },
+        {
+          "client_id": "106218873843-72302503u5vi85bihud081mpkranh8n0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIynxNZXENTRWhqF6fW4GBA2YjZ0-rMqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106218873843-72302503u5vi85bihud081mpkranh8n0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

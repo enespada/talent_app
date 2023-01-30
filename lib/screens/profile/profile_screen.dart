@@ -217,8 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       .string('wall_home_primary_button'),
                                   fontSize: responsive.widthPercent(4),
                                   onPressed: () {
-                                    // context.navigateTo(
-                                    //     WallProfilePage(userApp: userApp));
                                     Navigator.pushNamed(
                                         context, EditProfileScreen.routeName);
                                   },
