@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:talent_app/screens/profile/settings_screen.dart';
 
+import 'package:talent_app/firebase_options.dart';
+import 'package:talent_app/screens/login/login_screen.dart';
+import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/auth_service.dart';
 import 'package:talent_app/services/search_service.dart';
+import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/utils/utils.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -18,6 +28,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => AuthService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserService(),
         ),
         ChangeNotifierProvider(
           create: (context) => SearchService(),
@@ -32,12 +45,16 @@ class MyApp extends StatelessWidget {
           // GlobalWidgetsLocalizations.delegate,
           // GlobalCupertinoLocalizations.delegate,
         ],
-        initialRoute: HomeScreen.routeName,
+        initialRoute: OnboardingScreen.routeName,
         routes: {
           //explorer
           ExplorerScreen.routeName: (context) => ExplorerScreen(),
           //home
           HomeScreen.routeName: (context) => const HomeScreen(),
+          //login
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          //onboarding
+          OnboardingScreen.routeName: (context) => const OnboardingScreen(),
           //profile
           ProfileScreen.routeName: (context) => const ProfileScreen(),
           EditProfileScreen.routeName: (context) => const EditProfileScreen(),

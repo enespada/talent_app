@@ -1,27 +1,53 @@
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:talent_app/models/models.dart';
 
 class AuthService extends ChangeNotifier {
   UserApp? userApp;
-  static const String _baseStorageUrl = 'gs://talent-app-f191f.appspot.com';
+  bool loading = false;
 
-  Future<String> urlImag(String id) async {
+  Future<bool> login(String user, String password) async {
+    if (loading) return false;
+    loading = true;
+    notifyListeners();
     try {
-      if (id == '') return '';
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: user,
+        password: password,
+      );
+      final token = await userCredential.user?.getIdToken(true);
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'acces_token', value: token);
 
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL("$_baseStorageUrl/$id/profile.png")
-          .getDownloadURL();
-      return storageRef.toString();
+      loading = false;
+      notifyListeners();
+      return true;
     } catch (e) {
-      // final storageRef = await FirebaseStorage.instance
-      //     .refFromURL(
-      //         "gs://talentapp-dev-c0fad.appspot.com/default_images/profile.png")
-      //     .getDownloadURL();
-      // return storageRef.toString();
-      return '';
+      loading = false;
+      notifyListeners();
+      return false;
     }
+  }
+
+  Future<String?> signUp(String user, String password) async {
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: user,
+      password: password,
+    );
+    final token = await userCredential.user?.getIdToken(true);
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'acces_token', value: token);
+    return userCredential.user?.uid;
+  }
+
+  Future<bool> isAuthenticated() async {
+    const storage = FlutterSecureStorage();
+    String accesToken = await storage.read(key: 'acces_token') ?? '';
+    return accesToken.isNotEmpty;
   }
 }

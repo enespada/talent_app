@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
@@ -109,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final AuthService authService = Provider.of<AuthService>(context);
+    final UserService userService = Provider.of<UserService>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -152,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         //-------------------Foto perfil------------------------
                         FutureBuilder(
-                          future: authService.urlImag(userApp?.id ?? ''),
+                          future: userService.urlImag(userApp?.id ?? ''),
                           builder: (BuildContext context,
                               AsyncSnapshot<String> snapshot) {
                             return Container(

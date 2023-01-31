@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/services/auth_service.dart';
+import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/widgets/square_editable_avatar.dart';
 import 'package:talent_app/widgets/yellow_text_button.dart';
 
 import '../../utils/utils.dart';
@@ -177,12 +179,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenFacts = responsive.heightPercent(2.5);
 
-    final AuthService authService = Provider.of(context);
+    final UserService userService = Provider.of<UserService>(context);
     final double avatarSize = responsive.heightPercent(20); //200
     ImageProvider<Object> avatarImage =
         const AssetImage('assets/images/profile.png');
     FutureBuilder(
-      future: authService.urlImag(_userApp?.id ?? ''),
+      future: userService.urlImag(_userApp?.id ?? ''),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.data != '') return Container();
         avatarImage = CachedNetworkImageProvider(snapshot.data!);
@@ -224,8 +226,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Center(
                             child: CircleEditableAvatar(
                               size: avatarSize,
-                              // user: _userApp,
                               image: avatarImage,
+                              iconColor: AppColors.greyscale5,
+                              iconBackgroundColor: AppColors.yellowColor,
                             ),
                           ),
                           SizedBox(height: spaceBetweenFacts),

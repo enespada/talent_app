@@ -1,17 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:talent_app/style/app_colors.dart';
 
 class EditPictureButton extends StatelessWidget {
   final Widget child;
   final double size;
   final void Function()? onPressed;
+  final Color? color;
 
   const EditPictureButton({
     Key? key,
     required this.child,
     required this.size,
     required this.onPressed,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -39,8 +42,8 @@ class EditPictureButton extends StatelessWidget {
       child: Container(
         height: size,
         width: size,
-        decoration: const BoxDecoration(
-          color: AppColors.yellowColor,
+        decoration: BoxDecoration(
+          color: (color != null) ? color : Colors.blue,
           shape: BoxShape.circle,
           // boxShadow: [
           //   BoxShadow(
