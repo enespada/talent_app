@@ -18,11 +18,10 @@ class UserService extends ChangeNotifier {
 
     userAppData = snapshot;
     userApp = UserApp.fromJson(snapshot.data()!);
-    // return UserApp.fromJson(snapshot.data()!);
     return userApp;
   }
 
-  Future<String> urlImag(String id) async {
+  Future<String> profileImageURL(String id) async {
     try {
       if (id == '') return '';
 

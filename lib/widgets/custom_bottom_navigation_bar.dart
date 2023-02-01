@@ -16,7 +16,7 @@ enum WhiteBottomNavigationBarMenu {
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
-  static const double _iconsWidth = 24.0;
+  static const double _iconsWidth = 20;
 
   const CustomBottomNavigationBar({
     Key? key,
@@ -25,120 +25,116 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      backgroundColor: AppColors.greyscale5,
-      showUnselectedLabels: false,
-      showSelectedLabels: false,
-      type: BottomNavigationBarType.fixed,
-      items: [
-        //---------------------------------Home---------------------------------
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icon_home.svg',
-            color: AppColors.greyscale2,
-            width: _iconsWidth,
-            height: _iconsWidth,
+    return SizedBox(
+      height: 60,
+      child: BottomNavigationBar(
+        backgroundColor: AppColors.greyscale5,
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
+        unselectedLabelStyle: const TextStyle(fontSize: 0),
+        selectedLabelStyle: const TextStyle(fontSize: 0),
+        type: BottomNavigationBarType.fixed,
+        items: [
+          //---------------------------------Home---------------------------------
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/images/icon_home.svg',
+              color: AppColors.greyscale2,
+              height: _iconsWidth,
+              width: _iconsWidth,
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/images/icon_home.svg',
+              color: AppColors.blueColor,
+              width: _iconsWidth,
+              height: _iconsWidth,
+            ),
+            label: Localization.of(context).string('home_title'),
           ),
-          activeIcon: SvgPicture.asset(
-            'assets/images/icon_home.svg',
-            color: AppColors.blueColor,
-            width: _iconsWidth,
-            height: _iconsWidth,
-          ),
-          label: Localization.of(context).string('home_title'),
-        ),
 
-        //--------------------------------Busqueda------------------------------
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icon_search.svg',
-            color: AppColors.greyscale2,
-            height: _iconsWidth,
-            width: _iconsWidth,
+          //--------------------------------Busqueda------------------------------
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/images/icon_search.svg',
+              color: AppColors.greyscale2,
+              height: _iconsWidth,
+              width: _iconsWidth,
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/images/icon_search.svg',
+              color: AppColors.blueColor,
+              height: _iconsWidth,
+              width: _iconsWidth,
+            ),
+            label: Localization.of(context).string('about_title'),
           ),
-          activeIcon: SvgPicture.asset(
-            'assets/images/icon_search.svg',
-            color: AppColors.blueColor,
-            height: _iconsWidth,
-            width: _iconsWidth,
-          ),
-          label: Localization.of(context).string('about_title'),
-        ),
 
-        //------------------------------Subida (+)------------------------------
-        BottomNavigationBarItem(
-          icon: ElevatedButton(
-              onPressed: () {
-                // String type = UserViewModel.user!.type!;
-                // switch (type) {
-                //   case "athlete":
-                //     context.navigateTo(const UploadPostHomePage());
-                //     break;
-                //   case "scouter":
-                //   case "manager":
-                //     context.navigateTo(const UploadChallengeHomePage());
-                //     break;
-                // }
-              },
-              child: const Icon(Icons.add)),
-          label: Localization.of(context).string('about_title'),
-        ),
-
-        //-------------------------------Chats----------------------------------
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icon_chat.svg',
-            color: AppColors.greyscale2,
-            width: _iconsWidth,
-            height: _iconsWidth,
+          //------------------------------Subida (+)------------------------------
+          BottomNavigationBarItem(
+            icon: const Icon(
+              Icons.add,
+              color: AppColors.greyscale2,
+              size: _iconsWidth + 20,
+            ),
+            label: Localization.of(context).string('about_title'),
           ),
-          activeIcon: SvgPicture.asset(
-            'assets/images/icon_chat.svg',
-            color: AppColors.blueColor,
-            width: _iconsWidth,
-            height: _iconsWidth,
-          ),
-          label: Localization.of(context).string('about_title'),
-        ),
 
-        //-------------------------------Perfil---------------------------------
-        BottomNavigationBarItem(
-          icon: ClipOval(
-            child: SizedBox.fromSize(
-              size: const Size.fromRadius(_iconsWidth / 2),
-              child: Image.asset(
-                'assets/images/profile_pic_example.png',
-                fit: BoxFit.cover,
+          //-------------------------------Chats----------------------------------
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/images/icon_chat.svg',
+              color: AppColors.greyscale2,
+              width: _iconsWidth,
+              height: _iconsWidth,
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/images/icon_chat.svg',
+              color: AppColors.blueColor,
+              width: _iconsWidth,
+              height: _iconsWidth,
+            ),
+            label: Localization.of(context).string('about_title'),
+          ),
+
+          //-------------------------------Perfil---------------------------------
+          BottomNavigationBarItem(
+            icon: ClipOval(
+              child: SizedBox.fromSize(
+                size: const Size.fromRadius(_iconsWidth / 2),
+                child: Image.asset(
+                  'assets/images/profile_pic_example.png',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
+            label: Localization.of(context).string('about_title'),
           ),
-          label: Localization.of(context).string('about_title'),
-        ),
-      ],
-      currentIndex: selectedIndex,
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            // context.navigatePopReplacing(const HomePage());
-            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-            break;
-          case 1:
-            // context.navigatePopReplacing(ExplorerHomePage());
-            Navigator.pushReplacementNamed(
-              context,
-              ExplorerScreen.routeName,
-            );
-            break;
-          case 3:
-            // context.navigatePopReplacing(MessagesHomePage());
-            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-            break;
-          case 4:
-            // context.navigatePopReplacing(const WallHomePage());
-            Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
-            break;
-        }
-      },
+        ],
+        currentIndex: selectedIndex,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              // context.navigatePopReplacing(const HomePage());
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+              break;
+            case 1:
+              // context.navigatePopReplacing(ExplorerHomePage());
+              Navigator.pushReplacementNamed(
+                context,
+                ExplorerScreen.routeName,
+              );
+              break;
+            case 3:
+              // context.navigatePopReplacing(MessagesHomePage());
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+              break;
+            case 4:
+              // context.navigatePopReplacing(const WallHomePage());
+              Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+              break;
+          }
+        },
+      ),
     );
   }
 }

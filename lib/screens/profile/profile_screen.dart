@@ -9,6 +9,7 @@ import 'package:talent_app/services/services.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
@@ -23,12 +24,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  //Usuario principal (el logueado)
-  UserApp? userApp;
   int _selectedPage = 0;
-  // final _viewModel = inject<UserViewModel>();
-  String sportTypeName = "";
-  String modalityName = "";
   //Grids a mostrar con los posts, lso challenges o los posts guardados
   final List<Widget> _pages = [
     _PublicationsGrid(
@@ -103,7 +99,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    // _viewModel.dispose();
     super.dispose();
   }
 
@@ -112,99 +107,110 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
 
+    double followersValue =
+        userService.userApp?.followers?.length.toDouble() ?? -1;
+    String followersString = Util.adaptNumFollow(followersValue);
+    double followingValue =
+        userService.userApp?.following?.length.toDouble() ?? -1;
+    String followingString = Util.adaptNumFollow(followingValue);
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
+          alignment: AlignmentDirectional.center,
           children: [
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    //------------------------Mi perfil-------------------------
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          Localization.of(context).string('wall_home_title'),
-                          style: TextStyle(
-                            color: AppColors.greyscale5,
-                            fontSize: responsive.widthPercent(6),
-                            fontWeight: FontWeight.bold,
-                          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Column(
+                children: [
+                  //------------------------Mi perfil-------------------------
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        Localization.of(context).string('wall_home_title'),
+                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(3.5),
+                          fontWeight: FontWeight.bold,
                         ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     context.navigateTo(NotificationsPage());
-                        //   },
-                        //   child: Icon(
-                        //     Icons.notifications_outlined,
-                        //     size: responsive.widthPercent(7),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.heightPercent(2)),
+                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     context.navigateTo(NotificationsPage());
+                      //   },
+                      //   child: Icon(
+                      //     Icons.notifications_outlined,
+                      //     size: responsive.widthPercent(7),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  SizedBox(height: responsive.heightPercent(1)),
 
-                    //-----------Foto perfil, nombre, editar, ajustes-----------
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        //-------------------Foto perfil------------------------
-                        FutureBuilder(
-                          future: userService.urlImag(userApp?.id ?? ''),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> snapshot) {
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: responsive.heightPercent(4),
-                                right: responsive.heightPercent(3),
-                                top: responsive.heightPercent(4),
+                  //-----------Foto perfil, nombre, editar, ajustes-----------
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      //-------------------Foto perfil------------------------
+                      FutureBuilder(
+                        future: userService
+                            .profileImageURL(userService.userApp?.id ?? ''),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String> snapshot) {
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom: responsive.heightPercent(4),
+                              right: responsive.heightPercent(3),
+                              top: responsive.heightPercent(4),
+                            ),
+                            height: responsive.widthPercent(22),
+                            width: responsive.widthPercent(22),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.whiteColor,
+                                width: 1,
                               ),
-                              height: responsive.widthPercent(22),
-                              width: responsive.widthPercent(22),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.whiteColor,
-                                  width: 1,
-                                ),
-                                shape: BoxShape.circle,
-                                image: (snapshot.hasData && snapshot.data != '')
-                                    ? DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                            snapshot.data!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/profile.png'),
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                            );
-                          },
-                        ),
-                        //---------------Nombre, editar, ajustes---------------
-                        Column(
+                              shape: BoxShape.circle,
+                              image: (snapshot.hasData && snapshot.data != '')
+                                  ? DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                          snapshot.data!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/profile.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      //---------------Nombre, editar, ajustes---------------
+                      Flexible(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //-------------------Nombre------------------------
                             Text(
-                              userApp?.fullname ?? 'Pepe',
-                              style: TextStyle(
-                                color: AppColors.greyscale5,
-                                fontSize: responsive.widthPercent(5),
+                              userService.userApp?.fullName ?? '',
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            SizedBox(height: responsive.heightPercent(0.8)),
 
                             //-------------------Deporte------------------------
                             Text(
-                              '${toBeginningOfSentenceCase(sportTypeName)} ${toBeginningOfSentenceCase(modalityName)} | ${userApp?.country}',
-                              style: TextStyle(
+                              '${toBeginningOfSentenceCase(userService.userApp?.type ?? '')} | ${userService.userApp?.country ?? ''}',
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
                                 color: AppColors.greyscale2,
-                                fontSize: responsive.widthPercent(3.5),
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: responsive.heightPercent(1)),
@@ -253,147 +259,160 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
 
-                    //-----------Seguidores, siguiendo, publicaciones-------------
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          // onTap: () =>
-                          //     context.navigateTo(const WallFollowersPage()),
-                          child: Column(
-                            children: [
-                              Text(
-                                '150',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.widthPercent(5),
-                                ),
+                  //-----------Seguidores, siguiendo, publicaciones-------------
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        // onTap: () =>
+                        //     context.navigateTo(const WallFollowersPage()),
+                        child: Column(
+                          children: [
+                            Text(
+                              followersString,
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                Localization.of(context)
-                                    .string('wall_home_followers_text'),
-                                // style: AppStyles.ligthTextTheme.bodyMedium,
+                            ),
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_followers_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        GestureDetector(
-                          // onTap: () =>
-                          //     context.navigateTo(const WallFollowersPage()),
-                          child: Column(
-                            children: [
-                              Text(
-                                '1.5k',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: responsive.widthPercent(5)),
+                      ),
+                      GestureDetector(
+                        // onTap: () =>
+                        //     context.navigateTo(const WallFollowersPage()),
+                        child: Column(
+                          children: [
+                            Text(
+                              followingString,
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                Localization.of(context)
-                                    .string('wall_home_following_text'),
-                                // style: AppStyles.ligthTextTheme.bodyMedium,
+                            ),
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_following_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        GestureDetector(
-                          // onTap: () => context
-                          //     .navigateTo(const WallPublishedImagesPage()),
-                          child: Column(
-                            children: [
-                              Text(
-                                '500',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.widthPercent(5),
-                                ),
+                      ),
+                      GestureDetector(
+                        // onTap: () => context
+                        //     .navigateTo(const WallPublishedImagesPage()),
+                        child: Column(
+                          children: [
+                            Text(
+                              '500',
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                Localization.of(context)
-                                    .string('wall_home_publications_text'),
-                                // style: AppStyles.ligthTextTheme.bodyMedium,
+                            ),
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_publications_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.heightPercent(1.5)),
+                      ),
+                    ],
+                  ),
+                  // SizedBox(height: responsive.heightPercent(1.5)),
 
-                    //--------------Publicaciones, retos y guardados------------
-                    Column(
-                      children: [
-                        const Divider(),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: responsive.heightPercent(1),
-                          ),
-                          width: responsive.widthPercent(75),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              //--------------------Posts-----------------------
-                              GestureDetector(
-                                onTap: () {
-                                  _selectedPage = 0;
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Icons.apps_sharp,
-                                  color: (_selectedPage == 0)
-                                      ? AppColors.blueColor
-                                      : AppColors.greyscale1,
-                                  size: responsive.widthPercent(8),
-                                ),
-                              ),
-
-                              //-------------------Challenges--------------------
-                              GestureDetector(
-                                onTap: () {
-                                  _selectedPage = 1;
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Icons.play_circle_outline,
-                                  color: (_selectedPage == 1)
-                                      ? AppColors.blueColor
-                                      : AppColors.greyscale1,
-                                  size: responsive.widthPercent(8),
-                                ),
-                              ),
-
-                              //----------------------Saved----------------------
-                              GestureDetector(
-                                onTap: () {
-                                  _selectedPage = 2;
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Icons.bookmark_border_rounded,
-                                  color: (_selectedPage == 2)
-                                      ? AppColors.blueColor
-                                      : AppColors.greyscale1,
-                                  size: responsive.widthPercent(8),
-                                ),
-                              ),
-                            ],
-                          ),
+                  //---------------Publicaciones, retos y guardados--------------
+                  Column(
+                    children: [
+                      const Divider(),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: responsive.heightPercent(1),
                         ),
-                        const Divider(),
-                      ],
-                    ),
-                    SizedBox(height: responsive.heightPercent(1.5)),
+                        width: responsive.widthPercent(75),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            //----------------------Posts------------------------
+                            GestureDetector(
+                              onTap: () {
+                                _selectedPage = 0;
+                                setState(() {});
+                              },
+                              child: Icon(
+                                Icons.apps_sharp,
+                                color: (_selectedPage == 0)
+                                    ? AppColors.blueColor
+                                    : AppColors.greyscale1,
+                                size: responsive.widthPercent(8),
+                              ),
+                            ),
 
-                    SizedBox(
-                      height: responsive.heightPercent(45),
-                      child: _pages[_selectedPage],
-                    ),
-                  ],
-                ),
+                            //-------------------Challenges--------------------
+                            GestureDetector(
+                              onTap: () {
+                                _selectedPage = 1;
+                                setState(() {});
+                              },
+                              child: Icon(
+                                Icons.play_circle_outline,
+                                color: (_selectedPage == 1)
+                                    ? AppColors.blueColor
+                                    : AppColors.greyscale1,
+                                size: responsive.widthPercent(8),
+                              ),
+                            ),
+
+                            //----------------------Saved----------------------
+                            GestureDetector(
+                              onTap: () {
+                                _selectedPage = 2;
+                                setState(() {});
+                              },
+                              child: Icon(
+                                Icons.bookmark_border_rounded,
+                                color: (_selectedPage == 2)
+                                    ? AppColors.blueColor
+                                    : AppColors.greyscale1,
+                                size: responsive.widthPercent(8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(),
+                    ],
+                  ),
+
+                  // SizedBox(
+                  //   height: responsive.heightPercent(60),
+                  //   child: _pages[_selectedPage],
+                  // ),
+                  Expanded(child: _pages[_selectedPage]),
+                ],
               ),
             ),
           ],
@@ -426,7 +445,7 @@ class _PublicationsGrid extends StatelessWidget {
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.vertical,
-      shrinkWrap: true,
+      // shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: responsive.widthPercent(2),

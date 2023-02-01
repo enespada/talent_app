@@ -1,14 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/screens/home/home_screen.dart';
 import 'package:talent_app/services/auth_service.dart';
 import 'package:talent_app/services/user_service.dart';
-import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
@@ -23,18 +21,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   UserApp? user;
-
-  bool _passwordHidden = true;
-  bool _isValidEmail = false, _isValidPwd = false;
-
   final _tecEmail = TextEditingController();
   final _tecPassword = TextEditingController();
-  User? userFirebase;
+  bool _passwordHidden = true;
+  bool _isValidEmail = false, _isValidPwd = false;
 
   @override
   Widget build(BuildContext context) {
     final AuthService authService = Provider.of<AuthService>(context);
     final UserService userService = Provider.of<UserService>(context);
+
+    final Responsive responsive = Responsive.of(context);
 
     return Scaffold(
       body: GestureDetector(
@@ -42,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 30),
-            height: double.infinity,
-            width: double.infinity,
+            height: responsive.height,
+            width: responsive.width,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: Image.asset('assets/images/background_lineas.png').image,
@@ -54,47 +51,55 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // CustomBackButton(
-                  //   onPressed: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  // ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      Localization.of(context).string('sign_in'),
-                      // style: AppStyles.ligthTextTheme.displayLarge,
+                  CustomBackButton(onTap: () => Navigator.pop(context)),
+                  SizedBox(height: responsive.heightPercent(2)),
+
+                  //----------------------Iniciar sesion-------------------------
+                  Text(
+                    Localization.of(context).string('sign_in'),
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      fontSize: responsive.diagonalPercent(5),
                     ),
                   ),
+                  SizedBox(height: responsive.heightPercent(3)),
+
+                  //-------------------Bienvenido de nuevo-----------------------
                   Text(
                     Localization.of(context).string('login_welcome'),
-                    // style: AppStyles.ligthTextTheme.bodyLarge,
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      fontSize: responsive.diagonalPercent(2.5),
+                    ),
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: responsive.heightPercent(5)),
+
+                  //-------------------------Login-------------------------------
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          Localization.of(context).string('sign_in_username'),
-                          // style: AppStyles.ligthTextTheme.bodyMedium,
+                      //-----------------------Email------------------------------
+                      Text(
+                        Localization.of(context).string('sign_in_username'),
+                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
                         ),
                       ),
+                      SizedBox(height: responsive.heightPercent(2)),
                       TextFormField(
-                        autofocus: true,
                         controller: _tecEmail,
                         keyboardType: TextInputType.emailAddress,
-                        // style: AppStyles.ligthTextTheme.labelSmall,
-                        onChanged: (value) {
-                          setState(() {
-                            _isValidEmail = value.contains(RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"));
-                          });
+                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                        onChanged: (String value) {
+                          _isValidEmail = value.contains(RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"));
+                          setState(() {});
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14.0, horizontal: 25.0),
+                            horizontal: 25,
+                            vertical: 14,
+                          ),
                           filled: true,
                           fillColor: AppColors.lightGrey,
                           border: OutlineInputBorder(
@@ -117,21 +122,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          Localization.of(context).string('sign_in_password'),
+                      SizedBox(height: responsive.heightPercent(3)),
+
+                      //-----------------------Password------------------------------
+                      Text(
+                        Localization.of(context).string('sign_in_password'),
+                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
                         ),
                       ),
+                      SizedBox(height: responsive.heightPercent(2)),
                       TextFormField(
                         controller: _tecPassword,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _passwordHidden,
-                        // style: AppStyles.ligthTextTheme.labelSmall,
-                        onChanged: (value) {
-                          setState(() {
-                            _isValidPwd = value.length >= 6;
-                          });
+                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                        onChanged: (String value) {
+                          _isValidPwd = value.length >= 6;
+                          setState(() {});
                         },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
@@ -164,7 +174,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 25),
+                  SizedBox(height: responsive.heightPercent(5)),
+
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
@@ -185,6 +196,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       print('Login correcto');
                                       await userService.getUser();
                                       print(userService.userApp?.bio);
+                                      Navigator.pushReplacementNamed(
+                                          context, HomeScreen.routeName);
                                     } else {
                                       print('Login fallido');
                                     }

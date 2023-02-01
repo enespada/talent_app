@@ -1,0 +1,751 @@
+// ignore_for_file: sort_child_properties_last
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
+
+import 'package:talent_app/models/models.dart';
+import 'package:talent_app/style/styles.dart';
+import 'package:talent_app/utils/utils.dart';
+
+enum TypeFollow { seguidores, seguidos }
+
+enum TypeUser { todos, scouters, deportistas }
+
+class WallFollowersPage extends StatefulWidget {
+  final TypeFollow typeFollow;
+
+  const WallFollowersPage({
+    Key? key,
+    required this.typeFollow,
+  }) : super(key: key);
+
+  @override
+  State<WallFollowersPage> createState() => _WallFollowersPageState();
+}
+
+class _WallFollowersPageState extends State<WallFollowersPage> {
+  // final _viewModel = inject<UserViewModel>();
+  UserApp? user;
+
+  // Para mostrar a los seguidores o a los seguidos usamos esta variable:
+  TypeFollow _typeFollow = TypeFollow.seguidores;
+  // Para mostrar a los seguidores/seguidos que son scouters o deportistas usamos esta variable:
+  TypeUser _typeUser = TypeUser.todos;
+  List<UserApp> followers = [];
+  String followersString = '';
+  List<UserApp> following = [];
+  String followingString = '';
+  int scoutersValue = 0;
+  int athletesValue = 0;
+  // Lista de usuarios a mostrar en la pantalla
+  List<UserApp> usersToShow = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _typeFollow = widget.typeFollow;
+
+    // _viewModel.getUserState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       user = state.data;
+    //       followers.clear();
+    //       following.clear();
+    //       initData();
+    //       // double followersValue = 8999.toDouble() ?? -1;
+    //       double followersValue = user?.followers?.length.toDouble() ?? -1;
+    //       followersString = Utils.adaptNumFollow(followersValue);
+    //       double followingValue = user?.following?.length.toDouble() ?? -1;
+    //       followingString = Utils.adaptNumFollow(followingValue);
+    //       setState(() {});
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+
+    // _viewModel.getUser();
+
+    // _viewModel.getFollowersState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       followers = state.data;
+    //       usersToShow.clear();
+    //       usersToShow.addAll(followers);
+    //       scoutersValue = 0;
+    //       athletesValue = 0;
+    //       for (UserApp userToShow in usersToShow) {
+    //         if (userToShow.type == 'scouter') scoutersValue++;
+    //         if (userToShow.type == 'athlete') athletesValue++;
+    //       }
+    //       setState(() {});
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+
+    // _viewModel.getFollowingState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       following = state.data;
+    //       usersToShow.clear();
+    //       usersToShow.addAll(following);
+    //       scoutersValue = 0;
+    //       athletesValue = 0;
+    //       for (UserApp userToShow in usersToShow) {
+    //         if (userToShow.type == 'scouter') scoutersValue++;
+    //         if (userToShow.type == 'athlete') athletesValue++;
+    //       }
+    //       setState(() {});
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+
+    // _viewModel.followState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+
+    // _viewModel.unfollowState.stream.listen((state) {
+    //   switch (state.status) {
+    //     case Status.LOADING:
+    //       LoadingOverlay.of(context).show();
+    //       break;
+    //     case Status.COMPLETED:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //     case Status.ERROR:
+    //       LoadingOverlay.of(context).hide();
+    //       ErrorOverlay.of(context).show(state.error);
+    //       break;
+    //     default:
+    //       LoadingOverlay.of(context).hide();
+    //       break;
+    //   }
+    // });
+  }
+
+  void initData() {
+    // switch (_typeFollow) {
+    //   case TypeFollow.seguidores:
+    //     if (followers.isEmpty) {
+    //       _viewModel.getFollowers(user?.followers);
+    //       break;
+    //     }
+    //     usersToShow.clear();
+    //     usersToShow.addAll(followers);
+    //     scoutersValue = 0;
+    //     athletesValue = 0;
+    //     for (UserApp userToShow in usersToShow) {
+    //       if (userToShow.type == 'scouter') scoutersValue++;
+    //       if (userToShow.type == 'athlete') athletesValue++;
+    //     }
+    //     setState(() {});
+    //     break;
+    //   case TypeFollow.seguidos:
+    //     if (following.isEmpty) {
+    //       _viewModel.getFollowing(user?.following);
+    //       break;
+    //     }
+    //     usersToShow.clear();
+    //     usersToShow.addAll(following);
+    //     scoutersValue = 0;
+    //     athletesValue = 0;
+    //     for (UserApp userToShow in usersToShow) {
+    //       if (userToShow.type == 'scouter') scoutersValue++;
+    //       if (userToShow.type == 'athlete') athletesValue++;
+    //     }
+    //     setState(() {});
+    //     break;
+    //   default:
+    // }
+  }
+
+  String typeString(BuildContext context, String string) {
+    switch (string) {
+      case 'athlete':
+        String aux = Localization.of(context).string('register_type_athlete');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      case 'scouter':
+        String aux = Localization.of(context).string('register_type_scouter');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      case 'manager':
+        String aux = Localization.of(context).string('register_type_manager');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      default:
+        return '';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    switch (_typeUser) {
+      case TypeUser.todos:
+        usersToShow.clear();
+        switch (_typeFollow) {
+          case TypeFollow.seguidores:
+            usersToShow.addAll(followers);
+            break;
+          case TypeFollow.seguidos:
+            usersToShow.addAll(following);
+            break;
+          default:
+        }
+        break;
+      case TypeUser.scouters:
+        usersToShow.clear();
+        switch (_typeFollow) {
+          case TypeFollow.seguidores:
+            usersToShow.addAll(followers);
+            break;
+          case TypeFollow.seguidos:
+            usersToShow.addAll(following);
+            break;
+          default:
+        }
+        usersToShow.removeWhere((UserApp element) => element.type != 'scouter');
+        break;
+      case TypeUser.deportistas:
+        usersToShow.clear();
+        switch (_typeFollow) {
+          case TypeFollow.seguidores:
+            usersToShow.addAll(followers);
+            break;
+          case TypeFollow.seguidos:
+            usersToShow.addAll(following);
+            break;
+          default:
+        }
+        usersToShow.removeWhere((UserApp element) => element.type != 'athlete');
+        break;
+      default:
+    }
+
+    List<Widget> typeUserContainers = [
+      //----------------------todos--------------------------
+      _TypeUserContainer(
+        title: 'todos',
+        typeUser: _typeUser,
+        typeUserCompare: TypeUser.todos,
+        onTap: () {
+          _typeUser = TypeUser.todos;
+          //TODO: mostrar todos los seguidores/seguidos
+          setState(() {});
+        },
+      ),
+
+      //----------------------scouters-------------------------
+      _TypeUserContainer(
+        title: '$scoutersValue scouters', //${user.followers.scouters.length} +-
+        typeUser: _typeUser,
+        typeUserCompare: TypeUser.scouters,
+        onTap: () {
+          _typeUser = TypeUser.scouters;
+          //TODO: mostrar seguidores/seguidos que son scouters
+          setState(() {});
+        },
+      ),
+
+      //--------------------deportistas-----------------------
+      _TypeUserContainer(
+        title:
+            '$athletesValue deportistas', //${user.followers.deportists.length} +-
+        typeUser: _typeUser,
+        typeUserCompare: TypeUser.deportistas,
+        onTap: () {
+          _typeUser = TypeUser.deportistas;
+          //TODO: mostrar seguidores/seguidos que son deportistas
+
+          setState(() {});
+        },
+      ),
+    ];
+
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      //-------------------------------body-------------------------------------
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                //-----------------Nombre usuario y flecha atras-------------------
+                // CustomAppBar(
+                //   responsive: responsive,
+                //   style: TextStyle(
+                //     fontSize: responsive.widthPercent(7),
+                //     fontWeight: FontWeight.w700,
+                //     color: AppColors.darkGrey,
+                //   ),
+                //   iconColor: AppColors.brandColor,
+                //   title: user?.fullName ?? '',
+                //   onTap: () {
+                //     // context.navigatePopReplacing(const WallHomePage());
+                //   },
+                // ),
+                SizedBox(height: responsive.heightPercent(2)),
+
+                //---------------------Filtros de busqueda----------------------
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      //----------------------seguidores - seguidos----------------
+                      Row(
+                        children: [
+                          //--------------------seguidores-------------------------
+                          _TypeFollowContainer(
+                            title:
+                                '$followersString ${Localization.of(context).string("wall_home_followers_text")}',
+                            typeFollow: _typeFollow,
+                            typeFollowCompare: TypeFollow.seguidores,
+                            onTap: () {
+                              _typeFollow = TypeFollow.seguidores;
+                              initData();
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(width: responsive.widthPercent(6)),
+
+                          //---------------------seguidos-------------------------
+                          _TypeFollowContainer(
+                            title:
+                                '$followingString  ${Localization.of(context).string("wall_home_following_text")}',
+                            typeFollow: _typeFollow,
+                            typeFollowCompare: TypeFollow.seguidos,
+                            onTap: () {
+                              _typeFollow = TypeFollow.seguidos;
+                              initData();
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: responsive.heightPercent(2)),
+
+                      //-----------------todos-scouters-deportistas---------------
+                      SizedBox(
+                        height: responsive.heightPercent(5),
+                        width: responsive.width,
+                        child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: typeUserContainers.length,
+                          itemBuilder: (context, index) {
+                            return typeUserContainers[index];
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: responsive.heightPercent(2)),
+
+                //-----------------Lista seguidores/seguidos------------------
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  height: responsive.heightPercent(63),
+                  width: responsive.width,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: usersToShow.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (user == null) return Container();
+                      bool isFollowing = false;
+                      String stringToCompare = '';
+                      for (DocumentReference? idFollowing in user!.following!) {
+                        stringToCompare = idFollowing
+                            .toString()
+                            .split('(')[1]
+                            .split(')')[0]
+                            .split('/')[1];
+                        if (stringToCompare == usersToShow[index].id) {
+                          isFollowing = true;
+                          break;
+                        }
+                      }
+
+                      return ListTile(
+                        // leading: FutureBuilder(
+                        //   future: userService
+                        //       .profileImageURL(usersToShow[index].id!),
+                        //   builder: (BuildContext context,
+                        //       AsyncSnapshot<String> snapshot) {
+                        //     return Container(
+                        //       height: responsive.heightPercent(16),
+                        //       width: responsive.widthPercent(16),
+                        //       decoration: BoxDecoration(
+                        //         shape: BoxShape.circle,
+                        //         image: (snapshot.hasData)
+                        //             ? DecorationImage(
+                        //                 image: CachedNetworkImageProvider(
+                        //                     snapshot.data!),
+                        //                 fit: BoxFit.cover,
+                        //               )
+                        //             : null,
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                        title: Text(
+                          usersToShow[index].fullName!,
+                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            color: AppColors.darkGrey,
+                            fontSize: responsive.widthPercent(4),
+                            fontWeight: FontWeight.w700,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        subtitle: Text(
+                          typeString(context, usersToShow[index].type ?? ''),
+                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            color: AppColors.mediunLightGrey,
+                            fontSize: responsive.widthPercent(3.5),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            //--------------------Icono x-----------------------
+                            if (_typeFollow == TypeFollow.seguidores)
+                              GestureDetector(
+                                onTap: () {
+                                  if (Platform.isAndroid) {
+                                    showDialogX(context, usersToShow[index]);
+                                  }
+                                  if (Platform.isIOS) {
+                                    showCupertinoDialogX(
+                                        context, usersToShow[index]);
+                                  }
+                                },
+                                child: const Icon(
+                                  Icons.close,
+                                  color: AppColors.mediunLightGrey,
+                                ),
+                              ),
+                            SizedBox(width: responsive.widthPercent(2.5)),
+
+                            //-------------Boton seguir/siguiendo----------------
+                            SizedBox(
+                              width: responsive.widthPercent(25),
+                              child: MaterialButton(
+                                child: Text(
+                                  (isFollowing)
+                                      ? Localization.of(context)
+                                          .string("wall_followers_following")
+                                      : Localization.of(context)
+                                          .string("wall_followers_follow"),
+                                  style: TextStyle(
+                                    fontSize: responsive.diagonalPercent(1.7),
+                                  ),
+                                ),
+                                textColor: (isFollowing)
+                                    ? AppColors.brandColor
+                                    : AppColors.whiteColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                elevation: 0.0,
+                                color: (isFollowing)
+                                    ? AppColors.whiteColor
+                                    : AppColors.brandColor,
+                                onPressed: (isFollowing)
+                                    ? () async {
+                                        //Opcion Siguiendo
+                                        // await _viewModel
+                                        //     .unfollow(usersToShow[index]);
+                                        // await Future.delayed(
+                                        //     const Duration(seconds: 2));
+                                        // await _viewModel.getUser();
+                                      }
+                                    : () async {
+                                        //Opcion Seguir
+                                        // await _viewModel
+                                        //     .follow(usersToShow[index]);
+                                        // await Future.delayed(
+                                        //     const Duration(seconds: 2));
+                                        // await _viewModel.getUser();
+                                      },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: CustomNavigationButton(
+            //     responsive: responsive,
+            //     backgroundColor: AppColors.whiteColor,
+            //     iconColors: AppColors.mediunLightGrey,
+            //     iconColorSelected: AppColors.darkGrey,
+            //     colorElevatedButton: const Color(0xFFF6F6F6),
+            //     borderColor: const Color(0xFFF6F6F6),
+            //     selectedMenuItem: CustomNavigationButtonMenu.wallPage,
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> onPressedDialogX(
+      BuildContext context, UserApp followerToRemove) async {
+    // await _viewModel.removeFollower(followerToRemove);
+    // Navigator.pop(context);
+    // await Future.delayed(const Duration(seconds: 2));
+    // await _viewModel.getUser();
+  }
+
+  Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: AlertDialog(
+            title: Center(
+              child: Text(
+                Localization.of(context).string("wall_followers_delete"),
+                style: AppStyles.darkTextTheme.displayMedium,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.end,
+            backgroundColor: AppColors.darkGrey,
+            content: Text(
+              Localization.of(context).string("wall_followers_message",
+                  params: [followerToRemove.fullName!]),
+              style: AppStyles.darkTextTheme.bodyLarge,
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: () => onPressedDialogX(context, followerToRemove),
+                elevation: 0.0,
+                textColor: AppColors.mediunLightGrey,
+                child: Text(
+                  Localization.of(context).string("wall_followers_yes"),
+                ),
+              ),
+              MaterialButton(
+                onPressed: () => Navigator.pop(context),
+                elevation: 5,
+                textColor: AppColors.brandColor,
+                child: Text(
+                  Localization.of(context).string("wall_followers_no"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<dynamic> showCupertinoDialogX(
+      BuildContext context, UserApp followerToRemove) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: CupertinoAlertDialog(
+            title: Center(
+              child: Text(
+                Localization.of(context).string("wall_followers_delete"),
+                style: AppStyles.ligthTextTheme.displayMedium,
+              ),
+            ),
+            content: Text(
+              Localization.of(context).string("wall_followers_message",
+                  params: [followerToRemove.fullName!]),
+              style: AppStyles.ligthTextTheme.bodyLarge,
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: () => onPressedDialogX(context, followerToRemove),
+                elevation: 0.0,
+                textColor: AppColors.mediunLightGrey,
+                child: Text(
+                  Localization.of(context).string("wall_followers_yes"),
+                ),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                elevation: 5,
+                textColor: AppColors.brandColor,
+                child: Text(
+                  Localization.of(context).string("wall_followers_no"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TypeFollowContainer extends StatelessWidget {
+  final String title;
+  final TypeFollow _typeFollow;
+  final TypeFollow _typeFollowCompare;
+  final Function()? onTap;
+
+  const _TypeFollowContainer({
+    Key? key,
+    required TypeFollow typeFollow,
+    required this.title,
+    this.onTap,
+    required TypeFollow typeFollowCompare,
+  })  : _typeFollow = typeFollow,
+        _typeFollowCompare = typeFollowCompare,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: Responsive.of(context).widthPercent(4),
+            fontWeight: (_typeFollow == _typeFollowCompare)
+                ? FontWeight.bold
+                : FontWeight.normal,
+            color: (_typeFollow == _typeFollowCompare)
+                ? AppColors.blackColor
+                : AppColors.mediunLightGrey,
+          ),
+        ),
+        decoration: BoxDecoration(
+          border: (_typeFollow == _typeFollowCompare)
+              ? const Border(
+                  bottom: BorderSide(
+                    width: 1.7,
+                    color: AppColors.blackColor,
+                  ),
+                )
+              : const Border(),
+        ),
+      ),
+    );
+  }
+}
+
+class _TypeUserContainer extends StatelessWidget {
+  final String title;
+  final TypeUser _typeUser;
+  final TypeUser _typeUserCompare;
+  final Function()? onTap;
+
+  const _TypeUserContainer({
+    Key? key,
+    required TypeUser typeUser,
+    required this.title,
+    this.onTap,
+    required TypeUser typeUserCompare,
+  })  : _typeUser = typeUser,
+        _typeUserCompare = typeUserCompare,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.only(top: 5, left: 12, right: 12, bottom: 5),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: AppColors.brandColor,
+              fontSize: responsive.widthPercent(3.5),
+            ),
+          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: (_typeUser == _typeUserCompare)
+              ? Colors.white
+              : AppColors.brandColor.withOpacity(0.2),
+          border: (_typeUser == _typeUserCompare)
+              ? Border.all(
+                  color: AppColors.brandColor,
+                  width: 2,
+                )
+              : const Border(),
+        ),
+      ),
+    );
+  }
+}

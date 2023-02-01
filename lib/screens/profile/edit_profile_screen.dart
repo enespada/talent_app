@@ -11,6 +11,7 @@ import 'package:talent_app/models/models.dart';
 import 'package:talent_app/services/auth_service.dart';
 import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/app_styles.dart';
 import 'package:talent_app/widgets/square_editable_avatar.dart';
 import 'package:talent_app/widgets/yellow_text_button.dart';
 
@@ -37,8 +38,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // final _userViewModel = inject<UserViewModel>();
-  // final _authViewModel = inject<AuthViewModel>();
   List<DocumentReference>? _listSport;
   List<DocumentSnapshot>? _sports;
   List<DocumentSnapshot>? _modalities;
@@ -144,22 +143,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveUserData() async {
-    _userApp?.fullname = _controllerName?.text;
+    _userApp?.fullName = _controllerName?.text;
     _userApp?.userName = _controllerUser?.text;
     _userApp?.birthday = _controllerAge?.text;
     _userApp?.bio = _controllerBio?.text;
     _userApp?.email = _controllerEmail?.text;
     _userApp?.phone = _controllerPhone?.text;
-    _userApp?.sportType = _sport?.reference;
+    _userApp?.sport = _sport?.reference;
     _userApp?.modality = _modality?.reference;
   }
 
   Future<void> initData() async {
     _userApp = widget.user;
-    _sport = await _userApp!.sportType!.get();
+    _sport = await _userApp!.sport!.get();
     _modality = await _userApp!.modality!.get();
 
-    _controllerName = new TextEditingController(text: '${_userApp?.fullname}');
+    _controllerName = new TextEditingController(text: '${_userApp?.fullName}');
     _controllerUser = new TextEditingController(text: '${_userApp?.userName}');
     _controllerAge = new TextEditingController(text: '${_userApp?.birthday}');
     _controllerBio = new TextEditingController(text: '${_userApp?.bio}');
@@ -168,25 +167,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   @override
-  void dispose() {
-    // _userViewModel.dispose();
-    // _authViewModel.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final UserService userService = Provider.of<UserService>(context);
+
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenFacts = responsive.heightPercent(2.5);
-
-    final UserService userService = Provider.of<UserService>(context);
-    final double avatarSize = responsive.heightPercent(20); //200
+    final double avatarSize = responsive.heightPercent(20);
     ImageProvider<Object> avatarImage =
         const AssetImage('assets/images/profile.png');
     FutureBuilder(
-      future: userService.urlImag(_userApp?.id ?? ''),
+      future: userService.profileImageURL(_userApp?.id ?? ''),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.data != '') return Container();
+        if (snapshot.data == '') return Container();
         avatarImage = CachedNetworkImageProvider(snapshot.data!);
         return Container();
       },
@@ -208,10 +200,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     CustomAppBar(
                       title:
                           Localization.of(context).string('wall_profile_title'),
-                      style: TextStyle(
-                        fontSize: responsive.widthPercent(7),
+                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        fontSize: responsive.diagonalPercent(3.5),
                         fontWeight: FontWeight.bold,
-                        color: AppColors.blackColor,
                       ),
                       iconColor: AppColors.blueColor,
                     ),

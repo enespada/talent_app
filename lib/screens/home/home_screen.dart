@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:talent_app/screens/screens.dart';
-import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
@@ -130,15 +130,13 @@ class _HomeAppBar extends StatelessWidget {
           //----------------------------Dropdown-------------------------------
           Expanded(
             child: PopupMenuButton<HomeMenuOption>(
-              // Callback that sets the selected popup menu item.
               onSelected: onSelected,
               icon: Row(
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      color: AppColors.greyscale5,
-                      fontSize: responsive.widthPercent(4),
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      fontSize: responsive.diagonalPercent(2.5),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -163,8 +161,9 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.publications,
                     child: Text(
                       Localization.of(context).string('publications_title'),
-                      // style: AppStyles.ligthTextTheme.bodyLarge
-                      //     ?.copyWith(color: appbarTextColor),
+                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        fontSize: responsive.diagonalPercent(2.1),
+                      ),
                     ),
                   ),
                 ];
@@ -173,8 +172,9 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.challenges,
                     child: Text(
                       Localization.of(context).string('challenges_title'),
-                      // style: AppStyles.ligthTextTheme.bodyLarge
-                      //     ?.copyWith(color: appbarTextColor),
+                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        fontSize: responsive.diagonalPercent(2.1),
+                      ),
                     ),
                   ));
                 }
