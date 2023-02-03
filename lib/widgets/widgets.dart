@@ -5,6 +5,7 @@ export 'package:talent_app/widgets/custom_app_bar.dart';
 export 'package:talent_app/widgets/custom_back_button.dart';
 export 'package:talent_app/widgets/custom_bottom_navigation_bar.dart';
 export 'package:talent_app/widgets/edit_picture_button.dart';
+export 'package:talent_app/widgets/edit_profile_fact.dart';
 export 'package:talent_app/widgets/publication.dart';
 export 'package:talent_app/widgets/square_editable_avatar.dart';
 export 'package:talent_app/widgets/yellow_text_button.dart';

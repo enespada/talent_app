@@ -13,19 +13,20 @@ enum TypeFollow { seguidores, seguidos }
 
 enum TypeUser { todos, scouters, deportistas }
 
-class WallFollowersPage extends StatefulWidget {
+//WallFollowersPage
+class ProfileFollowScreen extends StatefulWidget {
   final TypeFollow typeFollow;
 
-  const WallFollowersPage({
+  const ProfileFollowScreen({
     Key? key,
     required this.typeFollow,
   }) : super(key: key);
 
   @override
-  State<WallFollowersPage> createState() => _WallFollowersPageState();
+  State<ProfileFollowScreen> createState() => _ProfileFollowScreenState();
 }
 
-class _WallFollowersPageState extends State<WallFollowersPage> {
+class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
   // final _viewModel = inject<UserViewModel>();
   UserApp? user;
 

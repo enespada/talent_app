@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/providers/edit_profile_provider.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/sports_service.dart';
 import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/style/styles.dart';
@@ -106,6 +108,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
+    final SportsService sportsService =
+        Provider.of<SportsService>(context, listen: false);
+    final ModalitiesService modalitiesService =
+        Provider.of<ModalitiesService>(context, listen: false);
+    final EditProfileProvider editProfileProvider =
+        Provider.of<EditProfileProvider>(context);
 
     double followersValue =
         userService.userApp?.followers?.length.toDouble() ?? -1;
@@ -223,9 +231,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   title: Localization.of(context)
                                       .string('wall_home_primary_button'),
                                   fontSize: responsive.widthPercent(4),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await sportsService.getSports();
+                                    editProfileProvider.takeUserData(
+                                        userService.userApp!,
+                                        sportsService.sports,
+                                        modalitiesService.modalities);
                                     Navigator.pushNamed(
-                                        context, EditProfileScreen.routeName);
+                                      context,
+                                      EditProfileScreen.routeName,
+                                    );
                                   },
                                 ),
                                 SizedBox(width: responsive.widthPercent(4)),

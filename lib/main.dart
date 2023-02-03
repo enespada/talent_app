@@ -3,12 +3,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/firebase_options.dart';
+import 'package:talent_app/providers/edit_profile_provider.dart';
 import 'package:talent_app/screens/login/login_screen.dart';
 import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/splash/splash_screen.dart';
 import 'package:talent_app/services/auth_service.dart';
 import 'package:talent_app/services/search_service.dart';
+import 'package:talent_app/services/services.dart';
+import 'package:talent_app/services/sports_service.dart';
 import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/utils/utils.dart';
 
@@ -35,6 +38,15 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => SearchService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SportsService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ModalitiesService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => EditProfileProvider(),
         ),
       ],
       child: MaterialApp(
