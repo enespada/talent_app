@@ -233,10 +233,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   fontSize: responsive.widthPercent(4),
                                   onPressed: () async {
                                     await sportsService.getSports();
-                                    editProfileProvider.takeUserData(
-                                        userService.userApp!,
-                                        sportsService.sports,
-                                        modalitiesService.modalities);
+                                    for (Sport s in sportsService.sports) {
+                                      if (s.id == userService.userApp!.sport) {
+                                        await modalitiesService
+                                            .getModalitiesBySport(s);
+                                        editProfileProvider.sport = s;
+                                        break;
+                                      }
+                                    }
+                                    for (Modality m
+                                        in modalitiesService.modalities) {
+                                      if (m.id ==
+                                          userService.userApp!.modality) {
+                                        editProfileProvider.modality = m;
+                                        break;
+                                      }
+                                    }
+
+                                    editProfileProvider
+                                        .initializeData(userService.userApp!);
+
                                     Navigator.pushNamed(
                                       context,
                                       EditProfileScreen.routeName,

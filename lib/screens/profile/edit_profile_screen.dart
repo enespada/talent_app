@@ -50,6 +50,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final UserService userService = Provider.of<UserService>(context);
     final SportsService sportsService = Provider.of<SportsService>(context);
+    final ModalitiesService modalitiesService =
+        Provider.of<ModalitiesService>(context);
     final EditProfileProvider editProfileProvider =
         Provider.of<EditProfileProvider>(context);
 
@@ -173,9 +175,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _WallProfileDropdownFactSports(
                         text: Localization.of(context)
                             .string('wall_profile_sport'),
-                        dropdownOptions: sportsService.sports ?? [],
+                        dropdownOptions: sportsService.sports,
                         dropdownValue: editProfileProvider.sport,
-                        onChanged: (Sport? newValue) {
+                        onChanged: (Sport? newValue) async {
                           editProfileProvider.sport = newValue;
                           // _authViewModel
                           //     .getModalitiesBySport(newValue!.reference);
@@ -185,16 +187,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         },
                       ),
                       SizedBox(height: spaceBetweenFacts),
-                      // _WallProfileDropdownFactModalities(
-                      //   text: Localization.of(context)
-                      //       .string('wall_profile_modality'),
-                      //   dropdownOptions: _modalities ?? [],
-                      //   dropdownValue: _modality, //${user.modality}
-                      //   onChanged: (newValue) {
-                      //     _modality = newValue;
-                      //     setState(() {});
-                      //   },
-                      // ),
+                      _WallProfileDropdownFactModalities(
+                        text: Localization.of(context)
+                            .string('wall_profile_modality'),
+                        dropdownOptions: modalitiesService.modalities ?? [],
+                        dropdownValue: _modality, //${user.modality}
+                        onChanged: (newValue) {
+                          _modality = newValue;
+                          setState(() {});
+                        },
+                      ),
 
                       SizedBox(height: spaceBetweenFacts + 30),
 
@@ -254,6 +256,78 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       bottomNavigationBar: const CustomBottomNavigationBar(
         selectedIndex: 4,
       ),
+    );
+  }
+}
+
+class _WallProfileDropdownFact<T> extends StatelessWidget {
+  final String text;
+  final List<T> dropdownOptions;
+  final void Function(T?)? onChanged;
+  Sport? dropdownValue;
+
+  _WallProfileDropdownFact({
+    Key? key,
+    required this.text,
+    required this.onChanged,
+    required this.dropdownValue,
+    required this.dropdownOptions,
+  }) : super(key: key);
+
+  List<DropdownMenuItem<T>> dropdownMenuItems = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSport = ((T as Sport) == true);
+    final bool isModality = ((T as Modality) == true);
+    if (!isModality && !isSport)
+      return Container(
+        child: Text('Error'),
+      );
+
+    final Responsive responsive = Responsive.of(context);
+    for (T dropdownOption in dropdownOptions) {
+      dropdownMenuItems.add(
+        DropdownMenuItem(
+          value: dropdownOption,
+          child: Text((isSport)
+              ? (dropdownOption as Sport).name!
+              : (dropdownOption as Modality).name!),
+        ),
+      );
+    }
+
+    final T? value = (dropdownValue != null)
+        ? dropdownOptions.firstWhere((doc) => doc.name == dropdownValue?.name)
+        : null;
+
+    return Row(
+      children: [
+        SizedBox(
+          width: responsive.widthPercent(20),
+          child: Text(
+            text,
+            style: const TextStyle(color: AppColors.mediunLightGrey),
+          ),
+        ),
+        SizedBox(width: responsive.widthPercent(8)),
+        Expanded(
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<Sport>(
+              dropdownColor: AppColors.whiteColor,
+              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(15),
+              value: value,
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.coinGrey,
+              ),
+              items: dropdownMenuItems,
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

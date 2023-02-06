@@ -11,27 +11,31 @@ class EditProfileProvider extends ChangeNotifier {
 
   EditProfileProvider() {}
 
-  void takeUserData(
-      UserApp userApp, List<Sport> sports, List<Modality> modalities) {
+  void initializeData(UserApp userApp, {Sport? sport, Modality? modality}) {
     tecFullName.text = userApp.fullName!;
     tecUserName.text = userApp.userName!;
     tecBio.text = userApp.bio!;
     tecPhone.text = userApp.phone!;
 
-    for (Sport s in sports) {
-      if (s.id == userApp.sport) {
-        sport = s;
-      }
-    }
+    if (sport != null) this.sport = sport;
+    // for (Sport s in sports) {
+    //   if (s.id == userApp.sport) {
+    //     sport = s;
+    //   }
+    // }
 
-    for (Modality m in modalities) {
-      if (m.id == userApp.sport) {
-        modality = m;
-      }
-    }
+    if (modality != null) this.modality = modality;
+    // for (Modality m in modalities) {
+    //   if (m.id == userApp.sport) {
+    //     modality = m;
+    //   }
+    // }
   }
 
   bool isValid() {
-    return false;
+    if (tecFullName.text.isEmpty) return false;
+    if (tecFullName.text.isEmpty) return false;
+    if (tecPhone.text.isEmpty) return false;
+    return true;
   }
 }

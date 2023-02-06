@@ -1,16 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:talent_app/models/models.dart';
 
 class ModalitiesService extends ChangeNotifier {
   List<Modality> modalities = [];
 
-  Future getSports() async {
+  Future getModalitiesBySport(Sport sport) async {
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
 
-    final data = await fbFirestore.collection('modalities').get();
+    final data = await fbFirestore
+        .collection('modalities')
+        .where("sport", isEqualTo: sport.id)
+        .get();
 
+    modalities.clear();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       modalities.add(Modality.fromJson(doc.data()));
     }

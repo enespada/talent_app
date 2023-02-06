@@ -5,6 +5,7 @@ import 'package:talent_app/models/models.dart';
 
 class SportsService extends ChangeNotifier {
   List<Sport> sports = [];
+  List<Modality> modalities = [];
 
   Future getSports() async {
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
@@ -13,6 +14,16 @@ class SportsService extends ChangeNotifier {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       sports.add(Sport.fromJson(doc.data()));
+    }
+  }
+
+  Future getSports() async {
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+
+    final data = await fbFirestore.collection('modalities').get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      modalities.add(Modality.fromJson(doc.data()));
     }
   }
 }
