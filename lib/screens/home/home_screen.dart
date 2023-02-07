@@ -29,23 +29,23 @@ class _HomeScreenState extends State<HomeScreen> {
   String homeAppBarTitle = '';
   HomeMenuOption _selectedHomeMenuOption = HomeMenuOption.publications;
   final pageController = PageController();
-  late SharedPreferences pref;
+  // late SharedPreferences pref;
   bool _isAthlete = false;
 
   @override
   void initState() {
-    _inicializeSharedPreferences();
+    // _inicializeSharedPreferences();
     super.initState();
   }
 
-  void _inicializeSharedPreferences() async {
-    pref = await SharedPreferences.getInstance();
-    (pref.getString('athleteType') == 'athlete')
-        ? _isAthlete = true
-        : _isAthlete = false;
-    print(_isAthlete);
-    setState(() {});
-  }
+  // void _inicializeSharedPreferences() async {
+  //   pref = await SharedPreferences.getInstance();
+  //   (pref.getString('athleteType') == 'athlete')
+  //       ? _isAthlete = true
+  //       : _isAthlete = false;
+  //   print(_isAthlete);
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -151,9 +151,7 @@ class _HomeAppBar extends StatelessWidget {
               position: PopupMenuPosition.under,
               color: AppColors.greyscale0,
               shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               itemBuilder: (BuildContext context) {
                 List<PopupMenuEntry<HomeMenuOption>> opciones = [
@@ -184,19 +182,19 @@ class _HomeAppBar extends StatelessWidget {
           ),
 
           //-------------------------Notificaciones-------------------------------
-          GestureDetector(
-            child: const Padding(
-              padding: EdgeInsets.only(right: 4),
-              child: Icon(
-                Icons.notifications_outlined,
-                size: 30,
-                color: AppColors.greyscale5,
-              ),
-            ),
-            onTap: () {
-              // context.navigateTo(NotificationsPage());
-            },
-          ),
+          // GestureDetector(
+          //   child: const Padding(
+          //     padding: EdgeInsets.only(right: 4),
+          //     child: Icon(
+          //       Icons.notifications_outlined,
+          //       size: 30,
+          //       color: AppColors.greyscale5,
+          //     ),
+          //   ),
+          //   onTap: () {
+          //     // context.navigateTo(NotificationsPage());
+          //   },
+          // ),
         ],
       ),
     );

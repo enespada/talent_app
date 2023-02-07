@@ -30,7 +30,6 @@ class UserService extends ChangeNotifier {
 
     final fbFirestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser;
-    final fbUser = await fbFirestore.collection("users").doc(user?.uid);
 
     final Map<String, dynamic> data = {};
     if (userApp!.bio != userAppToUpdate.bio) {
@@ -56,17 +55,19 @@ class UserService extends ChangeNotifier {
           .set(data, SetOptions(merge: true));
     }
 
-    //Actualizamos nuestra lista de seguidos
     if (userApp!.modality != userAppToUpdate.modality) {
-      await fbUser.update({
-        "modality": FieldValue.arrayUnion([userAppToUpdate.modality]),
-      });
+      await fbFirestore
+          .collection("users")
+          .doc(user?.uid)
+          .update({"modality": userAppToUpdate.modality});
       userApp!.modality = userAppToUpdate.modality;
     }
     if (userApp!.sport != userAppToUpdate.sport) {
-      await fbUser.update({
-        "sport": FieldValue.arrayUnion([userAppToUpdate.sport]),
-      });
+      await fbFirestore
+          .collection("users")
+          .doc(user?.uid)
+          .update({"sport": userAppToUpdate.sport});
+
       userApp!.sport = userAppToUpdate.sport;
     }
 
@@ -83,12 +84,10 @@ class UserService extends ChangeNotifier {
           .getDownloadURL();
       return storageRef.toString();
     } catch (e) {
-      // final storageRef = await FirebaseStorage.instance
-      //     .refFromURL(
-      //         "gs://talentapp-dev-c0fad.appspot.com/default_images/profile.png")
-      //     .getDownloadURL();
-      // return storageRef.toString();
-      return '';
+      final storageRef = await FirebaseStorage.instance
+          .refFromURL("$_baseStorageUrl/default_images/profile.png")
+          .getDownloadURL();
+      return storageRef.toString();
     }
   }
 }

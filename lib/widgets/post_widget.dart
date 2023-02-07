@@ -1,31 +1,31 @@
 // ignore_for_file: unnecessary_this
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:talent_app/models/models.dart';
+
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/carousel_images.dart';
 
-class Publication extends StatefulWidget {
-  final List<Image> images;
+class PostWidget extends StatefulWidget {
+  final Post post;
+  // final List<Image> images;
 
-  const Publication({
+  const PostWidget({
     Key? key,
-    required this.images,
+    // required this.images,
+    required this.post,
   }) : super(key: key);
 
   @override
-  State<Publication> createState() => _PublicationState();
+  State<PostWidget> createState() => _PostWidgetState();
 }
 
-class _PublicationState extends State<Publication>
-    with TickerProviderStateMixin {
+class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
   TabController? controller;
 
   @override
   void initState() {
-    this.controller = TabController(length: widget.images.length, vsync: this);
+    // this.controller = TabController(length: widget.images.length, vsync: this);
     super.initState();
   }
 
@@ -99,7 +99,7 @@ class _PublicationState extends State<Publication>
                   Icons.bookmark_border_rounded,
                   color: AppColors.greyscale5,
                 ),
-              )
+              ),
             ],
           ),
         ),

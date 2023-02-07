@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:talent_app/screens/explorer/explorer_screen.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/profile/profile_screen.dart';
+import 'package:talent_app/services/posts_service.dart';
+import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 
@@ -25,6 +28,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserService userService = Provider.of<UserService>(context);
+    final PostsService postsService = Provider.of<PostsService>(context);
+
     return SizedBox(
       height: 60,
       child: BottomNavigationBar(
@@ -114,7 +120,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
         onTap: (int index) {
           switch (index) {
             case 0:
-              // context.navigatePopReplacing(const HomePage());
+              if (postsService.postsToShow.isEmpty)
+                postsService.getFollowingPosts(userService.userApp!);
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
               break;
             case 1:

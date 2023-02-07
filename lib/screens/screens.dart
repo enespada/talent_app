@@ -6,9 +6,18 @@ export 'package:talent_app/screens/home/challenges_page.dart';
 export 'package:talent_app/screens/home/home_screen.dart';
 export 'package:talent_app/screens/home/posts_page.dart';
 
+//login
+export 'package:talent_app/screens/login/login_screen.dart';
+
+//onboarding
+export 'package:talent_app/screens/onboarding/onboarding_screen.dart';
+
 //profile
 export 'package:talent_app/screens/profile/edit_profile_screen.dart';
 export 'package:talent_app/screens/profile/profile_screen.dart';
 export 'package:talent_app/screens/profile/settings_screen.dart';
+
+//splash
+export 'package:talent_app/screens/splash/splash_screen.dart';
 
 //upload

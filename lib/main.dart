@@ -9,6 +9,7 @@ import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/splash/splash_screen.dart';
 import 'package:talent_app/services/auth_service.dart';
+import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/search_service.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/services/sports_service.dart';
@@ -30,24 +31,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => AuthService(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserService(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SearchService(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SportsService(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ModalitiesService(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => EditProfileProvider(),
-        ),
+        ChangeNotifierProvider(create: (context) => AuthService()),
+        ChangeNotifierProvider(create: (context) => UserService()),
+        ChangeNotifierProvider(create: (context) => SearchService()),
+        ChangeNotifierProvider(create: (context) => SportsService()),
+        ChangeNotifierProvider(create: (context) => ModalitiesService()),
+        ChangeNotifierProvider(create: (context) => PostsService()),
+        ChangeNotifierProvider(create: (context) => EditProfileProvider()),
       ],
       child: MaterialApp(
         title: 'Talent App',

@@ -7,14 +7,14 @@ class ModalitiesService extends ChangeNotifier {
   List<Modality> modalities = [];
 
   Future getModalitiesBySport(Sport sport) async {
-    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    modalities.clear();
 
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final data = await fbFirestore
         .collection('modalities')
         .where("sport", isEqualTo: sport.id)
         .get();
 
-    modalities.clear();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       modalities.add(Modality.fromJson(doc.data()));
     }

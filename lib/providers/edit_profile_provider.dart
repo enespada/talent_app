@@ -11,20 +11,20 @@ class EditProfileProvider extends ChangeNotifier {
 
   EditProfileProvider() {}
 
-  void initializeData(UserApp userApp, {Sport? sport, Modality? modality}) {
+  void initializeData(UserApp userApp) {
     tecFullName.text = userApp.fullName!;
     tecUserName.text = userApp.userName!;
     tecBio.text = userApp.bio!;
     tecPhone.text = userApp.phone!;
 
-    if (sport != null) this.sport = sport;
+    // if (sport != null) this.sport = sport;
     // for (Sport s in sports) {
     //   if (s.id == userApp.sport) {
     //     sport = s;
     //   }
     // }
 
-    if (modality != null) this.modality = modality;
+    // if (modality != null) this.modality = modality;
     // for (Modality m in modalities) {
     //   if (m.id == userApp.sport) {
     //     modality = m;
@@ -36,6 +36,7 @@ class EditProfileProvider extends ChangeNotifier {
     if (tecFullName.text.isEmpty) return false;
     if (tecFullName.text.isEmpty) return false;
     if (tecPhone.text.isEmpty) return false;
+    if (tecPhone.text.substring(0, 1) != '+') return false;
     return true;
   }
 }

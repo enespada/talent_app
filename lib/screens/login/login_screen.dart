@@ -3,9 +3,8 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
-import 'package:talent_app/screens/home/home_screen.dart';
-import 'package:talent_app/services/auth_service.dart';
-import 'package:talent_app/services/user_service.dart';
+import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
@@ -30,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final AuthService authService = Provider.of<AuthService>(context);
     final UserService userService = Provider.of<UserService>(context);
+    final PostsService postsService = Provider.of<PostsService>(context);
 
     final Responsive responsive = Responsive.of(context);
 
@@ -188,14 +188,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             foregroundDisabled: AppColors.greyscale4,
                             onPressed: (_isValidEmail && _isValidPwd)
                                 ? () async {
-                                    // _viewModel.login(
-                                    //     _tecEmail.text, _tecPassword.text);
                                     bool loginOK = await authService.login(
                                         _tecEmail.text, _tecPassword.text);
                                     if (loginOK) {
                                       print('Login correcto');
                                       await userService.getUser();
-                                      print(userService.userApp?.bio);
+                                      postsService.getFollowingPosts(
+                                          userService.userApp!);
+
                                       Navigator.pushReplacementNamed(
                                           context, HomeScreen.routeName);
                                     } else {
