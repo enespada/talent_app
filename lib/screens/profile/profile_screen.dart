@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
+import 'package:talent_app/screens/profile/profile_follow_screen.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/sports_service.dart';
@@ -107,11 +108,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+
     final UserService userService = Provider.of<UserService>(context);
     final SportsService sportsService =
         Provider.of<SportsService>(context, listen: false);
     final ModalitiesService modalitiesService =
         Provider.of<ModalitiesService>(context, listen: false);
+    final PostsService postsService = Provider.of<PostsService>(context);
+
     final EditProfileProvider editProfileProvider =
         Provider.of<EditProfileProvider>(context);
 
@@ -121,6 +125,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double followingValue =
         userService.userApp?.following?.length.toDouble() ?? -1;
     String followingString = Util.adaptNumFollow(followingValue);
+    double publicationsValue = userService.userPosts.length.toDouble() ?? -1;
+    String publicationsString = Util.adaptNumFollow(publicationsValue);
 
     return Scaffold(
       body: SafeArea(
@@ -161,8 +167,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       //-------------------Foto perfil------------------------
                       FutureBuilder(
-                        future: userService
-                            .profileImageURL(userService.userApp?.id ?? ''),
+                        future: userService.profileImageURL(
+                            userService.userApp!.id!.path.split('/')[1]),
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
                           return Container(
@@ -195,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
 
-                      //---------------Nombre, editar, ajustes---------------
+                      //-----------------Nombre, editar, ajustes-----------------
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,12 +302,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   //-----------Seguidores, siguiendo, publicaciones-------------
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
-                        // onTap: () =>
-                        //     context.navigateTo(const WallFollowersPage()),
+                        onTap: () async {
+                          await userService.getFollowers();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileFollowScreen(
+                                userApp: userService.userApp!,
+                                typeFollow: TypeFollow.seguidores,
+                              ),
+                            ),
+                          );
+                        },
                         child: Column(
                           children: [
                             Text(
@@ -324,8 +339,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       GestureDetector(
-                        // onTap: () =>
-                        //     context.navigateTo(const WallFollowersPage()),
+                        onTap: () async {
+                          await userService.getFollowing();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileFollowScreen(
+                                  userApp: userService.userApp!,
+                                  typeFollow: TypeFollow.seguidos),
+                            ),
+                          );
+                        },
                         child: Column(
                           children: [
                             Text(
@@ -353,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             Text(
-                              '500',
+                              publicationsString,
                               style:
                                   AppStyles.ligthTextTheme.bodyLarge!.copyWith(
                                 fontSize: responsive.diagonalPercent(2.5),

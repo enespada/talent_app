@@ -1,5 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:talent_app/models/models.dart';
 
@@ -35,5 +36,21 @@ class PostsService extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<List<String>> getPostFiles(Post post) async {
+    List<String> postFilesUrls = [];
+    try {
+      for (String file in post.files!) {
+        final url = await FirebaseStorage.instance.ref(file).getDownloadURL();
+        postFilesUrls.add(url.toString());
+      }
+      return postFilesUrls;
+    } catch (e) {
+      // final url = await FirebaseStorage.instance
+      //     .ref("default_images/example.png")
+      //     .getDownloadURL();
+      return postFilesUrls;
+    }
   }
 }

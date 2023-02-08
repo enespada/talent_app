@@ -6,7 +6,7 @@ import 'package:talent_app/utils/utils.dart';
 
 class CarouselImages extends StatefulWidget {
   final List<AssetEntity>? assetEntities;
-  final List<Image>? images;
+  final List<ImageProvider<Object>>? images;
 
   const CarouselImages({
     Key? key,
@@ -55,7 +55,7 @@ class _CarouselImagesState extends State<CarouselImages>
     }
     if (widget.assetEntities != null && widget.images == null) {
       return SizedBox(
-        height: responsive.heightPercent(52),
+        height: responsive.heightPercent(40),
         width: responsive.width,
         child: DefaultTabController(
           length: widget.assetEntities!.length,
@@ -75,13 +75,9 @@ class _CarouselImagesState extends State<CarouselImages>
                   itemCount: widget.assetEntities!.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      height: responsive.heightPercent(10),
+                      height: responsive.heightPercent(7),
                       width: responsive.width,
                       color: AppColors.greyscale5,
-                      // child: Image(
-                      //   image: AssetImage(widget._images[index]),
-                      //   fit: BoxFit.cover,
-                      // ),
                       child: AssetEntityImage(
                         widget.assetEntities![index],
                         fit: BoxFit.cover,
@@ -95,16 +91,18 @@ class _CarouselImagesState extends State<CarouselImages>
                   },
                 ),
               ),
-              SizedBox(height: responsive.heightPercent(4)),
+              SizedBox(height: responsive.heightPercent(2)),
 
               //-----------------------Selectores---------------------------------
-              TabPageSelector(
-                controller: controller,
-                borderStyle: BorderStyle.solid,
-                color: AppColors.greyscale0,
-                selectedColor: AppColors.blueColor,
-                indicatorSize: 7,
-              ),
+              if (widget.images!.length > 1)
+                TabPageSelector(
+                  controller: controller,
+                  borderStyle: BorderStyle.solid,
+                  color: AppColors.greyscale0,
+                  selectedColor: AppColors.blueColor,
+                  indicatorSize: 7,
+                ),
+              SizedBox(height: responsive.heightPercent(2)),
             ],
           ),
         ),
@@ -113,7 +111,7 @@ class _CarouselImagesState extends State<CarouselImages>
 
     if (widget.assetEntities == null && widget.images != null) {
       return SizedBox(
-        height: responsive.heightPercent(52),
+        height: responsive.heightPercent(45),
         width: responsive.width,
         child: DefaultTabController(
           length: widget.images!.length,
@@ -132,21 +130,21 @@ class _CarouselImagesState extends State<CarouselImages>
                   itemCount: widget.images!.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      height: responsive.heightPercent(10),
+                      height: responsive.heightPercent(7),
                       width: responsive.width,
                       color: AppColors.greyscale5,
-                      // child: Image(
-                      //   image: AssetImage(widget._images[index]),
-                      //   fit: BoxFit.cover,
-                      // ),
-                      child: widget.images![index],
+                      child: Image(
+                        image: widget.images![index],
+                        fit: BoxFit.cover,
+                      ),
                     );
                   },
                 ),
               ),
-              SizedBox(height: responsive.heightPercent(4)),
+              SizedBox(height: responsive.heightPercent(2)),
 
               //-----------------------Selectores---------------------------------
+              // if (widget.images!.length > 1)
               TabPageSelector(
                 controller: controller,
                 borderStyle: BorderStyle.solid,
@@ -154,6 +152,9 @@ class _CarouselImagesState extends State<CarouselImages>
                 selectedColor: AppColors.blueColor,
                 indicatorSize: 7,
               ),
+              // if (widget.images!.length == 1)
+              //   SizedBox(height: responsive.heightPercent(2)),
+              SizedBox(height: responsive.heightPercent(2)),
             ],
           ),
         ),

@@ -13,12 +13,6 @@ class PostsPage extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
     final PostsService postsService = Provider.of<PostsService>(context);
 
-    final List<Image> images = [
-      Image.asset('assets/images/playImage.png'),
-      Image.asset('assets/images/sharedImage.png'),
-      Image.asset('assets/images/sharedImage.png'),
-    ];
-
     if (postsService.isLoading) {
       return const Center(child: CircularProgressIndicator());
     } else {

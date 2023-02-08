@@ -7,7 +7,7 @@ UserApp userAppFromJson(String str) => UserApp.fromJson(json.decode(str));
 String userAppToJson(UserApp data) => json.encode(data.toJson());
 
 class UserApp {
-  String? id;
+  DocumentReference? id;
   String? type;
   String? fullName;
   String? email;

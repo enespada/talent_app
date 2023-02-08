@@ -4,11 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/utils/utils.dart';
 
 class UserService extends ChangeNotifier {
   UserApp? userApp;
   DocumentSnapshot<Map<String, dynamic>>? userAppData;
-  static const String _baseStorageUrl = 'gs://talent-app-f191f.appspot.com';
+  List<Post> userPosts = [];
+  List<UserApp> followers = [];
+  List<UserApp> following = [];
   bool isLoading = false;
 
   Future<UserApp?> getUser() async {
@@ -75,17 +78,107 @@ class UserService extends ChangeNotifier {
     notifyListeners();
   }
 
+  //Metodo para obtener los posts del usuario
+  Future<void> getPosts() async {
+    if (userApp == null) return;
+    if (isLoading) return;
+    isLoading = true;
+    notifyListeners();
+
+    userPosts.clear();
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection('posts')
+        .where('user', isEqualTo: userApp!.id)
+        // .orderBy("datetime", descending: true)
+        // .limit(30)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      Post postaux = Post.fromJson(doc.data());
+      postaux.userApp = userApp;
+      userPosts.add(postaux);
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getFollowers() async {
+    List<DocumentReference?>? idFollowers = [];
+    idFollowers.addAll(userApp!.followers!);
+    if (idFollowers.isEmpty) return;
+    // if (isLoading) return;
+    // isLoading = true;
+    // notifyListeners();
+
+    followers.clear();
+    List<UserApp> provFollowers = [];
+    final fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore.collection("users").get();
+    String stringToCompare = '';
+    for (QueryDocumentSnapshot<Map<String, dynamic>> element in data.docs) {
+      for (DocumentReference? idFollower in idFollowers) {
+        stringToCompare =
+            idFollower.toString().split('(')[1].split(')')[0].split('/')[1];
+        if (stringToCompare == element.id) {
+          provFollowers.add(UserApp.fromJson(element.data()));
+          break;
+        }
+      }
+    }
+    followers.addAll(provFollowers);
+
+    // isLoading = false;
+    // notifyListeners();
+  }
+
+  Future<void> getFollowing() async {
+    List<DocumentReference?>? idFollowing = [];
+    idFollowing.addAll(userApp!.following!);
+    if (idFollowing.isEmpty) return;
+    // if (isLoading) return;
+    // isLoading = true;
+    // notifyListeners();
+
+    following.clear();
+    List<UserApp> provFollowing = [];
+    final fbFirestore = FirebaseFirestore.instance;
+    // final data = await fbFirestore
+    //     .collection("users")
+    //     .where("id", whereIn: idFollowing)
+    //     .get();
+    final data = await fbFirestore.collection("users").get();
+    String stringToCompare = '';
+    for (QueryDocumentSnapshot<Map<String, dynamic>> element in data.docs) {
+      for (DocumentReference? idFollowing in idFollowing) {
+        stringToCompare =
+            idFollowing.toString().split('(')[1].split(')')[0].split('/')[1];
+        if (stringToCompare == element.id) {
+          provFollowing.add(UserApp.fromJson(element.data()));
+          break;
+        }
+      }
+    }
+    following.addAll(provFollowing);
+
+    // isLoading = false;
+    // notifyListeners();
+  }
+
   Future<String> profileImageURL(String id) async {
     try {
       if (id == '') return '';
 
       final storageRef = await FirebaseStorage.instance
-          .refFromURL("$_baseStorageUrl/$id/profile.png")
+          .refFromURL(
+              "${NetworkEndpoints.FirebaseStorageBaseUrl}/$id/profile.png")
           .getDownloadURL();
       return storageRef.toString();
     } catch (e) {
       final storageRef = await FirebaseStorage.instance
-          .refFromURL("$_baseStorageUrl/default_images/profile.png")
+          .refFromURL(
+              "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
           .getDownloadURL();
       return storageRef.toString();
     }

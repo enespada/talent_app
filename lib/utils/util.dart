@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Util {
   static String adaptNumFollow(double value) {
     String string;
@@ -34,6 +36,29 @@ class Util {
       }
     }
 
+    return string;
+  }
+
+  static String postDateTime(Timestamp timestamp) {
+    String string = '';
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch);
+    DateTime dateTimeNow = DateTime.now();
+    if (dateTimeNow.difference(dateTime).inHours < 1) {
+      string = 'Hace ${dateTimeNow.difference(dateTime).inMinutes} minutos';
+    } else {
+      if (dateTimeNow.difference(dateTime).inHours < 24) {
+        string = 'Hace ${dateTimeNow.difference(dateTime).inHours} horas';
+      } else {
+        if (dateTimeNow.difference(dateTime).inHours < 48) {
+          string = 'Ayer';
+        } else {
+          if (dateTimeNow.difference(dateTime).inHours < 1) {
+            string = '${dateTime.day}-${dateTime.month}-${dateTime.year}';
+          }
+        }
+      }
+    }
     return string;
   }
 }

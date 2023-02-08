@@ -1,13 +1,18 @@
 // ignore_for_file: sort_child_properties_last
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
+import 'package:talent_app/widgets/widgets.dart';
 
 enum TypeFollow { seguidores, seguidos }
 
@@ -15,11 +20,13 @@ enum TypeUser { todos, scouters, deportistas }
 
 //WallFollowersPage
 class ProfileFollowScreen extends StatefulWidget {
+  final UserApp userApp;
   final TypeFollow typeFollow;
 
   const ProfileFollowScreen({
     Key? key,
     required this.typeFollow,
+    required this.userApp,
   }) : super(key: key);
 
   @override
@@ -27,16 +34,12 @@ class ProfileFollowScreen extends StatefulWidget {
 }
 
 class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
-  // final _viewModel = inject<UserViewModel>();
-  UserApp? user;
-
+  UserApp? userApp;
   // Para mostrar a los seguidores o a los seguidos usamos esta variable:
-  TypeFollow _typeFollow = TypeFollow.seguidores;
+  late TypeFollow _typeFollow;
   // Para mostrar a los seguidores/seguidos que son scouters o deportistas usamos esta variable:
   TypeUser _typeUser = TypeUser.todos;
-  List<UserApp> followers = [];
   String followersString = '';
-  List<UserApp> following = [];
   String followingString = '';
   int scoutersValue = 0;
   int athletesValue = 0;
@@ -45,234 +48,105 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     _typeFollow = widget.typeFollow;
-
-    // _viewModel.getUserState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       user = state.data;
-    //       followers.clear();
-    //       following.clear();
-    //       initData();
-    //       // double followersValue = 8999.toDouble() ?? -1;
-    //       double followersValue = user?.followers?.length.toDouble() ?? -1;
-    //       followersString = Utils.adaptNumFollow(followersValue);
-    //       double followingValue = user?.following?.length.toDouble() ?? -1;
-    //       followingString = Utils.adaptNumFollow(followingValue);
-    //       setState(() {});
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
-
-    // _viewModel.getUser();
-
-    // _viewModel.getFollowersState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       followers = state.data;
-    //       usersToShow.clear();
-    //       usersToShow.addAll(followers);
-    //       scoutersValue = 0;
-    //       athletesValue = 0;
-    //       for (UserApp userToShow in usersToShow) {
-    //         if (userToShow.type == 'scouter') scoutersValue++;
-    //         if (userToShow.type == 'athlete') athletesValue++;
-    //       }
-    //       setState(() {});
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
-
-    // _viewModel.getFollowingState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       following = state.data;
-    //       usersToShow.clear();
-    //       usersToShow.addAll(following);
-    //       scoutersValue = 0;
-    //       athletesValue = 0;
-    //       for (UserApp userToShow in usersToShow) {
-    //         if (userToShow.type == 'scouter') scoutersValue++;
-    //         if (userToShow.type == 'athlete') athletesValue++;
-    //       }
-    //       setState(() {});
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
-
-    // _viewModel.followState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
-
-    // _viewModel.unfollowState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
+    userApp = widget.userApp;
+    changeFollow();
   }
 
-  void initData() {
-    // switch (_typeFollow) {
-    //   case TypeFollow.seguidores:
-    //     if (followers.isEmpty) {
-    //       _viewModel.getFollowers(user?.followers);
-    //       break;
-    //     }
-    //     usersToShow.clear();
-    //     usersToShow.addAll(followers);
-    //     scoutersValue = 0;
-    //     athletesValue = 0;
-    //     for (UserApp userToShow in usersToShow) {
-    //       if (userToShow.type == 'scouter') scoutersValue++;
-    //       if (userToShow.type == 'athlete') athletesValue++;
-    //     }
-    //     setState(() {});
-    //     break;
-    //   case TypeFollow.seguidos:
-    //     if (following.isEmpty) {
-    //       _viewModel.getFollowing(user?.following);
-    //       break;
-    //     }
-    //     usersToShow.clear();
-    //     usersToShow.addAll(following);
-    //     scoutersValue = 0;
-    //     athletesValue = 0;
-    //     for (UserApp userToShow in usersToShow) {
-    //       if (userToShow.type == 'scouter') scoutersValue++;
-    //       if (userToShow.type == 'athlete') athletesValue++;
-    //     }
-    //     setState(() {});
-    //     break;
-    //   default:
-    // }
-  }
+  void changeFollow() async {
+    double followersValue = userApp!.followers!.length.toDouble() ?? -1;
+    followersString = Util.adaptNumFollow(followersValue);
+    double followingValue = userApp!.following!.length.toDouble() ?? -1;
+    followingString = Util.adaptNumFollow(followingValue);
 
-  String typeString(BuildContext context, String string) {
-    switch (string) {
-      case 'athlete':
-        String aux = Localization.of(context).string('register_type_athlete');
-        String inicial = aux.substring(0, 1).toUpperCase();
-        String resto = aux.substring(1, aux.length);
-        return '$inicial$resto';
-      case 'scouter':
-        String aux = Localization.of(context).string('register_type_scouter');
-        String inicial = aux.substring(0, 1).toUpperCase();
-        String resto = aux.substring(1, aux.length);
-        return '$inicial$resto';
-      case 'manager':
-        String aux = Localization.of(context).string('register_type_manager');
-        String inicial = aux.substring(0, 1).toUpperCase();
-        String resto = aux.substring(1, aux.length);
-        return '$inicial$resto';
+    switch (_typeFollow) {
+      case TypeFollow.seguidores:
+        // if (userService.followers.isEmpty) {
+        //   await userService.getFollowers();
+        // }
+        // usersToShow.clear();
+        // usersToShow.addAll(userService.followers);
+        scoutersValue = 0;
+        athletesValue = 0;
+        for (UserApp userToShow in usersToShow) {
+          if (userToShow.type == 'scouter') scoutersValue++;
+          if (userToShow.type == 'athlete') athletesValue++;
+        }
+        // setState(() {});
+        break;
+      case TypeFollow.seguidos:
+        // if (userService.following.isEmpty) {
+        //   await userService.getFollowing();
+        // }
+        // usersToShow.clear();
+        // usersToShow.addAll(userService.following);
+        scoutersValue = 0;
+        athletesValue = 0;
+        for (UserApp userToShow in usersToShow) {
+          if (userToShow.type == 'scouter') scoutersValue++;
+          if (userToShow.type == 'athlete') athletesValue++;
+        }
+        // setState(() {});
+        break;
       default:
-        return '';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: true,
+    );
 
-    switch (_typeUser) {
-      case TypeUser.todos:
+    switch (_typeFollow) {
+      case TypeFollow.seguidores:
         usersToShow.clear();
-        switch (_typeFollow) {
-          case TypeFollow.seguidores:
-            usersToShow.addAll(followers);
+        usersToShow.addAll(userService.followers);
+        scoutersValue = 0;
+        athletesValue = 0;
+        for (UserApp userToShow in usersToShow) {
+          if (userToShow.type == 'scouter') scoutersValue++;
+          if (userToShow.type == 'athlete') athletesValue++;
+        }
+        switch (_typeUser) {
+          case TypeUser.todos:
             break;
-          case TypeFollow.seguidos:
-            usersToShow.addAll(following);
+          case TypeUser.scouters:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'scouter');
+            break;
+          case TypeUser.deportistas:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'athlete');
             break;
           default:
         }
         break;
-      case TypeUser.scouters:
+      case TypeFollow.seguidos:
         usersToShow.clear();
-        switch (_typeFollow) {
-          case TypeFollow.seguidores:
-            usersToShow.addAll(followers);
+        usersToShow.addAll(userService.following);
+        scoutersValue = 0;
+        athletesValue = 0;
+        for (UserApp userToShow in usersToShow) {
+          if (userToShow.type == 'scouter') scoutersValue++;
+          if (userToShow.type == 'athlete') athletesValue++;
+        }
+        switch (_typeUser) {
+          case TypeUser.todos:
             break;
-          case TypeFollow.seguidos:
-            usersToShow.addAll(following);
+          case TypeUser.scouters:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'scouter');
+            break;
+          case TypeUser.deportistas:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'athlete');
             break;
           default:
         }
-        usersToShow.removeWhere((UserApp element) => element.type != 'scouter');
-        break;
-      case TypeUser.deportistas:
-        usersToShow.clear();
-        switch (_typeFollow) {
-          case TypeFollow.seguidores:
-            usersToShow.addAll(followers);
-            break;
-          case TypeFollow.seguidos:
-            usersToShow.addAll(following);
-            break;
-          default:
-        }
-        usersToShow.removeWhere((UserApp element) => element.type != 'athlete');
         break;
       default:
     }
@@ -292,7 +166,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
       //----------------------scouters-------------------------
       _TypeUserContainer(
-        title: '$scoutersValue scouters', //${user.followers.scouters.length} +-
+        title: '$scoutersValue scouters',
         typeUser: _typeUser,
         typeUserCompare: TypeUser.scouters,
         onTap: () {
@@ -304,14 +178,12 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
       //--------------------deportistas-----------------------
       _TypeUserContainer(
-        title:
-            '$athletesValue deportistas', //${user.followers.deportists.length} +-
+        title: '$athletesValue deportistas',
         typeUser: _typeUser,
         typeUserCompare: TypeUser.deportistas,
         onTap: () {
           _typeUser = TypeUser.deportistas;
           //TODO: mostrar seguidores/seguidos que son deportistas
-
           setState(() {});
         },
       ),
@@ -326,19 +198,15 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             Column(
               children: [
                 //-----------------Nombre usuario y flecha atras-------------------
-                // CustomAppBar(
-                //   responsive: responsive,
-                //   style: TextStyle(
-                //     fontSize: responsive.widthPercent(7),
-                //     fontWeight: FontWeight.w700,
-                //     color: AppColors.darkGrey,
-                //   ),
-                //   iconColor: AppColors.brandColor,
-                //   title: user?.fullName ?? '',
-                //   onTap: () {
-                //     // context.navigatePopReplacing(const WallHomePage());
-                //   },
-                // ),
+                CustomAppBar(
+                  title: userService.userApp!.fullName!,
+                  style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    fontSize: responsive.diagonalPercent(3),
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.greyscale5,
+                  ),
+                  iconColor: AppColors.blueColor,
+                ),
                 SizedBox(height: responsive.heightPercent(2)),
 
                 //---------------------Filtros de busqueda----------------------
@@ -356,9 +224,12 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                 '$followersString ${Localization.of(context).string("wall_home_followers_text")}',
                             typeFollow: _typeFollow,
                             typeFollowCompare: TypeFollow.seguidores,
-                            onTap: () {
+                            onTap: () async {
                               _typeFollow = TypeFollow.seguidores;
-                              initData();
+                              if (userService.followers.isEmpty) {
+                                await userService.getFollowers();
+                              }
+                              changeFollow();
                               setState(() {});
                             },
                           ),
@@ -370,9 +241,12 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                 '$followingString  ${Localization.of(context).string("wall_home_following_text")}',
                             typeFollow: _typeFollow,
                             typeFollowCompare: TypeFollow.seguidos,
-                            onTap: () {
+                            onTap: () async {
                               _typeFollow = TypeFollow.seguidos;
-                              initData();
+                              if (userService.following.isEmpty) {
+                                await userService.getFollowing();
+                              }
+                              changeFollow();
                               setState(() {});
                             },
                           ),
@@ -399,157 +273,171 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                 SizedBox(height: responsive.heightPercent(2)),
 
                 //-----------------Lista seguidores/seguidos------------------
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  height: responsive.heightPercent(63),
-                  width: responsive.width,
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: usersToShow.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (user == null) return Container();
-                      bool isFollowing = false;
-                      String stringToCompare = '';
-                      for (DocumentReference? idFollowing in user!.following!) {
-                        stringToCompare = idFollowing
-                            .toString()
-                            .split('(')[1]
-                            .split(')')[0]
-                            .split('/')[1];
-                        if (stringToCompare == usersToShow[index].id) {
-                          isFollowing = true;
-                          break;
+                if (userService.isLoading)
+                  const Center(child: CircularProgressIndicator()),
+                if (!userService.isLoading)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    height: responsive.heightPercent(63),
+                    width: responsive.width,
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: usersToShow.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (userService.userApp == null) return Container();
+                        bool isFollowing = false;
+                        String stringToCompare = '';
+                        for (DocumentReference? idFollowing
+                            in userService.userApp!.following!) {
+                          stringToCompare = idFollowing
+                              .toString()
+                              .split('(')[1]
+                              .split(')')[0]
+                              .split('/')[1];
+                          if (stringToCompare == usersToShow[index].id) {
+                            isFollowing = true;
+                            break;
+                          }
                         }
-                      }
 
-                      return ListTile(
-                        // leading: FutureBuilder(
-                        //   future: userService
-                        //       .profileImageURL(usersToShow[index].id!),
-                        //   builder: (BuildContext context,
-                        //       AsyncSnapshot<String> snapshot) {
-                        //     return Container(
-                        //       height: responsive.heightPercent(16),
-                        //       width: responsive.widthPercent(16),
-                        //       decoration: BoxDecoration(
-                        //         shape: BoxShape.circle,
-                        //         image: (snapshot.hasData)
-                        //             ? DecorationImage(
-                        //                 image: CachedNetworkImageProvider(
-                        //                     snapshot.data!),
-                        //                 fit: BoxFit.cover,
-                        //               )
-                        //             : null,
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
-                        title: Text(
-                          usersToShow[index].fullName!,
-                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.darkGrey,
-                            fontSize: responsive.widthPercent(4),
-                            fontWeight: FontWeight.w700,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        subtitle: Text(
-                          typeString(context, usersToShow[index].type ?? ''),
-                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.mediunLightGrey,
-                            fontSize: responsive.widthPercent(3.5),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            //--------------------Icono x-----------------------
-                            if (_typeFollow == TypeFollow.seguidores)
-                              GestureDetector(
-                                onTap: () {
-                                  if (Platform.isAndroid) {
-                                    showDialogX(context, usersToShow[index]);
-                                  }
-                                  if (Platform.isIOS) {
-                                    showCupertinoDialogX(
-                                        context, usersToShow[index]);
-                                  }
-                                },
-                                child: const Icon(
-                                  Icons.close,
-                                  color: AppColors.mediunLightGrey,
+                        return ListTile(
+                          leading: FutureBuilder(
+                            future: userService.profileImageURL(
+                                usersToShow[index].id!.path.split('/')[1]),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> snapshot) {
+                              return Container(
+                                height: responsive.heightPercent(16),
+                                width: responsive.widthPercent(16),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: (snapshot.hasData)
+                                      ? DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                              snapshot.data!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
                                 ),
-                              ),
-                            SizedBox(width: responsive.widthPercent(2.5)),
-
-                            //-------------Boton seguir/siguiendo----------------
-                            SizedBox(
-                              width: responsive.widthPercent(25),
-                              child: MaterialButton(
-                                child: Text(
-                                  (isFollowing)
-                                      ? Localization.of(context)
-                                          .string("wall_followers_following")
-                                      : Localization.of(context)
-                                          .string("wall_followers_follow"),
-                                  style: TextStyle(
-                                    fontSize: responsive.diagonalPercent(1.7),
+                              );
+                            },
+                          ),
+                          title: Text(
+                            usersToShow[index].fullName!,
+                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                              color: AppColors.darkGrey,
+                              fontSize: responsive.widthPercent(4),
+                              fontWeight: FontWeight.w700,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          subtitle: Text(
+                            typeString(context, usersToShow[index].type ?? ''),
+                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                              color: AppColors.mediunLightGrey,
+                              fontSize: responsive.widthPercent(3.5),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              //--------------------Icono x-----------------------
+                              if (_typeFollow == TypeFollow.seguidores)
+                                GestureDetector(
+                                  onTap: () {
+                                    if (Platform.isAndroid) {
+                                      showDialogX(context, usersToShow[index]);
+                                    }
+                                    if (Platform.isIOS) {
+                                      showCupertinoDialogX(
+                                          context, usersToShow[index]);
+                                    }
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: AppColors.mediunLightGrey,
                                   ),
                                 ),
-                                textColor: (isFollowing)
-                                    ? AppColors.brandColor
-                                    : AppColors.whiteColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                              SizedBox(width: responsive.widthPercent(2.5)),
+
+                              //-------------Boton seguir/siguiendo----------------
+                              SizedBox(
+                                width: responsive.widthPercent(25),
+                                child: MaterialButton(
+                                  child: Text(
+                                    (isFollowing)
+                                        ? Localization.of(context)
+                                            .string("wall_followers_following")
+                                        : Localization.of(context)
+                                            .string("wall_followers_follow"),
+                                    style: TextStyle(
+                                      fontSize: responsive.diagonalPercent(1.7),
+                                    ),
+                                  ),
+                                  textColor: (isFollowing)
+                                      ? AppColors.brandColor
+                                      : AppColors.whiteColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 0.0,
+                                  color: (isFollowing)
+                                      ? AppColors.whiteColor
+                                      : AppColors.brandColor,
+                                  onPressed: (isFollowing)
+                                      ? () async {
+                                          //Opcion Siguiendo
+                                          // await _viewModel
+                                          //     .unfollow(usersToShow[index]);
+                                          // await Future.delayed(
+                                          //     const Duration(seconds: 2));
+                                          // await _viewModel.getUser();
+                                        }
+                                      : () async {
+                                          //Opcion Seguir
+                                          // await _viewModel
+                                          //     .follow(usersToShow[index]);
+                                          // await Future.delayed(
+                                          //     const Duration(seconds: 2));
+                                          // await _viewModel.getUser();
+                                        },
                                 ),
-                                elevation: 0.0,
-                                color: (isFollowing)
-                                    ? AppColors.whiteColor
-                                    : AppColors.brandColor,
-                                onPressed: (isFollowing)
-                                    ? () async {
-                                        //Opcion Siguiendo
-                                        // await _viewModel
-                                        //     .unfollow(usersToShow[index]);
-                                        // await Future.delayed(
-                                        //     const Duration(seconds: 2));
-                                        // await _viewModel.getUser();
-                                      }
-                                    : () async {
-                                        //Opcion Seguir
-                                        // await _viewModel
-                                        //     .follow(usersToShow[index]);
-                                        // await Future.delayed(
-                                        //     const Duration(seconds: 2));
-                                        // await _viewModel.getUser();
-                                      },
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
-            // Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: CustomNavigationButton(
-            //     responsive: responsive,
-            //     backgroundColor: AppColors.whiteColor,
-            //     iconColors: AppColors.mediunLightGrey,
-            //     iconColorSelected: AppColors.darkGrey,
-            //     colorElevatedButton: const Color(0xFFF6F6F6),
-            //     borderColor: const Color(0xFFF6F6F6),
-            //     selectedMenuItem: CustomNavigationButtonMenu.wallPage,
-            //   ),
-            // ),
           ],
         ),
       ),
     );
+  }
+
+  String typeString(BuildContext context, String string) {
+    switch (string) {
+      case 'athlete':
+        String aux = Localization.of(context).string('register_type_athlete');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      case 'scouter':
+        String aux = Localization.of(context).string('register_type_scouter');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      case 'manager':
+        String aux = Localization.of(context).string('register_type_manager');
+        String inicial = aux.substring(0, 1).toUpperCase();
+        String resto = aux.substring(1, aux.length);
+        return '$inicial$resto';
+      default:
+        return '';
+    }
   }
 
   Future<void> onPressedDialogX(

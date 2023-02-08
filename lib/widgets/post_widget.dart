@@ -1,10 +1,16 @@
 // ignore_for_file: unnecessary_this
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/posts_service.dart';
+import 'package:talent_app/services/services.dart';
 
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/app_styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/carousel_images.dart';
+import 'package:talent_app/widgets/widgets.dart';
 
 class PostWidget extends StatefulWidget {
   final Post post;
@@ -25,13 +31,16 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // this.controller = TabController(length: widget.images.length, vsync: this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive.of(context);
+    final PostsService postsService =
+        Provider.of<PostsService>(context, listen: true);
+    final UserService userService =
+        Provider.of<UserService>(context, listen: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,59 +50,45 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
         //   onPopupSelected: (item) {},
         // ),
         Container(
-          margin: const EdgeInsets.only(bottom: 15),
+          margin: const EdgeInsets.only(bottom: 2),
           height: responsive.heightPercent(40),
           width: responsive.width,
           child: Stack(
             children: [
-              // DefaultTabController(
-              //   length: widget.images.length,
-              //   child: Column(
-              //     children: [
-              //       Expanded(
-              //         child: PageView.builder(
-              //           itemCount: widget.images.length,
-              //           physics: const BouncingScrollPhysics(),
-              //           scrollDirection: Axis.horizontal,
-              //           pageSnapping: true,
-              //           onPageChanged: (index) {
-              //             DefaultTabController.of(context)?.index = index;
-              //             setState(() {
-              //               controller?.index = index;
-              //             });
-              //           },
-              //           itemBuilder: (_, index) => SizedBox(
-              //             width: responsive.width,
-              //             height: responsive.heightPercent(30),
-              //             child: widget.images[index],
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(height: responsive.heightPercent(2)),
-              //       TabPageSelector(
-              //         controller: controller,
-              //         color: AppColors.whiteColor,
-              //         selectedColor: AppColors.brandColor,
-              //         indicatorSize: responsive.widthPercent(2),
-              //       ),
-              //       SizedBox(height: responsive.heightPercent(1))
-              //     ],
-              //   ),
-              // ),
-              CarouselImages(
-                assetEntities: null,
-                images: widget.images,
+              FutureBuilder(
+                future: postsService.getPostFiles(widget.post),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<String>> snapshot) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    List<String> postFilesUrls = snapshot.data!;
+                    List<ImageProvider<Object>> postImages = [];
+                    for (String file in postFilesUrls) {
+                      postImages.add(CachedNetworkImageProvider(file));
+                    }
+                    return CarouselImages(
+                      assetEntities: null,
+                      images: postImages,
+                    );
+                  }
+                  return Container(
+                    color: AppColors.greyscale2,
+                  );
+                },
               ),
-              Positioned(
-                bottom: 7,
-                left: responsive.widthPercent(5),
-                child: const Icon(
-                  Icons.send,
-                  color: AppColors.greyscale5,
+              if (userService.userApp!.type == 'scouter')
+                Positioned(
+                  bottom: 6,
+                  left: responsive.widthPercent(5),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: const Icon(
+                      Icons.send,
+                      color: AppColors.greyscale5,
+                    ),
+                  ),
                 ),
-              ),
               Positioned(
-                bottom: 7,
+                bottom: 6,
                 right: responsive.widthPercent(5),
                 child: const Icon(
                   Icons.bookmark_border_rounded,
@@ -112,33 +107,18 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'lana_smith  ',
+                      text: '${widget.post.userApp!.userName} ',
                       style: TextStyle(
                         color: AppColors.greyscale5,
-                        fontSize: responsive.widthPercent(4),
+                        fontSize: responsive.diagonalPercent(2.2),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextSpan(
-                      text: 'Día de entrenamiento con mis nuevos compañeros ',
-                      style: TextStyle(
+                      text: '${widget.post.description} ',
+                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
                         color: AppColors.greyscale5,
-                        fontSize: responsive.widthPercent(3),
-                      ),
-                    ),
-                    TextSpan(
-                      text: '#futbol #deporte #reto',
-                      style: TextStyle(
-                        color: AppColors.blueColor,
-                        fontSize: responsive.widthPercent(3),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '? Debería hacer más?',
-                      style: TextStyle(
-                        color: AppColors.greyscale5,
-                        fontSize: responsive.widthPercent(3),
+                        fontSize: responsive.diagonalPercent(1.8),
                       ),
                     ),
                   ],
@@ -146,7 +126,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
               ),
               SizedBox(height: responsive.heightPercent(1)),
               Text(
-                'Hoy 14:20',
+                Util.postDateTime(widget.post.datetime!),
                 style: TextStyle(
                   color: AppColors.greyscale2,
                   fontSize: responsive.widthPercent(3),
@@ -156,6 +136,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
             ],
           ),
         ),
+        SizedBox(height: responsive.heightPercent(4)),
       ],
     );
   }

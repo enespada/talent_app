@@ -87,8 +87,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       //-------------------------Foto-----------------------------
                       FutureBuilder(
-                        future: userService
-                            .profileImageURL(userService.userApp!.id ?? ''),
+                        future: userService.profileImageURL(
+                            userService.userApp!.id!.path.split('/')[1]),
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
                           if (snapshot.hasData && snapshot.data != '') {

@@ -117,7 +117,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
         ],
         currentIndex: selectedIndex,
-        onTap: (int index) {
+        onTap: (int index) async {
           switch (index) {
             case 0:
               if (postsService.postsToShow.isEmpty)
@@ -137,6 +137,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               break;
             case 4:
               // context.navigatePopReplacing(const WallHomePage());
+              if (userService.userPosts.isEmpty) await userService.getPosts();
               Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
               break;
           }
