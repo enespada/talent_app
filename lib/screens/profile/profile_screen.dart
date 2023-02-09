@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
+import 'package:talent_app/screens/profile/posts_screen.dart';
 import 'package:talent_app/screens/profile/profile_follow_screen.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/screens/screens.dart';
@@ -29,71 +30,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _selectedPage = 0;
   //Grids a mostrar con los posts, lso challenges o los posts guardados
-  final List<Widget> _pages = [
-    _PublicationsGrid(
-      // onTap: () => context.navigateTo(const WallChallengePage()),
-      onTap: () {},
-      images: [
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-      ],
-    ),
-    _PublicationsGrid(
-      onTap: () {},
-      images: [
-        Image.asset(
-          'assets/images/gridImage.png',
-          fit: BoxFit.cover,
-        ),
-      ],
-    ),
-    _PublicationsGrid(
-      onTap: () {},
-      images: const [],
-    ),
-  ];
 
   @override
   void initState() {
@@ -127,6 +63,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String followingString = Util.adaptNumFollow(followingValue);
     double publicationsValue = userService.userPosts.length.toDouble() ?? -1;
     String publicationsString = Util.adaptNumFollow(publicationsValue);
+
+    final List<Widget> _pages = [
+      _PublicationsGrid(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PostsScreen(),
+            ),
+          );
+        },
+        posts: userService.userPosts,
+      ),
+      _PublicationsGrid(
+        onTap: () {},
+        posts: [],
+      ),
+      _PublicationsGrid(
+        onTap: () {},
+        posts: [],
+      ),
+    ];
 
     return Scaffold(
       body: SafeArea(
@@ -167,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       //-------------------Foto perfil------------------------
                       FutureBuilder(
-                        future: userService.profileImageURL(
+                        future: userService.getProfileImageURL(
                             userService.userApp!.id!.path.split('/')[1]),
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
@@ -304,6 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      //------------------------Seguidores-----------------------
                       GestureDetector(
                         onTap: () async {
                           await userService.getFollowers();
@@ -338,6 +297,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       ),
+
+                      //-------------------------Seguidos-------------------------
                       GestureDetector(
                         onTap: () async {
                           await userService.getFollowing();
@@ -371,6 +332,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       ),
+
+                      //--------------------------Posts--------------------------
                       GestureDetector(
                         // onTap: () => context
                         //     .navigateTo(const WallPublishedImagesPage()),
@@ -397,7 +360,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-                  // SizedBox(height: responsive.heightPercent(1.5)),
 
                   //---------------Publicaciones, retos y guardados--------------
                   Column(
@@ -426,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
 
-                            //-------------------Challenges--------------------
+                            //--------------------Challenges---------------------
                             GestureDetector(
                               onTap: () {
                                 _selectedPage = 1;
@@ -441,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
 
-                            //----------------------Saved----------------------
+                            //-----------------------Saved-----------------------
                             GestureDetector(
                               onTap: () {
                                 _selectedPage = 2;
@@ -462,10 +424,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
 
-                  // SizedBox(
-                  //   height: responsive.heightPercent(60),
-                  //   child: _pages[_selectedPage],
-                  // ),
                   Expanded(child: _pages[_selectedPage]),
                 ],
               ),
@@ -484,18 +442,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 //GridPage
 class _PublicationsGrid extends StatelessWidget {
-  final List<Image> images;
+  final List<Post> posts;
   final void Function()? onTap;
 
   const _PublicationsGrid({
     Key? key,
-    required this.images,
+    required this.posts,
     required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
+    final PostsService postsService = Provider.of<PostsService>(context);
 
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
@@ -506,13 +465,21 @@ class _PublicationsGrid extends StatelessWidget {
         crossAxisSpacing: responsive.widthPercent(2),
         mainAxisSpacing: responsive.widthPercent(2),
       ),
-      itemCount: images.length,
+      itemCount: posts.length,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: onTap,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: images[index],
+            child: FutureBuilder(
+              future: postsService.getPostPoster(posts[index]),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  return snapshot.data!;
+                }
+                return Container(color: Colors.white);
+              },
+            ),
           ),
         );
       },

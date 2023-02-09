@@ -1,495 +1,581 @@
-// // ignore_for_file: unnecessary_this
+// ignore_for_file: unnecessary_this
 
-// import 'package:flutter/material.dart';
-// import 'package:photo_manager/photo_manager.dart';
-// import 'package:talent_app/style/app_colors.dart';
-// import 'package:talent_app/utils/responsive.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
-// enum UploadGalleryTemplateMenu { recent, report }
+import 'package:talent_app/style/styles.dart';
+import 'package:talent_app/utils/utils.dart';
 
-// class UploadGalleryTemplate extends StatefulWidget {
-//   //--------------------------------Atributos----------------------------------
-//   final String title;
-//   final Widget action;
-//   final List<AssetEntity> selectedImages;
+enum UploadGalleryTemplateMenu { recent, report }
 
-//   //--------------------------------Constructor--------------------------------
-//   const UploadGalleryTemplate({
-//     Key? key,
-//     required this.title,
-//     required this.action,
-//     required this.selectedImages,
-//   }) : super(key: key);
+enum TypeFiles { Common, Images, Videos }
 
-//   @override
-//   State<UploadGalleryTemplate> createState() => _UploadGalleryTemplateState();
-// }
+class UploadGalleryTemplate extends StatefulWidget {
+  //--------------------------------Atributos----------------------------------
+  final String title;
+  final Widget action;
+  final List<AssetEntity> selectedImages;
 
-// class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
-//   //--------------------------------Atributos----------------------------------
-//   //Variable para controlar si se quieren mostrar imagenes, videos o ambos
-//   String selectedType = "todos";
-//   //Lista de todas las imagenes (o videos?) a mostrar
-//   List<AssetEntity> images = [];
-//   //Lista de las imagenes (y/o videos?) seleccionadas
-//   List<AssetEntity> selectedImages = [];
-//   //Lista de albumes
-//   List<AssetPathEntity> albums = [];
-//   int indexAlbum = 0;
-//   //Nombre del album a mostrar
-//   String titleAlbum = "Recent";
-//   //Pagina a mostrar del album
-//   int page = 0;
-//   //Ultima imagen seleccionada, que debe ser null si no hay ninguna seleccionada
-//   // Image? currentImage;
-//   AssetEntityImage? currentImage;
+  //--------------------------------Constructor--------------------------------
+  const UploadGalleryTemplate({
+    Key? key,
+    required this.title,
+    required this.action,
+    required this.selectedImages,
+  }) : super(key: key);
 
-//   //----------------------------------Metodos-----------------------------------
-//   RequestType getRequestType() {
-//     RequestType requestType = RequestType.common;
-//     switch (selectedType) {
-//       case 'todos':
-//         requestType = RequestType.common;
-//         break;
-//       case 'imágenes':
-//         requestType = RequestType.image;
-//         break;
-//       case 'vídeos':
-//         requestType = RequestType.video;
-//         break;
-//     }
-//     return requestType;
-//   }
+  @override
+  State<UploadGalleryTemplate> createState() => _UploadGalleryTemplateState();
+}
 
-//   //Metodo que recupera los albumes del dispositivo
-//   Future<void> getAlbums(RequestType type, int indexAlbum, int page) async {
-//     this.albums = await PhotoManager.getAssetPathList(
-//       type: type,
-//       filterOption: FilterOptionGroup(
-//         imageOption: const FilterOption(
-//           sizeConstraint: SizeConstraint(ignoreSize: true),
-//         ),
-//       ),
-//     );
+class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
+  //--------------------------------Atributos----------------------------------
+  //Variable para controlar si se quieren mostrar imagenes, videos o ambos
+  TypeFiles typeFiles = TypeFiles.Common;
+  //Lista de todas las imagenes (o videos?) a mostrar
+  List<AssetEntity> images = [];
+  //Lista de las imagenes (y/o videos?) seleccionadas
+  List<AssetEntity> selectedImages = [];
+  //Lista de albumes
+  List<AssetPathEntity> albums = [];
+  int indexAlbum = 0;
+  //Nombre del album a mostrar
+  String titleAlbum = "Recent";
+  //Pagina a mostrar del album
+  int page = 0;
+  //Ultima imagen seleccionada, que debe ser null si no hay ninguna seleccionada
+  // Image? currentImage;
+  AssetEntityImage? currentImage;
 
-//     if (albums.isNotEmpty) {
-//       images = await albums[indexAlbum].getAssetListPaged(
-//         page: page,
-//         size: 20,
-//       );
-//       titleAlbum = albums[indexAlbum].name;
-//     } else {
-//       images = [];
-//     }
+  //----------------------------------Metodos-----------------------------------
+  RequestType getRequestType() {
+    RequestType requestType = RequestType.common;
+    switch (typeFiles) {
+      case TypeFiles.Common:
+        requestType = RequestType.common;
+        break;
+      case TypeFiles.Images:
+        requestType = RequestType.image;
+        break;
+      case TypeFiles.Videos:
+        requestType = RequestType.video;
+        break;
+    }
+    return requestType;
+  }
 
-//     setState(() {});
-//   }
+  //Metodo que recupera los albumes del dispositivo
+  Future<void> getAlbums(RequestType type, int indexAlbum, int page) async {
+    this.albums = await PhotoManager.getAssetPathList(
+      type: type,
+      filterOption: FilterOptionGroup(
+        imageOption: const FilterOption(
+          sizeConstraint: SizeConstraint(ignoreSize: true),
+        ),
+      ),
+    );
 
-//   void listaAlbum() async {
-//     final PermissionState ps = await PhotoManager.requestPermissionExtend();
-//     if (ps.isAuth) {
-//       albums = await PhotoManager.getAssetPathList(
-//         type: RequestType.common,
-//         filterOption: FilterOptionGroup(
-//           imageOption: const FilterOption(
-//             sizeConstraint: SizeConstraint(ignoreSize: true),
-//           ),
-//         ),
-//       );
-//       if (albums.isNotEmpty) {
-//         images = await albums[indexAlbum].getAssetListPaged(
-//           page: page,
-//           size: 20,
-//         );
+    if (albums.isNotEmpty) {
+      images = await albums[indexAlbum].getAssetListPaged(
+        page: page,
+        size: 20,
+      );
+      titleAlbum = albums[indexAlbum].name;
+    } else {
+      images = [];
+    }
 
-//         titleAlbum = albums[indexAlbum].name;
-//       } else {
-//         images = [];
-//       }
-//       setState(() {});
-//     }
-//   }
+    setState(() {});
+  }
 
-//   @override
-//   void initState() {
-//     listaAlbum();
-//     super.initState();
-//   }
+  void listaAlbum() async {
+    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+    if (ps.isAuth) {
+      albums = await PhotoManager.getAssetPathList(
+        type: RequestType.common,
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            sizeConstraint: SizeConstraint(ignoreSize: true),
+          ),
+        ),
+      );
+      if (albums.isNotEmpty) {
+        images = await albums[indexAlbum].getAssetListPaged(
+          page: page,
+          size: 20,
+        );
 
-//   // Future<AssetEntityImage> convertFileToImage(AssetEntity assetEntity) async {
-//   //   return AssetEntityImage(
-//   //     assetEntity,
-//   //     fit: BoxFit.cover,
-//   //     width: double.infinity,
-//   //     isOriginal: false,
-//   //     thumbnailSize: const ThumbnailSize.square(800),
-//   //     loadingBuilder: (context, child, loadingProgress) => child,
-//   //   );
-//   // }
+        titleAlbum = albums[indexAlbum].name;
+      } else {
+        images = [];
+      }
+      setState(() {});
+    }
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
+  @override
+  void initState() {
+    listaAlbum();
+    super.initState();
+  }
 
-//     return UploadTemplate(
-//       title: widget.title,
-//       action: widget.action,
-//       body: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           //-------------------------Foto seleccionada--------------------------
-//           Container(
-//             margin: EdgeInsets.only(bottom: responsive.heightPercent(5)),
-//             height: responsive.heightPercent(45),
-//             child: (currentImage == null)
-//                 ? Container(color: Colors.grey.withOpacity(0.3))
-//                 : currentImage,
-//           ),
+  // Future<AssetEntityImage> convertFileToImage(AssetEntity assetEntity) async {
+  //   return AssetEntityImage(
+  //     assetEntity,
+  //     fit: BoxFit.cover,
+  //     width: double.infinity,
+  //     isOriginal: false,
+  //     thumbnailSize: const ThumbnailSize.square(800),
+  //     loadingBuilder: (context, child, loadingProgress) => child,
+  //   );
+  // }
 
-//           //------------------Recientes (albumes) y boton-------------------------
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               //--------------------Recientes (albumes)-------------------------
-//               Container(
-//                 margin: EdgeInsets.only(left: responsive.widthPercent(3)),
-//                 padding: const EdgeInsets.symmetric(horizontal: 15),
-//                 height: responsive.heightPercent(4),
-//                 width: responsive.widthPercent(50),
-//                 decoration: BoxDecoration(
-//                   color: AppColors.darkGrey,
-//                   borderRadius: BorderRadius.circular(25),
-//                 ),
-//                 child: PopupMenuButton<UploadGalleryTemplateMenu>(
-//                   position: PopupMenuPosition.under,
-//                   color: AppColors.darkGrey,
-//                   shape: const RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.all(
-//                       Radius.circular(15),
-//                     ),
-//                   ),
-//                   itemBuilder: (context) => [
-//                     ...albums.map(
-//                       (AssetPathEntity album) =>
-//                           PopupMenuItem<UploadGalleryTemplateMenu>(
-//                         onTap: () async {
-//                           final PermissionState ps =
-//                               await PhotoManager.requestPermissionExtend();
-//                           if (ps.isAuth) {
-//                             albums = await PhotoManager.getAssetPathList(
-//                               type: getRequestType(),
-//                               filterOption: FilterOptionGroup(
-//                                 imageOption: const FilterOption(
-//                                   sizeConstraint:
-//                                       SizeConstraint(ignoreSize: true),
-//                                 ),
-//                               ),
-//                             );
-//                             indexAlbum = albums.indexOf(album);
-//                             images = await albums[albums.indexOf(album)]
-//                                 .getAssetListPaged(
-//                               page: page,
-//                               size: 20,
-//                             );
-//                             titleAlbum = album.name;
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
 
-//                             setState(() {});
-//                           }
-//                         },
-//                         value: UploadGalleryTemplateMenu.recent,
-//                         child: Text(
-//                           album.name,
-//                           // style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
-//                           //   color: AppColors.whiteColor,
-//                           // ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                   child: Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       Expanded(
-//                         child: Text(
-//                           titleAlbum,
-//                           // style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
-//                           //   color: AppColors.whiteColor,
-//                           // ),
-//                         ),
-//                       ),
-//                       const Icon(
-//                         Icons.keyboard_arrow_down_rounded,
-//                         color: AppColors.whiteColor,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
+    return UploadTemplate(
+      title: widget.title,
+      action: widget.action,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //-------------------------Foto seleccionada--------------------------
+          Container(
+            margin: EdgeInsets.only(bottom: responsive.heightPercent(5)),
+            height: responsive.heightPercent(45),
+            child: (currentImage == null)
+                ? Container(color: Colors.grey.withOpacity(0.3))
+                : currentImage,
+          ),
 
-//               //---------------------------Boton-------------------------------
-//               // Container(
-//               //   margin: EdgeInsets.only(right: responsive.widthPercent(3)),
-//               //   child: IconButton(
-//               //     style: IconButton.styleFrom(
-//               //       backgroundColor: AppColors.whiteColor,
-//               //     ),
-//               //     onPressed: () {
-//               //       page++;
-//               //       setState(() {});
-//               //     },
-//               //     icon: SvgPicture.asset(
-//               //       'assets/images/selectMultiply.svg',
-//               //       height: responsive.heightPercent(3),
-//               //       color: AppColors.blackColor,
-//               //     ),
-//               //   ),
-//               // ),
-//             ],
-//           ),
+          //------------------Recientes (albumes) y boton-------------------------
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //--------------------Recientes (albumes)-------------------------
+              Container(
+                margin: EdgeInsets.only(left: responsive.widthPercent(3)),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                height: responsive.heightPercent(4),
+                width: responsive.widthPercent(50),
+                decoration: BoxDecoration(
+                  color: AppColors.greyscale3,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: PopupMenuButton<UploadGalleryTemplateMenu>(
+                  position: PopupMenuPosition.under,
+                  color: AppColors.greyscale3,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                  itemBuilder: (context) => [
+                    ...albums.map(
+                      (AssetPathEntity album) =>
+                          PopupMenuItem<UploadGalleryTemplateMenu>(
+                        onTap: () async {
+                          final PermissionState ps =
+                              await PhotoManager.requestPermissionExtend();
+                          if (ps.isAuth) {
+                            albums = await PhotoManager.getAssetPathList(
+                              type: getRequestType(),
+                              filterOption: FilterOptionGroup(
+                                imageOption: const FilterOption(
+                                  sizeConstraint:
+                                      SizeConstraint(ignoreSize: true),
+                                ),
+                              ),
+                            );
+                            indexAlbum = albums.indexOf(album);
+                            images = await albums[albums.indexOf(album)]
+                                .getAssetListPaged(
+                              page: page,
+                              size: 20,
+                            );
+                            titleAlbum = album.name;
 
-//           //------------------------GridView con fotos---------------------------
-//           Container(
-//             margin: EdgeInsets.only(
-//               bottom: responsive.heightPercent(15),
-//               top: responsive.heightPercent(4),
-//               left: responsive.widthPercent(3),
-//               right: responsive.widthPercent(3),
-//             ),
-//             child: UploadAllPhotos(
-//               images: images,
-//               selectedImages: selectedImages,
-//               devuelveImagenes: () async {
-//                 if (selectedImages.isNotEmpty) {
-//                   // File? file =
-//                   //     await selectedImages[selectedImages.length - 1].file;
-//                   // currentImage = await convertFileToImage(file!);
-//                   // currentImage = await convertFileToImage(selectedImages[selectedImages.length - 1]);
-//                   currentImage = AssetEntityImage(
-//                     selectedImages[selectedImages.length - 1],
-//                     fit: BoxFit.cover,
-//                     width: double.infinity,
-//                     isOriginal: false,
-//                     thumbnailSize: const ThumbnailSize.square(800),
-//                     loadingBuilder: (context, child, loadingProgress) => child,
-//                   );
-//                 } else {
-//                   currentImage = null;
-//                 }
-//                 widget.selectedImages.clear();
-//                 widget.selectedImages.addAll(selectedImages);
-//                 setState(() {});
-//               },
-//               setStatePadre: () {
-//                 setState(() {
-//                   //Para que se vuelvan a coger las imagenes que se muestran del album hacemos
-//                   listaAlbum();
-//                 });
-//               },
-//               selectedType: selectedType,
-//             ),
-//           ),
-//         ],
-//       ),
+                            setState(() {});
+                          }
+                        },
+                        value: UploadGalleryTemplateMenu.recent,
+                        child: Text(
+                          album.name,
+                          style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          titleAlbum,
+                          style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.whiteColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-//       //------------------------todos, imagenes, videos---------------------------
-//       bottomNavigatorBar: CustomButtonNavigator(
-//         onTapAll: () async {
-//           selectedType = 'todos';
-//           final PermissionState ps =
-//               await PhotoManager.requestPermissionExtend();
-//           if (ps.isAuth) {
-//             await getAlbums(RequestType.common, indexAlbum, page);
-//           }
-//         },
-//         onTapImages: () async {
-//           selectedType = 'imágenes';
-//           final PermissionState ps =
-//               await PhotoManager.requestPermissionExtend();
-//           if (ps.isAuth) {
-//             await getAlbums(RequestType.image, indexAlbum, page);
-//             setState(() {});
-//           }
-//         },
-//         onTapVideos: () async {
-//           selectedType = 'vídeos';
-//           final PermissionState ps =
-//               await PhotoManager.requestPermissionExtend();
-//           if (ps.isAuth) {
-//             await getAlbums(RequestType.video, indexAlbum, page);
-//             setState(() {});
-//           }
-//         },
-//         selectedType: selectedType,
-//         albums: albums,
-//         images: images,
-//         indexAlbum: 0,
-//         page: 0,
-//       ),
-//     );
-//   }
-// }
+              //---------------------------Boton-------------------------------
+              // Container(
+              //   margin: EdgeInsets.only(right: responsive.widthPercent(3)),
+              //   child: IconButton(
+              //     style: IconButton.styleFrom(
+              //       backgroundColor: AppColors.whiteColor,
+              //     ),
+              //     onPressed: () {
+              //       page++;
+              //       setState(() {});
+              //     },
+              //     icon: SvgPicture.asset(
+              //       'assets/images/selectMultiply.svg',
+              //       height: responsive.heightPercent(3),
+              //       color: AppColors.blackColor,
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
 
-// class UploadTemplate extends StatefulWidget {
-//   final String title;
-//   final Widget action;
-//   final Widget body;
-//   final Widget? bottomNavigatorBar;
+          //------------------------GridView con fotos---------------------------
+          Container(
+            margin: EdgeInsets.only(
+              bottom: responsive.heightPercent(15),
+              top: responsive.heightPercent(4),
+              left: responsive.widthPercent(3),
+              right: responsive.widthPercent(3),
+            ),
+            child: GridView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: responsive.widthPercent(2),
+                mainAxisSpacing: responsive.widthPercent(2),
+              ),
+              children: [
+                //----------------------------Camara-----------------------------------
+                if (typeFiles != TypeFiles.Videos)
+                  GestureDetector(
+                    onTap: () async {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? photo =
+                          await _picker.pickImage(source: ImageSource.camera);
 
-//   const UploadTemplate({
-//     Key? key,
-//     required this.title,
-//     required this.action,
-//     required this.body,
-//     this.bottomNavigatorBar,
-//   }) : super(key: key);
+                      //Guardamos la imagen tomada con la camara en la galeria
+                      if (photo != null) {
+                        await GallerySaver.saveImage(photo.path);
+                      }
+                      //Para que se vuelvan a coger las imagenes que se muestran del album hacemos
+                      listaAlbum();
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.darkGrey,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Icon(
+                          Icons.camera_alt_outlined,
+                          size: responsive.heightPercent(10),
+                          color: AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
 
-//   @override
-//   State<UploadTemplate> createState() => _UploadTemplateState();
-// }
+                //------------------------------Fotos-----------------------------------
+                ...images.map((AssetEntity image) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: (selectedImages.contains(image))
+                          ? Border.all(color: AppColors.yellowColor, width: 2)
+                          : Border.all(),
+                    ),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (selectedImages.contains(image)) {
+                          selectedImages.remove(image);
+                        } else {
+                          selectedImages.add(image);
+                        }
+                        if (typeFiles == TypeFiles.Common ||
+                            typeFiles == TypeFiles.Images) {
+                          if (selectedImages.isNotEmpty) {
+                            currentImage = AssetEntityImage(
+                              selectedImages[selectedImages.length - 1],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              isOriginal: false,
+                              thumbnailSize: const ThumbnailSize.square(800),
+                              loadingBuilder:
+                                  (context, child, loadingProgress) => child,
+                            );
+                          } else {
+                            currentImage = null;
+                          }
+                          // selectedImages.clear();
+                          // selectedImages.addAll(selectedImages);
+                          setState(() {});
+                        } else if (typeFiles == TypeFiles.Videos) {
+                          if (selectedImages.isNotEmpty) {
+                            currentImage = AssetEntityImage(
+                              selectedImages[selectedImages.length - 1],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              isOriginal: false,
+                              thumbnailSize: const ThumbnailSize.square(800),
+                              loadingBuilder:
+                                  (context, child, loadingProgress) => child,
+                            );
+                          } else {
+                            currentImage = null;
+                          }
+                          setState(() {});
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: AssetEntityImage(
+                          image,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) =>
+                              child,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        ],
+      ),
 
-// class _UploadTemplateState extends State<UploadTemplate> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
+      //------------------------todos, imagenes, videos---------------------------
+      bottomNavigatorBar: CustomButtonNavigator(
+        onTapAll: () async {
+          typeFiles = TypeFiles.Common;
+          final PermissionState ps =
+              await PhotoManager.requestPermissionExtend();
+          if (ps.isAuth) {
+            await getAlbums(RequestType.common, indexAlbum, page);
+          }
+        },
+        onTapImages: () async {
+          typeFiles = TypeFiles.Images;
+          final PermissionState ps =
+              await PhotoManager.requestPermissionExtend();
+          if (ps.isAuth) {
+            await getAlbums(RequestType.image, indexAlbum, page);
+            setState(() {});
+          }
+        },
+        onTapVideos: () async {
+          typeFiles = TypeFiles.Videos;
+          final PermissionState ps =
+              await PhotoManager.requestPermissionExtend();
+          if (ps.isAuth) {
+            await getAlbums(RequestType.video, indexAlbum, page);
+            setState(() {});
+          }
+        },
+        typeFiles: typeFiles,
+        albums: albums,
+        images: images,
+        indexAlbum: 0,
+        page: 0,
+      ),
+    );
+  }
+}
 
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: AppColors.blackColor,
-//         centerTitle: true,
-//         leading: GestureDetector(
-//           onTap: () {
-//             Navigator.pop(context);
-//           },
-//           child: const Icon(
-//             Icons.arrow_back,
-//             color: AppColors.brandColor,
-//           ),
-//         ),
-//         title: Text(
-//           widget.title,
-//           style: TextStyle(
-//             color: AppColors.whiteColor,
-//             fontWeight: FontWeight.bold,
-//             fontSize: responsive.widthPercent(6),
-//           ),
-//         ),
-//         actions: [
-//           Container(
-//             margin: EdgeInsets.only(right: responsive.widthPercent(3)),
-//             child: widget.action,
-//           )
-//         ],
-//       ),
+class UploadTemplate extends StatefulWidget {
+  final String title;
+  final Widget action;
+  final Widget body;
+  final Widget? bottomNavigatorBar;
 
-//       //--------------------------------body----------------------------------
-//       body: SafeArea(
-//         child: Stack(
-//           children: [
-//             Container(
-//               color: AppColors.blackColor,
-//             ),
-//             SingleChildScrollView(
-//               physics: const BouncingScrollPhysics(),
-//               child: widget.body,
-//             ),
-//             Align(
-//               alignment: Alignment.bottomCenter,
-//               child: widget.bottomNavigatorBar ?? Container(),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  const UploadTemplate({
+    Key? key,
+    required this.title,
+    required this.action,
+    required this.body,
+    this.bottomNavigatorBar,
+  }) : super(key: key);
 
-// class CustomButtonNavigator extends StatefulWidget {
-//   CustomButtonNavigator({
-//     Key? key,
-//     this.selectedType = 'todos',
-//     required this.albums,
-//     this.images,
-//     this.page = 0,
-//     this.indexAlbum = 0,
-//     required this.onTapAll,
-//     required this.onTapImages,
-//     required this.onTapVideos,
-//   }) : super(key: key);
+  @override
+  State<UploadTemplate> createState() => _UploadTemplateState();
+}
 
-//   String selectedType;
-//   List<AssetPathEntity>? albums;
-//   List<AssetEntity>? images;
-//   int page;
-//   int indexAlbum;
-//   final void Function()? onTapAll;
-//   final void Function()? onTapImages;
-//   final void Function()? onTapVideos;
+class _UploadTemplateState extends State<UploadTemplate> {
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
 
-//   @override
-//   State<CustomButtonNavigator> createState() => _CustomButtonNavigatorState();
-// }
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.blackColor,
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(
+            Icons.arrow_back,
+            color: AppColors.brandColor,
+          ),
+        ),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.bold,
+            fontSize: responsive.widthPercent(6),
+          ),
+        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: responsive.widthPercent(3)),
+            child: widget.action,
+          )
+        ],
+      ),
 
-// class _CustomButtonNavigatorState extends State<CustomButtonNavigator> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
+      //--------------------------------body----------------------------------
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+              color: AppColors.blackColor,
+            ),
+            SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: widget.body,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: widget.bottomNavigatorBar ?? Container(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-//     return Container(
-//       padding: EdgeInsets.only(
-//           left: responsive.widthPercent(3),
-//           right: responsive.widthPercent(3),
-//           top: responsive.heightPercent(2),
-//           bottom: responsive.heightPercent(5)),
-//       decoration: const BoxDecoration(
-//           color: AppColors.darkGrey,
-//           borderRadius: BorderRadius.only(
-//               topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceAround,
-//         children: [
-//           GestureDetector(
-//             onTap: widget.onTapAll,
-//             child: Text(
-//               'todos',
-//               style: TextStyle(
-//                   color: (widget.selectedType == 'todos')
-//                       ? AppColors.brandColor
-//                       : AppColors.coinGrey,
-//                   fontWeight: (widget.selectedType == 'todos')
-//                       ? FontWeight.bold
-//                       : FontWeight.normal,
-//                   fontSize: responsive.widthPercent(4)),
-//             ),
-//           ),
-//           GestureDetector(
-//             onTap: widget.onTapImages,
-//             child: Text(
-//               'imágenes',
-//               style: TextStyle(
-//                   color: (widget.selectedType == 'imágenes')
-//                       ? AppColors.brandColor
-//                       : AppColors.coinGrey,
-//                   fontWeight: (widget.selectedType == 'imágenes')
-//                       ? FontWeight.bold
-//                       : FontWeight.normal,
-//                   fontSize: responsive.widthPercent(4)),
-//             ),
-//           ),
-//           GestureDetector(
-//               onTap: widget.onTapVideos,
-//               child: Text(
-//                 'vídeos',
-//                 style: TextStyle(
-//                     color: (widget.selectedType == 'vídeos')
-//                         ? AppColors.brandColor
-//                         : AppColors.coinGrey,
-//                     fontWeight: (widget.selectedType == 'vídeos')
-//                         ? FontWeight.bold
-//                         : FontWeight.normal,
-//                     fontSize: responsive.widthPercent(4)),
-//               )),
-//         ],
-//       ),
-//     );
-//   }
-// }
+class CustomButtonNavigator extends StatefulWidget {
+  TypeFiles typeFiles;
+  List<AssetPathEntity>? albums;
+  List<AssetEntity>? images;
+  int page;
+  int indexAlbum;
+  final void Function()? onTapAll;
+  final void Function()? onTapImages;
+  final void Function()? onTapVideos;
+
+  CustomButtonNavigator({
+    Key? key,
+    this.typeFiles = TypeFiles.Common,
+    required this.albums,
+    this.images,
+    this.page = 0,
+    this.indexAlbum = 0,
+    required this.onTapAll,
+    required this.onTapImages,
+    required this.onTapVideos,
+  }) : super(key: key);
+
+  @override
+  State<CustomButtonNavigator> createState() => _CustomButtonNavigatorState();
+}
+
+class _CustomButtonNavigatorState extends State<CustomButtonNavigator> {
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    return Container(
+      padding: EdgeInsets.only(
+        left: responsive.widthPercent(3),
+        right: responsive.widthPercent(3),
+        top: responsive.heightPercent(2),
+        bottom: responsive.heightPercent(5),
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.darkGrey,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          GestureDetector(
+            onTap: widget.onTapAll,
+            child: Text(
+              'todos',
+              style: TextStyle(
+                color: (widget.typeFiles == TypeFiles.Common)
+                    ? AppColors.brandColor
+                    : AppColors.coinGrey,
+                fontWeight: (widget.typeFiles == TypeFiles.Common)
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                fontSize: responsive.widthPercent(4),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: widget.onTapImages,
+            child: Text(
+              'imágenes',
+              style: TextStyle(
+                color: (widget.typeFiles == TypeFiles.Images)
+                    ? AppColors.brandColor
+                    : AppColors.coinGrey,
+                fontWeight: (widget.typeFiles == TypeFiles.Images)
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                fontSize: responsive.widthPercent(4),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: widget.onTapVideos,
+            child: Text(
+              'vídeos',
+              style: TextStyle(
+                color: (widget.typeFiles == TypeFiles.Videos)
+                    ? AppColors.brandColor
+                    : AppColors.coinGrey,
+                fontWeight: (widget.typeFiles == TypeFiles.Videos)
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                fontSize: responsive.widthPercent(4),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

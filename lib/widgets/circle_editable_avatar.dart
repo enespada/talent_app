@@ -7,14 +7,17 @@ import 'package:talent_app/widgets/widgets.dart';
 
 class CircleEditableAvatar extends StatefulWidget {
   final double size;
-  final ImageProvider<Object> image;
+  // ImageProvider<Object> image;
+  Image? image;
+  File? file;
   final Color? iconColor;
   final Color? iconBackgroundColor;
 
-  const CircleEditableAvatar({
+  CircleEditableAvatar({
     Key? key,
     required this.size,
     required this.image,
+    required this.file,
     this.iconColor,
     this.iconBackgroundColor,
   }) : super(key: key);
@@ -36,6 +39,7 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     _xFile = await picker.pickImage(source: ImageSource.gallery);
+    widget.file = File(_xFile!.path);
     setState(() {});
   }
 
@@ -54,13 +58,20 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
               width: widget.size - widget.size * 0.25,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size),
-                child: (_xFile == null)
-                    ? Image(
-                        image: widget.image,
-                        fit: BoxFit.cover,
-                      )
+                child: (widget.file == null)
+                    // ? Image(
+                    //     image: widget.image,
+                    //     fit: BoxFit.cover,
+                    //   )
+                    // : Image.file(
+                    //     File(_xFile!.path),
+                    //     height: widget.size,
+                    //     width: widget.size,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    ? widget.image
                     : Image.file(
-                        File(_xFile!.path),
+                        widget.file!,
                         height: widget.size,
                         width: widget.size,
                         fit: BoxFit.cover,

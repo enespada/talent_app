@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_new
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/services/sports_service.dart';
 import 'package:talent_app/style/styles.dart';
@@ -26,8 +29,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  Future<void> _saveChanges(
-      UserService userService, EditProfileProvider editProfileProvider) async {
+  Future<void> _saveChanges(UserService userService, File? file,
+      EditProfileProvider editProfileProvider) async {
     UserApp userAppToUpdate = UserApp();
 
     userAppToUpdate.fullName = editProfileProvider.tecFullName.text;
@@ -38,6 +41,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     userAppToUpdate.modality = editProfileProvider.modality!.id;
 
     await userService.updateUser(userAppToUpdate);
+    if (file != null) {
+      await userService.uploadImageProfile(file.path);
+      Future.delayed(const Duration(seconds: 2));
+    }
+    Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
   }
 
   @override
@@ -58,6 +66,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenFacts = responsive.heightPercent(2.5);
     final double avatarSize = responsive.heightPercent(20);
+    CircleEditableAvatar circleEditableAvatar = CircleEditableAvatar(
+      size: avatarSize,
+      image: null,
+      file: null,
+      iconColor: AppColors.greyscale5,
+      iconBackgroundColor: AppColors.yellowColor,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.whiteBackground,
@@ -87,30 +102,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       //-------------------------Foto-----------------------------
                       FutureBuilder(
-                        future: userService.profileImageURL(
+                        future: userService.getProfileImageURL(
                             userService.userApp!.id!.path.split('/')[1]),
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
                           if (snapshot.hasData && snapshot.data != '') {
-                            return Center(
-                              child: CircleEditableAvatar(
-                                size: avatarSize,
-                                image:
-                                    CachedNetworkImageProvider(snapshot.data!),
-                                iconColor: AppColors.greyscale5,
-                                iconBackgroundColor: AppColors.yellowColor,
-                              ),
+                            circleEditableAvatar.image = Image(
+                              image: CachedNetworkImageProvider(snapshot.data!),
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            circleEditableAvatar.image = const Image(
+                              image: AssetImage('assets/images/profile.png'),
                             );
                           }
                           return Center(
-                            child: CircleEditableAvatar(
-                              size: avatarSize,
-                              image:
-                                  const AssetImage('assets/images/profile.png'),
-                              iconColor: AppColors.greyscale5,
-                              iconBackgroundColor: AppColors.yellowColor,
-                            ),
+                            child: circleEditableAvatar,
                           );
+                          // return Center(
+                          //   child: CircleEditableAvatar(
+                          //     size: avatarSize,
+                          //     image: const Image(
+                          //       image: AssetImage('assets/images/profile.png'),
+                          //     ),
+                          //     file: file,
+                          //     iconColor: AppColors.greyscale5,
+                          //     iconBackgroundColor: AppColors.yellowColor,
+                          //   ),
+                          // );
                         },
                       ),
                       SizedBox(height: spaceBetweenFacts),
@@ -200,8 +219,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 : () async {
                                     if (editProfileProvider.isValid()) {
                                       await _saveChanges(
-                                          userService, editProfileProvider);
-                                      Navigator.pop(context);
+                                          userService,
+                                          circleEditableAvatar.file,
+                                          editProfileProvider);
                                     } else {
                                       //TODO: alertdialog
                                     }

@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
 enum HomeMenuOption { challenges, publications }
-
-final List<Widget> _pages = [
-  const PostsPage(),
-  // const ChallengesPage(),
-  Container(
-    color: Colors.green,
-  ),
-];
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = 'home_screen';
@@ -49,12 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final PostsService postsService = Provider.of<PostsService>(context);
+
     if (_selectedHomeMenuOption == HomeMenuOption.publications) {
       homeAppBarTitle = Localization.of(context).string('publications_title');
     }
     if (_selectedHomeMenuOption == HomeMenuOption.challenges) {
       homeAppBarTitle = Localization.of(context).string('challenges_title');
     }
+
+    final List<Widget> pages = [
+      PostsListWidget(posts: postsService.postsToShow),
+      // const ChallengesPage(),
+      Container(color: Colors.green),
+    ];
 
     return Scaffold(
       backgroundColor: AppColors.greyscale0,
@@ -82,13 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {});
               },
             ),
+            SizedBox(height: responsive.heightPercent(2)),
 
             //----------------------Publicaciones o retos-----------------------
             Expanded(
               child: PageView(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: pageController,
-                children: _pages,
+                children: pages,
               ),
             ),
           ],

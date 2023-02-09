@@ -53,9 +53,7 @@ class Util {
         if (dateTimeNow.difference(dateTime).inHours < 48) {
           string = 'Ayer';
         } else {
-          if (dateTimeNow.difference(dateTime).inHours < 1) {
-            string = '${dateTime.day}-${dateTime.month}-${dateTime.year}';
-          }
+          string = '${dateTime.day}-${dateTime.month}-${dateTime.year}';
         }
       }
     }

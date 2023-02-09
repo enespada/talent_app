@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:talent_app/screens/explorer/explorer_screen.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/profile/profile_screen.dart';
+import 'package:talent_app/screens/upload/upload_post_home_screen.dart';
 import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/app_colors.dart';
@@ -28,6 +30,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
     final PostsService postsService = Provider.of<PostsService>(context);
 
@@ -104,14 +107,33 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
           //-------------------------------Perfil---------------------------------
           BottomNavigationBarItem(
-            icon: ClipOval(
-              child: SizedBox.fromSize(
-                size: const Size.fromRadius(_iconsWidth / 2),
-                child: Image.asset(
-                  'assets/images/profile_pic_example.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
+            icon: FutureBuilder(
+              future: userService.getProfileImageURL(
+                  userService.userApp!.id!.path.split('/')[1]),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                return Container(
+                  height: responsive.diagonalPercent(4),
+                  width: responsive.diagonalPercent(4),
+                  decoration: BoxDecoration(
+                    border: (selectedIndex == 4)
+                        ? Border.all(
+                            color: AppColors.yellowColor,
+                            width: 1,
+                          )
+                        : const Border(),
+                    shape: BoxShape.circle,
+                    image: (snapshot.hasData && snapshot.data != '')
+                        ? DecorationImage(
+                            image: CachedNetworkImageProvider(snapshot.data!),
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            image: AssetImage('assets/images/profile.png'),
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                );
+              },
             ),
             label: Localization.of(context).string('about_title'),
           ),
@@ -121,7 +143,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           switch (index) {
             case 0:
               if (postsService.postsToShow.isEmpty)
-                postsService.getFollowingPosts(userService.userApp!);
+                await postsService.getFollowingPosts(userService.userApp!);
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
               break;
             case 1:
@@ -129,6 +151,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
               Navigator.pushReplacementNamed(
                 context,
                 ExplorerScreen.routeName,
+              );
+              break;
+            case 2:
+              Navigator.pushNamed(
+                context,
+                UploadPostHomeScreen.routeName,
               );
               break;
             case 3:

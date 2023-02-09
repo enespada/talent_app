@@ -8,6 +8,7 @@ import 'package:talent_app/screens/login/login_screen.dart';
 import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/splash/splash_screen.dart';
+import 'package:talent_app/screens/upload/upload_post_home_screen.dart';
 import 'package:talent_app/services/auth_service.dart';
 import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/search_service.dart';
@@ -64,6 +65,9 @@ class MyApp extends StatelessWidget {
           SettingsScreen.routeName: (context) => const SettingsScreen(),
           //splash
           SplashScreen.routeName: (context) => const SplashScreen(),
+          //upload
+          UploadPostHomeScreen.routeName: (context) =>
+              const UploadPostHomeScreen(),
         },
       ),
     );

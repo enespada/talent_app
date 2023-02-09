@@ -4,7 +4,7 @@ export 'package:talent_app/screens/explorer/explorer_screen.dart';
 //home
 export 'package:talent_app/screens/home/challenges_page.dart';
 export 'package:talent_app/screens/home/home_screen.dart';
-export 'package:talent_app/screens/home/posts_page.dart';
+export 'package:talent_app/widgets/posts_list_widget.dart';
 
 //login
 export 'package:talent_app/screens/login/login_screen.dart';

@@ -59,38 +59,6 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     followersString = Util.adaptNumFollow(followersValue);
     double followingValue = userApp!.following!.length.toDouble() ?? -1;
     followingString = Util.adaptNumFollow(followingValue);
-
-    switch (_typeFollow) {
-      case TypeFollow.seguidores:
-        // if (userService.followers.isEmpty) {
-        //   await userService.getFollowers();
-        // }
-        // usersToShow.clear();
-        // usersToShow.addAll(userService.followers);
-        scoutersValue = 0;
-        athletesValue = 0;
-        for (UserApp userToShow in usersToShow) {
-          if (userToShow.type == 'scouter') scoutersValue++;
-          if (userToShow.type == 'athlete') athletesValue++;
-        }
-        // setState(() {});
-        break;
-      case TypeFollow.seguidos:
-        // if (userService.following.isEmpty) {
-        //   await userService.getFollowing();
-        // }
-        // usersToShow.clear();
-        // usersToShow.addAll(userService.following);
-        scoutersValue = 0;
-        athletesValue = 0;
-        for (UserApp userToShow in usersToShow) {
-          if (userToShow.type == 'scouter') scoutersValue++;
-          if (userToShow.type == 'athlete') athletesValue++;
-        }
-        // setState(() {});
-        break;
-      default:
-    }
   }
 
   @override
@@ -286,15 +254,15 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         if (userService.userApp == null) return Container();
                         bool isFollowing = false;
-                        String stringToCompare = '';
+                        // String stringToCompare = '';
                         for (DocumentReference? idFollowing
                             in userService.userApp!.following!) {
-                          stringToCompare = idFollowing
-                              .toString()
-                              .split('(')[1]
-                              .split(')')[0]
-                              .split('/')[1];
-                          if (stringToCompare == usersToShow[index].id) {
+                          // stringToCompare = idFollowing
+                          //     .toString()
+                          //     .split('(')[1]
+                          //     .split(')')[0]
+                          //     .split('/')[1];
+                          if (idFollowing == usersToShow[index].id) {
                             isFollowing = true;
                             break;
                           }
@@ -302,7 +270,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
                         return ListTile(
                           leading: FutureBuilder(
-                            future: userService.profileImageURL(
+                            future: userService.getProfileImageURL(
                                 usersToShow[index].id!.path.split('/')[1]),
                             builder: (BuildContext context,
                                 AsyncSnapshot<String> snapshot) {
@@ -390,17 +358,27 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                           //Opcion Siguiendo
                                           // await _viewModel
                                           //     .unfollow(usersToShow[index]);
+                                          await userService
+                                              .unfollow(usersToShow[index]);
                                           // await Future.delayed(
                                           //     const Duration(seconds: 2));
                                           // await _viewModel.getUser();
+                                          // await userService.getFollowing();
+                                          changeFollow();
+                                          setState(() {});
                                         }
                                       : () async {
                                           //Opcion Seguir
                                           // await _viewModel
                                           //     .follow(usersToShow[index]);
+                                          await userService
+                                              .follow(usersToShow[index]);
                                           // await Future.delayed(
                                           //     const Duration(seconds: 2));
                                           // await _viewModel.getUser();
+                                          // await userService.getFollowing();
+                                          changeFollow();
+                                          setState(() {});
                                         },
                                 ),
                               ),

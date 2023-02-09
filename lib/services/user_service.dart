@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -166,7 +168,37 @@ class UserService extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<String> profileImageURL(String id) async {
+  Future<void> follow(UserApp userToFollow) async {
+    if (userApp == null) return;
+    //Actualizamos la lista de seguidores del usuario seguido
+    await userToFollow.id!.update({
+      "followers": FieldValue.arrayUnion([userApp!.id]),
+    });
+
+    //Actualizamos nuestra lista de seguidos en firebase
+    await userApp!.id!.update({
+      "following": FieldValue.arrayUnion([userToFollow.id]),
+    });
+    userApp!.following!.add(userToFollow.id);
+    following.add(userToFollow);
+  }
+
+  Future<void> unfollow(UserApp userToUnfollow) async {
+    if (userApp == null) return;
+    //Actualizamos la lista de seguidores del usuario seguido
+    await userToUnfollow.id!.update({
+      "followers": FieldValue.arrayRemove([userApp!.id]),
+    });
+
+    //Actualizamos nuestra lista de seguidos en firebase
+    await userApp!.id!.update({
+      "following": FieldValue.arrayRemove([userToUnfollow.id]),
+    });
+    userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
+    following.remove(userToUnfollow);
+  }
+
+  Future<String> getProfileImageURL(String id) async {
     try {
       if (id == '') return '';
 
@@ -182,5 +214,14 @@ class UserService extends ChangeNotifier {
           .getDownloadURL();
       return storageRef.toString();
     }
+  }
+
+  Future<void> uploadImageProfile(String imgPath) async {
+    final fbStorage = FirebaseStorage.instance.ref();
+    final File file = File(imgPath);
+    final metadaData = SettableMetadata(contentType: "image/png");
+    fbStorage
+        .child("${userApp!.id!.path.split('/')[1]}/profile.png")
+        .putFile(file, metadaData);
   }
 }

@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class PostsService extends ChangeNotifier {
   List<Post> postsToShow = [];
@@ -42,7 +46,8 @@ class PostsService extends ChangeNotifier {
     List<String> postFilesUrls = [];
     try {
       for (String file in post.files!) {
-        final url = await FirebaseStorage.instance.ref(file).getDownloadURL();
+        final String url =
+            await FirebaseStorage.instance.ref(file).getDownloadURL();
         postFilesUrls.add(url.toString());
       }
       return postFilesUrls;
@@ -51,6 +56,37 @@ class PostsService extends ChangeNotifier {
       //     .ref("default_images/example.png")
       //     .getDownloadURL();
       return postFilesUrls;
+    }
+  }
+
+  Future<Widget> getPostPoster(Post post) async {
+    final FirebaseStorage fbStorage = FirebaseStorage.instance;
+    final FullMetadata metadata =
+        await fbStorage.ref(post.files![0]).getMetadata();
+    final String contentType = metadata.contentType!;
+    final String url = await fbStorage.ref(post.files![0]).getDownloadURL();
+
+    if (contentType.split("/").first == "video") {
+      final uint8list = await VideoThumbnail.thumbnailData(
+        video: url,
+        imageFormat: ImageFormat.JPEG,
+        // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        maxWidth: 0,
+        quality: 25,
+      );
+
+      final tempDir = await getTemporaryDirectory();
+      File file = await File('${tempDir.path}/${post.files![0]}')
+          .create(recursive: true);
+      file.writeAsBytesSync(uint8list!);
+
+      return Image.file(file, fit: BoxFit.cover);
+    } else {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: double.infinity,
+      );
     }
   }
 }

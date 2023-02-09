@@ -8,6 +8,7 @@ class EditProfileProvider extends ChangeNotifier {
   TextEditingController tecPhone = new TextEditingController();
   Sport? sport;
   Modality? modality;
+  ImageProvider<Object>? initialProfileImage;
 
   EditProfileProvider() {}
 

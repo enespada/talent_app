@@ -71,7 +71,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                     );
                   }
                   return Container(
-                    color: AppColors.greyscale2,
+                    color: AppColors.whiteColor,
                   );
                 },
               ),
