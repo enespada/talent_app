@@ -1,12 +1,14 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:path/path.dart' as p;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'package:talent_app/models/models.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 class PostsService extends ChangeNotifier {
   List<Post> postsToShow = [];
@@ -88,5 +90,34 @@ class PostsService extends ChangeNotifier {
         width: double.infinity,
       );
     }
+  }
+
+  Future uploadPost(Post post, List<AssetEntity> selectedImages) async {
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    //P1: Creamos el post en Firestore para obtener un id
+    final DocumentReference reference =
+        await fbFirestore.collection('posts').add(post.toJson());
+    post.id = reference.id;
+
+    //P2: Guardamos en el Storage los files del post
+    final FirebaseStorage fbStorage = FirebaseStorage.instance;
+    final Reference storageRef = fbStorage.ref();
+
+    List<String> filesList = [];
+    for (AssetEntity selectedImage in selectedImages) {
+      File file = (await selectedImage.file)!;
+      String extension = p.extension(file.path);
+
+      final Reference ref = storageRef.child(
+          '${post.userId!.id}/posts/${post.id}/file${selectedImages.indexOf(selectedImage)}$extension');
+      await ref.putFile(file);
+      filesList.add(ref.fullPath);
+    }
+
+    //P3: Guardamos las urls de los files en el post en Firestore
+    await fbFirestore.collection('posts').doc(post.id).update({
+      "files": filesList,
+    });
+    return post;
   }
 }

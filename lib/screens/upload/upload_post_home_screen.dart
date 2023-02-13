@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:talent_app/screens/upload/upload_post_description_screen.dart';
 
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/templates/templates.dart';
@@ -24,11 +25,14 @@ class UploadPostHomeScreen extends StatelessWidget {
       action: GestureDetector(
         onTap: () {
           if (selectedImages.isNotEmpty) {
-            // context.navigateTo(
-            //   UploadPostDescriptionPage(
-            //     selectedImages: selectedImages,
-            //   ),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UploadPostDescriptionScreen(
+                  selectedImages: selectedImages,
+                ),
+              ),
+            );
           }
         },
         child: const Icon(

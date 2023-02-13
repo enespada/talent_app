@@ -6,6 +6,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
 import 'package:talent_app/style/styles.dart';
+import 'package:talent_app/templates/templates.dart';
 import 'package:talent_app/utils/utils.dart';
 
 enum UploadGalleryTemplateMenu { recent, report }
@@ -32,17 +33,18 @@ class UploadGalleryTemplate extends StatefulWidget {
 
 class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   //--------------------------------Atributos----------------------------------
+  //Lista de albumes del dispositivo
+  List<AssetPathEntity> albums = [];
+  //Indice del album actual en la lista de albumes (?)
+  int indexAlbum = 0;
+  //Nombre del album a mostrar
+  String titleAlbum = "Recent";
   //Variable para controlar si se quieren mostrar imagenes, videos o ambos
   TypeFiles typeFiles = TypeFiles.Common;
   //Lista de todas las imagenes (o videos?) a mostrar
   List<AssetEntity> images = [];
   //Lista de las imagenes (y/o videos?) seleccionadas
   List<AssetEntity> selectedImages = [];
-  //Lista de albumes
-  List<AssetPathEntity> albums = [];
-  int indexAlbum = 0;
-  //Nombre del album a mostrar
-  String titleAlbum = "Recent";
   //Pagina a mostrar del album
   int page = 0;
   //Ultima imagen seleccionada, que debe ser null si no hay ninguna seleccionada
@@ -101,12 +103,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
           ),
         ),
       );
+
       if (albums.isNotEmpty) {
         images = await albums[indexAlbum].getAssetListPaged(
           page: page,
           size: 20,
         );
-
         titleAlbum = albums[indexAlbum].name;
       } else {
         images = [];
@@ -120,17 +122,6 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     listaAlbum();
     super.initState();
   }
-
-  // Future<AssetEntityImage> convertFileToImage(AssetEntity assetEntity) async {
-  //   return AssetEntityImage(
-  //     assetEntity,
-  //     fit: BoxFit.cover,
-  //     width: double.infinity,
-  //     isOriginal: false,
-  //     thumbnailSize: const ThumbnailSize.square(800),
-  //     loadingBuilder: (context, child, loadingProgress) => child,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -185,8 +176,9 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                               type: getRequestType(),
                               filterOption: FilterOptionGroup(
                                 imageOption: const FilterOption(
-                                  sizeConstraint:
-                                      SizeConstraint(ignoreSize: true),
+                                  sizeConstraint: SizeConstraint(
+                                    ignoreSize: true,
+                                  ),
                                 ),
                               ),
                             );
@@ -220,6 +212,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                           style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
                             color: AppColors.whiteColor,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Icon(
@@ -333,8 +326,6 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                           } else {
                             currentImage = null;
                           }
-                          // selectedImages.clear();
-                          // selectedImages.addAll(selectedImages);
                           setState(() {});
                         } else if (typeFiles == TypeFiles.Videos) {
                           if (selectedImages.isNotEmpty) {
@@ -372,7 +363,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       ),
 
       //------------------------todos, imagenes, videos---------------------------
-      bottomNavigatorBar: CustomButtonNavigator(
+      bottomNavigatorBar: _CustomButtonNavigator(
         onTapAll: () async {
           typeFiles = TypeFiles.Common;
           final PermissionState ps =
@@ -407,81 +398,20 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       ),
     );
   }
+
+  // Future<AssetEntityImage> convertFileToImage(AssetEntity assetEntity) async {
+  //   return AssetEntityImage(
+  //     assetEntity,
+  //     fit: BoxFit.cover,
+  //     width: double.infinity,
+  //     isOriginal: false,
+  //     thumbnailSize: const ThumbnailSize.square(800),
+  //     loadingBuilder: (context, child, loadingProgress) => child,
+  //   );
+  // }
 }
 
-class UploadTemplate extends StatefulWidget {
-  final String title;
-  final Widget action;
-  final Widget body;
-  final Widget? bottomNavigatorBar;
-
-  const UploadTemplate({
-    Key? key,
-    required this.title,
-    required this.action,
-    required this.body,
-    this.bottomNavigatorBar,
-  }) : super(key: key);
-
-  @override
-  State<UploadTemplate> createState() => _UploadTemplateState();
-}
-
-class _UploadTemplateState extends State<UploadTemplate> {
-  @override
-  Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
-        centerTitle: true,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: const Icon(
-            Icons.arrow_back,
-            color: AppColors.brandColor,
-          ),
-        ),
-        title: Text(
-          widget.title,
-          style: TextStyle(
-            color: AppColors.whiteColor,
-            fontWeight: FontWeight.bold,
-            fontSize: responsive.widthPercent(6),
-          ),
-        ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: responsive.widthPercent(3)),
-            child: widget.action,
-          )
-        ],
-      ),
-
-      //--------------------------------body----------------------------------
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              color: AppColors.blackColor,
-            ),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: widget.body,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: widget.bottomNavigatorBar ?? Container(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomButtonNavigator extends StatefulWidget {
+class _CustomButtonNavigator extends StatefulWidget {
   TypeFiles typeFiles;
   List<AssetPathEntity>? albums;
   List<AssetEntity>? images;
@@ -491,7 +421,7 @@ class CustomButtonNavigator extends StatefulWidget {
   final void Function()? onTapImages;
   final void Function()? onTapVideos;
 
-  CustomButtonNavigator({
+  _CustomButtonNavigator({
     Key? key,
     this.typeFiles = TypeFiles.Common,
     required this.albums,
@@ -504,10 +434,10 @@ class CustomButtonNavigator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomButtonNavigator> createState() => _CustomButtonNavigatorState();
+  State<_CustomButtonNavigator> createState() => _CustomButtonNavigatorState();
 }
 
-class _CustomButtonNavigatorState extends State<CustomButtonNavigator> {
+class _CustomButtonNavigatorState extends State<_CustomButtonNavigator> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
