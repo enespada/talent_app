@@ -72,7 +72,8 @@ class PostsService extends ChangeNotifier {
       final uint8list = await VideoThumbnail.thumbnailData(
         video: url,
         imageFormat: ImageFormat.JPEG,
-        // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        //Specify the width of the thumbnail, let the height auto-scaled to keep
+        //the source aspect ratio
         maxWidth: 0,
         quality: 25,
       );
@@ -118,6 +119,7 @@ class PostsService extends ChangeNotifier {
     await fbFirestore.collection('posts').doc(post.id).update({
       "files": filesList,
     });
+    post.files!.addAll(filesList);
     return post;
   }
 }

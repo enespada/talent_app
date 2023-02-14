@@ -11,19 +11,17 @@ import 'package:talent_app/utils/utils.dart';
 
 enum UploadGalleryTemplateMenu { recent, report }
 
-enum TypeFiles { Common, Images, Videos }
-
 class UploadGalleryTemplate extends StatefulWidget {
   //--------------------------------Atributos----------------------------------
   final String title;
-  final Widget action;
+  Widget? action;
   final List<AssetEntity> selectedImages;
 
   //--------------------------------Constructor--------------------------------
-  const UploadGalleryTemplate({
+  UploadGalleryTemplate({
     Key? key,
     required this.title,
-    required this.action,
+    this.action,
     required this.selectedImages,
   }) : super(key: key);
 
@@ -40,7 +38,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   //Nombre del album a mostrar
   String titleAlbum = "Recent";
   //Variable para controlar si se quieren mostrar imagenes, videos o ambos
-  TypeFiles typeFiles = TypeFiles.Common;
+  RequestType requestType = RequestType.common;
   //Lista de todas las imagenes (o videos?) a mostrar
   List<AssetEntity> images = [];
   //Lista de las imagenes (y/o videos?) seleccionadas
@@ -50,26 +48,28 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   //Ultima imagen seleccionada, que debe ser null si no hay ninguna seleccionada
   // Image? currentImage;
   AssetEntityImage? currentImage;
+  ScrollController scrollController = ScrollController();
 
   //----------------------------------Metodos-----------------------------------
-  RequestType getRequestType() {
-    RequestType requestType = RequestType.common;
-    switch (typeFiles) {
-      case TypeFiles.Common:
-        requestType = RequestType.common;
-        break;
-      case TypeFiles.Images:
-        requestType = RequestType.image;
-        break;
-      case TypeFiles.Videos:
-        requestType = RequestType.video;
-        break;
-    }
-    return requestType;
-  }
 
   //Metodo que recupera los albumes del dispositivo
+  void bringAlbumsFirstTime() async {
+    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+    if (ps.isAuth) {
+      this.albums = await PhotoManager.getAssetPathList(
+        type: RequestType.common,
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            sizeConstraint: SizeConstraint(ignoreSize: true),
+          ),
+        ),
+      );
+      setState(() {});
+    }
+  }
+
   Future<void> getAlbums(RequestType type, int indexAlbum, int page) async {
+    //Obtenemos los albumes del dispositivo
     this.albums = await PhotoManager.getAssetPathList(
       type: type,
       filterOption: FilterOptionGroup(
@@ -79,16 +79,15 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       ),
     );
 
-    if (albums.isNotEmpty) {
-      images = await albums[indexAlbum].getAssetListPaged(
-        page: page,
-        size: 20,
-      );
-      titleAlbum = albums[indexAlbum].name;
+    if (this.albums.isNotEmpty) {
+      this.images = await this.albums[indexAlbum].getAssetListPaged(
+            page: page,
+            size: 20,
+          );
+      this.titleAlbum = this.albums[indexAlbum].name;
     } else {
-      images = [];
+      this.images = [];
     }
-
     setState(() {});
   }
 
@@ -119,6 +118,14 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 
   @override
   void initState() {
+    selectedImages = widget.selectedImages;
+    scrollController.addListener(() {
+      if ((scrollController.position.pixels + 200) >=
+          scrollController.position.maxScrollExtent) {
+        //TODO: Traer mas images del album
+        // _explorerViewModel.getPosts(listPublications, 20);
+      }
+    });
     listaAlbum();
     super.initState();
   }
@@ -129,14 +136,14 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 
     return UploadTemplate(
       title: widget.title,
-      action: widget.action,
+      action: widget.action ?? const Text('data'),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //-------------------------Foto seleccionada--------------------------
           Container(
             margin: EdgeInsets.only(bottom: responsive.heightPercent(5)),
-            height: responsive.heightPercent(45),
+            height: responsive.heightPercent(40),
             child: (currentImage == null)
                 ? Container(color: Colors.grey.withOpacity(0.3))
                 : currentImage,
@@ -173,7 +180,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                               await PhotoManager.requestPermissionExtend();
                           if (ps.isAuth) {
                             albums = await PhotoManager.getAssetPathList(
-                              type: getRequestType(),
+                              type: requestType,
                               filterOption: FilterOptionGroup(
                                 imageOption: const FilterOption(
                                   sizeConstraint: SizeConstraint(
@@ -264,7 +271,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
               ),
               children: [
                 //----------------------------Camara-----------------------------------
-                if (typeFiles != TypeFiles.Videos)
+                if (requestType != RequestType.video)
                   GestureDetector(
                     onTap: () async {
                       final ImagePicker _picker = ImagePicker();
@@ -311,8 +318,8 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                         } else {
                           selectedImages.add(image);
                         }
-                        if (typeFiles == TypeFiles.Common ||
-                            typeFiles == TypeFiles.Images) {
+                        if (requestType == RequestType.common ||
+                            requestType == RequestType.image) {
                           if (selectedImages.isNotEmpty) {
                             currentImage = AssetEntityImage(
                               selectedImages[selectedImages.length - 1],
@@ -327,7 +334,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                             currentImage = null;
                           }
                           setState(() {});
-                        } else if (typeFiles == TypeFiles.Videos) {
+                        } else if (requestType == RequestType.video) {
                           if (selectedImages.isNotEmpty) {
                             currentImage = AssetEntityImage(
                               selectedImages[selectedImages.length - 1],
@@ -365,7 +372,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       //------------------------todos, imagenes, videos---------------------------
       bottomNavigatorBar: _CustomButtonNavigator(
         onTapAll: () async {
-          typeFiles = TypeFiles.Common;
+          requestType = RequestType.common;
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
@@ -373,7 +380,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
           }
         },
         onTapImages: () async {
-          typeFiles = TypeFiles.Images;
+          requestType = RequestType.image;
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
@@ -382,7 +389,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
           }
         },
         onTapVideos: () async {
-          typeFiles = TypeFiles.Videos;
+          requestType = RequestType.video;
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
@@ -390,7 +397,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
             setState(() {});
           }
         },
-        typeFiles: typeFiles,
+        requestType: requestType,
         albums: albums,
         images: images,
         indexAlbum: 0,
@@ -412,7 +419,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 }
 
 class _CustomButtonNavigator extends StatefulWidget {
-  TypeFiles typeFiles;
+  RequestType requestType;
   List<AssetPathEntity>? albums;
   List<AssetEntity>? images;
   int page;
@@ -423,7 +430,7 @@ class _CustomButtonNavigator extends StatefulWidget {
 
   _CustomButtonNavigator({
     Key? key,
-    this.typeFiles = TypeFiles.Common,
+    this.requestType = RequestType.common,
     required this.albums,
     this.images,
     this.page = 0,
@@ -463,14 +470,14 @@ class _CustomButtonNavigatorState extends State<_CustomButtonNavigator> {
             onTap: widget.onTapAll,
             child: Text(
               'todos',
-              style: TextStyle(
-                color: (widget.typeFiles == TypeFiles.Common)
-                    ? AppColors.brandColor
-                    : AppColors.coinGrey,
-                fontWeight: (widget.typeFiles == TypeFiles.Common)
+              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(2),
+                fontWeight: (widget.requestType == RequestType.common)
                     ? FontWeight.bold
                     : FontWeight.normal,
-                fontSize: responsive.widthPercent(4),
+                color: (widget.requestType == RequestType.common)
+                    ? AppColors.blueColor
+                    : AppColors.greyscale1,
               ),
             ),
           ),
@@ -478,14 +485,14 @@ class _CustomButtonNavigatorState extends State<_CustomButtonNavigator> {
             onTap: widget.onTapImages,
             child: Text(
               'imágenes',
-              style: TextStyle(
-                color: (widget.typeFiles == TypeFiles.Images)
-                    ? AppColors.brandColor
-                    : AppColors.coinGrey,
-                fontWeight: (widget.typeFiles == TypeFiles.Images)
+              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(2),
+                fontWeight: (widget.requestType == RequestType.image)
                     ? FontWeight.bold
                     : FontWeight.normal,
-                fontSize: responsive.widthPercent(4),
+                color: (widget.requestType == RequestType.image)
+                    ? AppColors.blueColor
+                    : AppColors.greyscale1,
               ),
             ),
           ),
@@ -493,14 +500,14 @@ class _CustomButtonNavigatorState extends State<_CustomButtonNavigator> {
             onTap: widget.onTapVideos,
             child: Text(
               'vídeos',
-              style: TextStyle(
-                color: (widget.typeFiles == TypeFiles.Videos)
-                    ? AppColors.brandColor
-                    : AppColors.coinGrey,
-                fontWeight: (widget.typeFiles == TypeFiles.Videos)
+              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(2),
+                fontWeight: (widget.requestType == RequestType.video)
                     ? FontWeight.bold
                     : FontWeight.normal,
-                fontSize: responsive.widthPercent(4),
+                color: (widget.requestType == RequestType.video)
+                    ? AppColors.blueColor
+                    : AppColors.greyscale1,
               ),
             ),
           ),

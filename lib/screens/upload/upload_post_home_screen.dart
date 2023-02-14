@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:talent_app/screens/upload/upload_post_description_screen.dart';
 
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/templates/templates.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -21,7 +21,6 @@ class UploadPostHomeScreen extends StatelessWidget {
     return UploadGalleryTemplate(
       title: Localization.of(context).string('upload_new_post'),
       selectedImages: selectedImages,
-      // type: ButtonType.common,
       action: GestureDetector(
         onTap: () {
           if (selectedImages.isNotEmpty) {
@@ -35,10 +34,7 @@ class UploadPostHomeScreen extends StatelessWidget {
             );
           }
         },
-        child: const Icon(
-          Icons.arrow_forward,
-          color: AppColors.brandColor,
-        ),
+        child: const Icon(Icons.arrow_forward, color: AppColors.blueColor),
       ),
     );
   }

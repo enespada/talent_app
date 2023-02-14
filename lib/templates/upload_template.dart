@@ -32,24 +32,21 @@ class _UploadTemplateState extends State<UploadTemplate> {
         centerTitle: true,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: const Icon(
-            Icons.arrow_back,
-            color: AppColors.brandColor,
-          ),
+          child: const Icon(Icons.arrow_back, color: AppColors.blueColor),
         ),
         title: Text(
           widget.title,
-          style: TextStyle(
-            color: AppColors.whiteColor,
+          style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+            fontSize: responsive.diagonalPercent(3),
             fontWeight: FontWeight.bold,
-            fontSize: responsive.widthPercent(6),
+            color: AppColors.whiteColor,
           ),
         ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: responsive.widthPercent(3)),
             child: widget.action,
-          )
+          ),
         ],
       ),
 
@@ -57,9 +54,7 @@ class _UploadTemplateState extends State<UploadTemplate> {
       body: SafeArea(
         child: Stack(
           children: [
-            Container(
-              color: AppColors.blackColor,
-            ),
+            Container(color: AppColors.blackColor),
             SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: widget.body,

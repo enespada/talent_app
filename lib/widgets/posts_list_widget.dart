@@ -13,8 +13,8 @@ class PostsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-    final PostsService postsService = Provider.of<PostsService>(context);
+    // final Responsive responsive = Responsive.of(context);
+    // final PostsService postsService = Provider.of<PostsService>(context);
 
     return ListView.builder(
       physics: const BouncingScrollPhysics(),

@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/screens/profile/profile_screen.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -159,23 +160,27 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      //---------------------Nombre usuario y flecha atras----------------------
+      appBar: CustomAppBar(
+        title: userService.userApp!.fullName!,
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          fontSize: responsive.diagonalPercent(3),
+          fontWeight: FontWeight.w700,
+          color: AppColors.greyscale5,
+        ),
+        iconColor: AppColors.blueColor,
+        onTap: () => Navigator.pushReplacementNamed(
+          context,
+          ProfileScreen.routeName,
+        ),
+      ),
       //-------------------------------body-------------------------------------
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
-                //-----------------Nombre usuario y flecha atras-------------------
-                CustomAppBar(
-                  title: userService.userApp!.fullName!,
-                  style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                    fontSize: responsive.diagonalPercent(3),
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.greyscale5,
-                  ),
-                  iconColor: AppColors.blueColor,
-                ),
-                SizedBox(height: responsive.heightPercent(2)),
+                SizedBox(height: responsive.heightPercent(1)),
 
                 //---------------------Filtros de busqueda----------------------
                 Padding(
@@ -356,14 +361,8 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                   onPressed: (isFollowing)
                                       ? () async {
                                           //Opcion Siguiendo
-                                          // await _viewModel
-                                          //     .unfollow(usersToShow[index]);
                                           await userService
                                               .unfollow(usersToShow[index]);
-                                          // await Future.delayed(
-                                          //     const Duration(seconds: 2));
-                                          // await _viewModel.getUser();
-                                          // await userService.getFollowing();
                                           changeFollow();
                                           setState(() {});
                                         }
@@ -441,7 +440,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
               ),
             ),
             actionsAlignment: MainAxisAlignment.end,
-            backgroundColor: AppColors.darkGrey,
+            backgroundColor: AppColors.greyscale5,
             content: Text(
               Localization.of(context).string("wall_followers_message",
                   params: [followerToRemove.fullName!]),
@@ -494,15 +493,13 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
               MaterialButton(
                 onPressed: () => onPressedDialogX(context, followerToRemove),
                 elevation: 0.0,
-                textColor: AppColors.mediunLightGrey,
+                textColor: AppColors.greyscale2,
                 child: Text(
                   Localization.of(context).string("wall_followers_yes"),
                 ),
               ),
               MaterialButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 elevation: 5,
                 textColor: AppColors.brandColor,
                 child: Text(

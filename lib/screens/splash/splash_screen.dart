@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
+import 'package:talent_app/style/styles.dart';
 
 class SplashScreen extends StatelessWidget {
   static const String routeName = 'splash_screen';
@@ -16,7 +17,7 @@ class SplashScreen extends StatelessWidget {
         future: checkLoginState(context),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: AppColors.blueColor),
           );
         },
       ),

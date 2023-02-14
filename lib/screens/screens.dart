@@ -21,3 +21,5 @@ export 'package:talent_app/screens/profile/settings_screen.dart';
 export 'package:talent_app/screens/splash/splash_screen.dart';
 
 //upload
+export 'package:talent_app/screens/upload/upload_post_home_screen.dart';
+export 'package:talent_app/screens/upload/upload_post_description_screen.dart';

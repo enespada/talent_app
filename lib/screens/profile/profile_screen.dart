@@ -102,8 +102,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         Localization.of(context).string('wall_home_title'),
                         style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(3.5),
+                          fontSize: responsive.diagonalPercent(3),
                           fontWeight: FontWeight.bold,
+                          color: AppColors.greyscale5,
                         ),
                       ),
                       // GestureDetector(
@@ -335,8 +336,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       //--------------------------Posts--------------------------
                       GestureDetector(
-                        // onTap: () => context
-                        //     .navigateTo(const WallPublishedImagesPage()),
                         child: Column(
                           children: [
                             Text(
