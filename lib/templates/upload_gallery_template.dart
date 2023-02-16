@@ -52,23 +52,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 
   //----------------------------------Metodos-----------------------------------
 
-  //Metodo que recupera los albumes del dispositivo
-  void bringAlbumsFirstTime() async {
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
-    if (ps.isAuth) {
-      this.albums = await PhotoManager.getAssetPathList(
-        type: RequestType.common,
-        filterOption: FilterOptionGroup(
-          imageOption: const FilterOption(
-            sizeConstraint: SizeConstraint(ignoreSize: true),
-          ),
-        ),
-      );
-      setState(() {});
-    }
-  }
-
-  Future<void> getAlbums(RequestType type, int indexAlbum, int page) async {
+  Future<void> getAlbums(RequestType type) async {
     //Obtenemos los albumes del dispositivo
     this.albums = await PhotoManager.getAssetPathList(
       type: type,
@@ -91,7 +75,8 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     setState(() {});
   }
 
-  void listaAlbum() async {
+  //Metodo que recupera los albumes del dispositivo
+  void bringAlbums() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth) {
       albums = await PhotoManager.getAssetPathList(
@@ -103,14 +88,14 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
         ),
       );
 
-      if (albums.isNotEmpty) {
-        images = await albums[indexAlbum].getAssetListPaged(
-          page: page,
-          size: 20,
-        );
-        titleAlbum = albums[indexAlbum].name;
+      if (this.albums.isNotEmpty) {
+        this.images = await this.albums[this.indexAlbum].getAssetListPaged(
+              page: page,
+              size: 20,
+            );
+        this.titleAlbum = this.albums[this.indexAlbum].name;
       } else {
-        images = [];
+        this.images = [];
       }
       setState(() {});
     }
@@ -126,7 +111,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
         // _explorerViewModel.getPosts(listPublications, 20);
       }
     });
-    listaAlbum();
+    bringAlbums();
     super.initState();
   }
 
@@ -283,7 +268,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                         await GallerySaver.saveImage(photo.path);
                       }
                       //Para que se vuelvan a coger las imagenes que se muestran del album hacemos
-                      listaAlbum();
+                      bringAlbums();
                       setState(() {});
                     },
                     child: Container(
@@ -370,13 +355,13 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       ),
 
       //------------------------todos, imagenes, videos---------------------------
-      bottomNavigatorBar: _CustomButtonNavigator(
+      bottomNavigatorBar: _AllImagesVideosSelector(
         onTapAll: () async {
           requestType = RequestType.common;
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
-            await getAlbums(RequestType.common, indexAlbum, page);
+            await getAlbums(RequestType.common);
           }
         },
         onTapImages: () async {
@@ -384,7 +369,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
-            await getAlbums(RequestType.image, indexAlbum, page);
+            await getAlbums(RequestType.image);
             setState(() {});
           }
         },
@@ -393,7 +378,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
           final PermissionState ps =
               await PhotoManager.requestPermissionExtend();
           if (ps.isAuth) {
-            await getAlbums(RequestType.video, indexAlbum, page);
+            await getAlbums(RequestType.video);
             setState(() {});
           }
         },
@@ -418,7 +403,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   // }
 }
 
-class _CustomButtonNavigator extends StatefulWidget {
+class _AllImagesVideosSelector extends StatefulWidget {
   RequestType requestType;
   List<AssetPathEntity>? albums;
   List<AssetEntity>? images;
@@ -428,7 +413,7 @@ class _CustomButtonNavigator extends StatefulWidget {
   final void Function()? onTapImages;
   final void Function()? onTapVideos;
 
-  _CustomButtonNavigator({
+  _AllImagesVideosSelector({
     Key? key,
     this.requestType = RequestType.common,
     required this.albums,
@@ -441,10 +426,11 @@ class _CustomButtonNavigator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<_CustomButtonNavigator> createState() => _CustomButtonNavigatorState();
+  State<_AllImagesVideosSelector> createState() =>
+      _AllImagesVideosSelectorState();
 }
 
-class _CustomButtonNavigatorState extends State<_CustomButtonNavigator> {
+class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
