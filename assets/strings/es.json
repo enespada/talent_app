@@ -163,5 +163,7 @@
   "wall_settings_logOut": "Cerrar sesión",
   "wall_settings_policy": "Avisos legales",
   "wall_settings_title": "Ajustes",
-  "posts_screen_my_posts": "Mis posts"
+  "posts_screen_my_posts": "Mis posts",
+  "home_screen_title": "Posts",
+  "chats_screen_title": "Chats"
 }

@@ -186,7 +186,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             title: Localization.of(context).string('sign_in'),
                             backgroundDisabled: AppColors.greyscale1,
                             foregroundDisabled: AppColors.greyscale4,
-                            onPressed: (_isValidEmail && _isValidPwd)
+                            onPressed: (_isValidEmail &&
+                                    _isValidPwd &&
+                                    !authService.isLoading)
                                 ? () async {
                                     bool loginOK = await authService.login(
                                         _tecEmail.text, _tecPassword.text);

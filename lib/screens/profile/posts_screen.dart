@@ -24,7 +24,14 @@ class PostsScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: AppColors.greyscale5,
         ),
-        iconColor: AppColors.blueColor,
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Icon(
+            Icons.arrow_back,
+            color: AppColors.blueColor,
+            size: responsive.heightPercent(3),
+          ),
+        ),
       ),
       body: SafeArea(
         child: PostsListWidget(posts: userService.userPosts),

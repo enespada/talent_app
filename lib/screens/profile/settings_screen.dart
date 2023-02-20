@@ -55,7 +55,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackColor,
                     ),
-                    iconColor: AppColors.brandColor,
+                    leading: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.blueColor,
+                        size: responsive.heightPercent(3),
+                      ),
+                    ),
                   ),
                   SizedBox(height: responsive.heightPercent(6)),
 

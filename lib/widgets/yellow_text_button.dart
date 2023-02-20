@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/styles.dart';
 import '../utils/utils.dart';
 
 class YellowTextButton extends StatelessWidget {
@@ -29,16 +30,13 @@ class YellowTextButton extends StatelessWidget {
         backgroundColor: AppColors.yellowColor,
         foregroundColor: AppColors.greyscale5,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(25),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
       ),
       onPressed: onPressed,
       child: Text(
         title,
-        // style: AppStyles.ligthTextTheme.labelLarge,
-        style: TextStyle(
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
           color: AppColors.greyscale5,
           fontSize: responsive.widthPercent(5),
           fontWeight: FontWeight.bold,

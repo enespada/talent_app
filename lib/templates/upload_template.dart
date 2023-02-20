@@ -55,10 +55,7 @@ class _UploadTemplateState extends State<UploadTemplate> {
         child: Stack(
           children: [
             Container(color: AppColors.blackColor),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: widget.body,
-            ),
+            widget.body,
             Align(
               alignment: Alignment.bottomCenter,
               child: widget.bottomNavigatorBar ?? Container(),

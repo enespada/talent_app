@@ -1,17 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:talent_app/models/models.dart';
 
 class AuthService extends ChangeNotifier {
   UserApp? userApp;
-  bool loading = false;
+  bool isLoading = false;
 
   Future<bool> login(String user, String password) async {
-    if (loading) return false;
-    loading = true;
+    if (isLoading) return false;
+    isLoading = true;
     notifyListeners();
     try {
       final UserCredential userCredential =
@@ -23,11 +22,11 @@ class AuthService extends ChangeNotifier {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'acces_token', value: token);
 
-      loading = false;
+      isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      loading = false;
+      isLoading = false;
       notifyListeners();
       return false;
     }

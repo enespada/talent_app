@@ -91,7 +91,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     fontSize: responsive.diagonalPercent(3.5),
                     fontWeight: FontWeight.bold,
                   ),
-                  iconColor: AppColors.blueColor,
+                  leading: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.blueColor,
+                      size: responsive.heightPercent(3),
+                    ),
+                  ),
                 ),
 
                 //-----------------------Info mi perfil-------------------------

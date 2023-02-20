@@ -168,10 +168,16 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
           fontWeight: FontWeight.w700,
           color: AppColors.greyscale5,
         ),
-        iconColor: AppColors.blueColor,
-        onTap: () => Navigator.pushReplacementNamed(
-          context,
-          ProfileScreen.routeName,
+        leading: GestureDetector(
+          onTap: () => Navigator.pushReplacementNamed(
+            context,
+            ProfileScreen.routeName,
+          ),
+          child: Icon(
+            Icons.arrow_back,
+            color: AppColors.blueColor,
+            size: responsive.heightPercent(3),
+          ),
         ),
       ),
       //-------------------------------body-------------------------------------
@@ -298,7 +304,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                           title: Text(
                             usersToShow[index].fullName!,
                             style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.darkGrey,
+                              color: AppColors.greyscale5,
                               fontSize: responsive.widthPercent(4),
                               fontWeight: FontWeight.w700,
                               overflow: TextOverflow.ellipsis,

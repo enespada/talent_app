@@ -23,80 +23,32 @@ class _HomeScreenState extends State<HomeScreen> {
   String homeAppBarTitle = '';
   HomeMenuOption _selectedHomeMenuOption = HomeMenuOption.publications;
   final pageController = PageController();
-  // late SharedPreferences pref;
   bool _isAthlete = false;
 
   @override
   void initState() {
-    // _inicializeSharedPreferences();
     super.initState();
   }
-
-  // void _inicializeSharedPreferences() async {
-  //   pref = await SharedPreferences.getInstance();
-  //   (pref.getString('athleteType') == 'athlete')
-  //       ? _isAthlete = true
-  //       : _isAthlete = false;
-  //   print(_isAthlete);
-  //   setState(() {});
-  // }
 
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final PostsService postsService = Provider.of<PostsService>(context);
 
-    if (_selectedHomeMenuOption == HomeMenuOption.publications) {
-      homeAppBarTitle = Localization.of(context).string('publications_title');
-    }
-    if (_selectedHomeMenuOption == HomeMenuOption.challenges) {
-      homeAppBarTitle = Localization.of(context).string('challenges_title');
-    }
-
-    final List<Widget> pages = [
-      PostsListWidget(posts: postsService.postsToShow),
-      // const ChallengesPage(),
-      Container(color: Colors.green),
-    ];
-
     return Scaffold(
-      backgroundColor: AppColors.greyscale0,
+      //--------------------------------appBar------------------------------------
+      appBar: CustomAppBar(
+        title: Localization.of(context).string("home_screen_title"),
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          fontSize: responsive.diagonalPercent(3),
+          fontWeight: FontWeight.bold,
+          color: AppColors.greyscale5,
+        ),
+      ),
+
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: Column(
-          children: [
-            //----------------------------Dropdown-------------------------------
-            _HomeAppBar(
-              title: homeAppBarTitle,
-              isAthlete: _isAthlete,
-              onSelected: (HomeMenuOption hmo) {
-                if (_selectedHomeMenuOption == hmo) return;
-                _selectedHomeMenuOption = hmo;
-                if (hmo == HomeMenuOption.publications) {
-                  homeAppBarTitle =
-                      Localization.of(context).string('publications_title');
-                  pageController.jumpToPage(0);
-                }
-                if (hmo == HomeMenuOption.challenges) {
-                  homeAppBarTitle =
-                      Localization.of(context).string('challenges_title');
-                  pageController.jumpToPage(1);
-                }
-                setState(() {});
-              },
-            ),
-            SizedBox(height: responsive.heightPercent(2)),
-
-            //----------------------Publicaciones o retos-----------------------
-            Expanded(
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: pageController,
-                children: pages,
-              ),
-            ),
-          ],
-        ),
+        child: PostsListWidget(posts: postsService.postsToShow),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------
@@ -104,6 +56,65 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedIndex: 0,
       ),
     );
+
+    // if (_selectedHomeMenuOption == HomeMenuOption.publications) {
+    //   homeAppBarTitle = Localization.of(context).string('publications_title');
+    // }
+    // if (_selectedHomeMenuOption == HomeMenuOption.challenges) {
+    //   homeAppBarTitle = Localization.of(context).string('challenges_title');
+    // }
+
+    // final List<Widget> pages = [
+    //   PostsListWidget(posts: postsService.postsToShow),
+    //   // const ChallengesPage(),
+    //   Container(color: Colors.green),
+    // ];
+
+    // return Scaffold(
+    //   backgroundColor: AppColors.greyscale0,
+    //   //--------------------------------body------------------------------------
+    //   body: SafeArea(
+    //     child: Column(
+    //       children: [
+    //         //----------------------------Dropdown-------------------------------
+    //         _HomeAppBar(
+    //           title: homeAppBarTitle,
+    //           isAthlete: _isAthlete,
+    //           onSelected: (HomeMenuOption hmo) {
+    //             if (_selectedHomeMenuOption == hmo) return;
+    //             _selectedHomeMenuOption = hmo;
+    //             if (hmo == HomeMenuOption.publications) {
+    //               homeAppBarTitle =
+    //                   Localization.of(context).string('publications_title');
+    //               pageController.jumpToPage(0);
+    //             }
+    //             if (hmo == HomeMenuOption.challenges) {
+    //               homeAppBarTitle =
+    //                   Localization.of(context).string('challenges_title');
+    //               pageController.jumpToPage(1);
+    //             }
+    //             setState(() {});
+    //           },
+    //         ),
+    //         SizedBox(height: responsive.heightPercent(2)),
+
+    //         //----------------------Publicaciones o retos-----------------------
+    //         Expanded(
+    //           child: PageView(
+    //             physics: const NeverScrollableScrollPhysics(),
+    //             controller: pageController,
+    //             children: pages,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+
+    //   //----------------------CustomBottomNavigationBar--------------------------
+    //   bottomNavigationBar: const CustomBottomNavigationBar(
+    //     selectedIndex: 0,
+    //   ),
+    // );
   }
 }
 

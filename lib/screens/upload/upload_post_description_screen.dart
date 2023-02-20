@@ -168,72 +168,75 @@ class _UploadPostDescriptionScreenState
             ),
           ),
         ),
-        body: Column(
-          children: [
-            //----------------------Carrusel de imagenes-------------------------
-            CarouselImages(
-              assetEntities: widget.selectedImages,
-              images: null,
-            ),
-
-            //---------------------------Widgets---------------------------------
-            Container(
-              padding: const EdgeInsets.only(top: 20, left: 25, right: 25),
-              width: responsive.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //-----------------------Descripcion---------------------------
-                  TextField(
-                    controller: tecDescription,
-                    cursorColor: AppColors.greyscale2,
-                    style: AppStyles.darkTextTheme.bodyLarge,
-                    cursorWidth: 3,
-                    decoration: InputDecoration(
-                      hintText: Localization.of(context)
-                          .string('upload_description_description'),
-                      hintStyle: AppStyles.darkTextTheme.bodyLarge,
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  SizedBox(height: responsive.heightPercent(3.5)),
-                  const Divider(height: 4, color: AppColors.greyscale3),
-                  SizedBox(height: responsive.heightPercent(3.5)),
-
-                  //----------------------Ubicacion-----------------------------
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     _addLocation();
-                  //   },
-                  //   child: Container(
-                  //     padding: const EdgeInsets.symmetric(vertical: 10),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         Text(
-                  //           Localization.of(context)
-                  //               .string('upload_description_add_ubication'),
-                  //           style: AppStyles.darkTextTheme.bodyLarge,
-                  //         ),
-                  //         const Icon(
-                  //           Icons.arrow_forward_ios,
-                  //           color: AppColors.mediunLightGrey,
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: responsive.heightPercent(1.5)),
-                  // Wrap(
-                  //   alignment: WrapAlignment.start,
-                  //   spacing: 10,
-                  //   children: _ubications,
-                  // ),
-                  // SizedBox(height: responsive.heightPercent(3.5)),
-                ],
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              //----------------------Carrusel de imagenes-------------------------
+              CarouselImages(
+                assetEntities: widget.selectedImages,
+                images: null,
               ),
-            ),
-          ],
+
+              //---------------------------Widgets---------------------------------
+              Container(
+                padding: const EdgeInsets.only(top: 20, left: 25, right: 25),
+                width: responsive.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //-----------------------Descripcion---------------------------
+                    TextField(
+                      controller: tecDescription,
+                      cursorColor: AppColors.greyscale2,
+                      style: AppStyles.darkTextTheme.bodyLarge,
+                      cursorWidth: 3,
+                      decoration: InputDecoration(
+                        hintText: Localization.of(context)
+                            .string('upload_description_description'),
+                        hintStyle: AppStyles.darkTextTheme.bodyLarge,
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    SizedBox(height: responsive.heightPercent(3.5)),
+                    const Divider(height: 4, color: AppColors.greyscale3),
+                    SizedBox(height: responsive.heightPercent(3.5)),
+
+                    //----------------------Ubicacion-----------------------------
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     _addLocation();
+                    //   },
+                    //   child: Container(
+                    //     padding: const EdgeInsets.symmetric(vertical: 10),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Text(
+                    //           Localization.of(context)
+                    //               .string('upload_description_add_ubication'),
+                    //           style: AppStyles.darkTextTheme.bodyLarge,
+                    //         ),
+                    //         const Icon(
+                    //           Icons.arrow_forward_ios,
+                    //           color: AppColors.mediunLightGrey,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: responsive.heightPercent(1.5)),
+                    // Wrap(
+                    //   alignment: WrapAlignment.start,
+                    //   spacing: 10,
+                    //   children: _ubications,
+                    // ),
+                    // SizedBox(height: responsive.heightPercent(3.5)),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

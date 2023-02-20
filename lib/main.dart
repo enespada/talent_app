@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SearchService()),
         ChangeNotifierProvider(create: (context) => SportsService()),
         ChangeNotifierProvider(create: (context) => ModalitiesService()),
+        ChangeNotifierProvider(create: (context) => ChatsService()),
         ChangeNotifierProvider(create: (context) => PostsService()),
         ChangeNotifierProvider(create: (context) => EditProfileProvider()),
       ],
@@ -51,6 +52,8 @@ class MyApp extends StatelessWidget {
         ],
         initialRoute: SplashScreen.routeName,
         routes: {
+          //chats
+          ChatsScreen.routeName: (context) => const ChatsScreen(),
           //explorer
           ExplorerScreen.routeName: (context) => ExplorerScreen(),
           //home

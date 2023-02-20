@@ -33,6 +33,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
     final PostsService postsService = Provider.of<PostsService>(context);
+    final ChatsService chatsService = Provider.of<ChatsService>(context);
 
     return SizedBox(
       height: 60,
@@ -161,7 +162,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
               break;
             case 3:
               // context.navigatePopReplacing(MessagesHomePage());
-              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+              if (chatsService.chats == null)
+                await chatsService.getUserChats(userService.userApp!);
+              Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
               break;
             case 4:
               // context.navigatePopReplacing(const WallHomePage());

@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: numSlides, vsync: this);
+    this.controller = TabController(length: numSlides, vsync: this);
   }
 
   @override
@@ -48,7 +48,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 physics: const ClampingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 onPageChanged: (selectedPage) {
-                  DefaultTabController.of(context)?.index = selectedPage;
                   controller?.index = selectedPage;
                   setState(() {});
                 },
