@@ -1,80 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
-import 'package:talent_app/widgets/talent_card.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-enum MessagesHomeMenu { example1, example2 }
+// enum MessagesHomeMenu { example1, example2 }
 
-enum MessagesHomeChatMenu { markRead, delete }
+// enum MessagesHomeChatMenu { markRead, delete }
 
-List<Map<String, dynamic>>? _chatObjects;
-
-class ChatsScreen extends StatefulWidget {
+class ChatsScreen extends StatelessWidget {
   static const String routeName = 'chats_screen';
 
   const ChatsScreen({Key? key}) : super(key: key);
 
   @override
-  State<ChatsScreen> createState() => _ChatsScreenState();
-}
-
-class _ChatsScreenState extends State<ChatsScreen> {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final TextEditingController searchFieldController = TextEditingController();
-  // final _chatViewModel = inject<ChatViewModel>();
-  // final _userViewModel = inject<UserViewModel>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    searchFieldController.addListener(() {
-      setState(() {});
-    });
-
-    // _userViewModel.getUserListState.stream.listen((state) {
-    //   switch (state.status) {
-    //     case Status.LOADING:
-    //       LoadingOverlay.of(context).show();
-    //       break;
-    //     case Status.COMPLETED:
-    //       LoadingOverlay.of(context).hide();
-    //       users = state.data;
-    //       setState(() {});
-    //       break;
-    //     case Status.ERROR:
-    //       LoadingOverlay.of(context).hide();
-    //       ErrorOverlay.of(context).show(state.error);
-    //       break;
-    //     default:
-    //       LoadingOverlay.of(context).hide();
-    //       break;
-    //   }
-    // });
-
-    // _chatViewModel.removeChatState.stream.listen((state) {
-    //   if (state.status == Status.COMPLETED) {
-    //     setState(() {});
-    //   }
-    // });
-
-    // _userViewModel.getUserList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final UserService userService = Provider.of<UserService>(context);
+    final ChatsService chatsService = Provider.of<ChatsService>(context);
+
+    Widget body;
+
+    if (chatsService.isLoadingChats) {
+      body = const Center(
+        child: CircularProgressIndicator(color: AppColors.blueColor),
+      );
+    } else {
+      body = ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: chatsService.chats!.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: ChatWidget(chat: chatsService.chats![index]),
+          );
+        },
+      );
+    }
 
     return Scaffold(
-      backgroundColor: AppColors.greyscale0,
+      // backgroundColor: AppColors.greyscale0,
 
       //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
@@ -86,15 +56,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
       //--------------------------------body----------------------------------
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ChatsListWidget(
-                  // users: users,
-                  ),
-            ),
-          ],
-        ),
+        // child: ChatsListWidget(),
+        child: body,
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------
@@ -103,92 +66,43 @@ class _ChatsScreenState extends State<ChatsScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    // _chatViewModel.dispose();
-    // _userViewModel.dispose();
-    super.dispose();
-  }
 }
 
-class ChatsListWidget extends StatefulWidget {
-  const ChatsListWidget({
-    Key? key,
-    // required this.viewModel,
-    // required this.searchFieldController,
-  }) : super(key: key);
+// class ChatsListWidget extends StatelessWidget {
+//   const ChatsListWidget({
+//     Key? key,
+//   }) : super(key: key);
 
-  // final ChatViewModel viewModel;
-  // final TextEditingController searchFieldController;
+//   @override
+//   Widget build(BuildContext context) {
+//     final Responsive responsive = Responsive.of(context);
+//     final ChatsService chatsService = Provider.of<ChatsService>(context);
 
-  @override
-  State<ChatsListWidget> createState() => _ChatsListWidgetState();
-}
-
-class _ChatsListWidgetState extends State<ChatsListWidget> {
-  @override
-  void initState() {
-    super.initState();
-    // widget.viewModel.fetchChatList();
-    // widget.viewModel.chatListState.stream.listen((state) {
-    //   if (state.status == Status.COMPLETED) {
-    //     _chatObjects = state.data;
-    //     setState(() {});
-    //   }
-    // });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-    final ChatsService chatsService = Provider.of<ChatsService>(context);
-
-    return Container(
-      padding: EdgeInsets.only(
-        top: responsive.heightPercent(2),
-        left: responsive.widthPercent(4),
-        right: responsive.widthPercent(4),
-      ),
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: chatsService.chats!.length,
-        itemBuilder: (BuildContext context, int index) {
-          final item = chatsService.chats![index];
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ChatWidget(
-                // chatObject: item,
-                // user: getContactUser(item),
-                // viewModel: widget.viewModel,
-                ),
-          );
-        },
-      ),
-    );
-  }
-
-  DocumentSnapshot? getContactUser(Map<String, dynamic> chat) {
-    // final currentUser = UserViewModel.user;
-
-    // final chatUserId = (chat['users'] as List).firstWhereOrNull(
-    //     (element) => element != UserViewModel.userData?.reference);
-
-    // return widget.users
-    //     .firstWhereOrNull((element) => element?.reference == chatUserId);
-  }
-}
+//     if (chatsService.isLoading) {
+//       return const Center(
+//         child: CircularProgressIndicator(color: AppColors.blueColor),
+//       );
+//     } else {
+//       return ListView.builder(
+//         physics: const BouncingScrollPhysics(),
+//         itemCount: chatsService.chats!.length,
+//         itemBuilder: (BuildContext context, int index) {
+//           return Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+//             child: ChatWidget(chat: chatsService.chats![index]),
+//           );
+//         },
+//       );
+//     }
+//   }
+// }
 
 class ChatWidget extends StatefulWidget {
-  final Map<String, dynamic>? chatObject;
-  final DocumentSnapshot? user;
-  // final ChatViewModel viewModel;
+  final Chat chat;
 
   const ChatWidget({
     Key? key,
-    this.chatObject,
-    this.user,
-    // required this.viewModel,
+    required this.chat,
   }) : super(key: key);
 
   @override
@@ -200,106 +114,79 @@ class _ChatWidgetState extends State<ChatWidget> {
   final int newMessagesNumber = 0;
   final bool isOnline = false;
   // If true : Online icon bottom right
-  final bool sent = false;
   UserApp? userApp;
+
+  Future bringUser(UserService userService) async {
+    //Si es un grupo (widget.chat.users!.length > 2)
+    if (widget.chat.name != null) {
+      //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
+    } else {
+      for (DocumentReference userId in widget.chat.users!) {
+        if (userId != userService.userApp) {
+          // userApp = await userId.get();
+          userId.get().then((DocumentSnapshot<Object?> value) {
+            userApp = UserApp.fromJson(value.data() as Map<String, dynamic>);
+            setState(() {});
+            return;
+          });
+          break;
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final UserService userService =
+          Provider.of<UserService>(context, listen: false);
+      bringUser(userService);
+    });
+    //TODO: Comprobar si hay mensajes nuevos
     super.initState();
-    // userApp = UserApp.fromJson(
-    //     (widget.user?.data() ?? <String, dynamic>{}) as Map<String, dynamic>);
-    //TODO: Traer al usuario del chat que no es el logueado
   }
 
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
+    final ChatsService chatsService = Provider.of<ChatsService>(context);
 
-    return GestureDetector(
+    return InkWell(
       onTap: () async {
         // context.navigateTo(MessagesChatPage(
         //     chatId: item['id'] ?? '', user: getContactUser(item)));
-      },
-      onLongPressStart: (LongPressStartDetails details) {
-        showMenu(
-            context: context,
-            color: AppColors.shadowGrey,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              chat: widget.chat,
+              userApp: userApp,
             ),
-            position: _getRelativeRect(details.globalPosition),
-            items: <PopupMenuEntry<MessagesHomeChatMenu>>[
-              PopupMenuItem<MessagesHomeChatMenu>(
-                value: MessagesHomeChatMenu.markRead,
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/icon_check.svg',
-                      color: AppColors.whiteColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      Localization.of(context)
-                          .string('messages_home_chat_mark_read'),
-                      style: AppStyles.darkTextTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<MessagesHomeChatMenu>(
-                value: MessagesHomeChatMenu.delete,
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/icon_delete.svg',
-                      color: AppColors.whiteColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      Localization.of(context)
-                          .string('messages_home_chat_delete'),
-                      style: AppStyles.darkTextTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              ),
-            ]).then((value) {
-          if (value == null) return;
-
-          switch (value) {
-            case MessagesHomeChatMenu.markRead:
-              if (widget.chatObject != null) {
-                // widget.viewModel.markAsReaded(widget.chatObject!);
-              }
-              break;
-            case MessagesHomeChatMenu.delete:
-              if (widget.chatObject != null) {
-                // widget.viewModel.removeChat(
-                //     widget.chatObject!); // Remove current user from chat
-              }
-              break;
-          }
-        });
+          ),
+        );
       },
       child: Container(
-        height: 74,
-        padding: const EdgeInsets.all(15),
-        decoration: (newMessagesNumber > 0)
-            ? const BoxDecoration(boxShadow: [
-                BoxShadow(color: AppColors.lightGrey, blurRadius: 12.0),
-                BoxShadow(color: AppColors.whiteColor),
-              ])
-            : null,
+        height: responsive.heightPercent(11),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        // decoration: (newMessagesNumber > 0)
+        //     ? const BoxDecoration(boxShadow: [
+        //         BoxShadow(color: AppColors.lightGrey, blurRadius: 12.0),
+        //         BoxShadow(color: AppColors.whiteColor),
+        //       ])
+        //     : null,
         child: Row(
           children: [
+            // if (userApp != null)
             FutureBuilder(
-              future: userService.getProfileImageURL(
-                  usersToShow[index].id!.path.split('/')[1]),
+              future: chatsService.getChatImageUrl(
+                chat: widget.chat,
+                activeUser: userService.userApp!,
+              ),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 return Container(
-                  height: responsive.heightPercent(16),
-                  width: responsive.widthPercent(16),
+                  height: responsive.diagonalPercent(7.5),
+                  width: responsive.diagonalPercent(7.5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: (snapshot.hasData)
@@ -365,43 +252,48 @@ class _ChatWidgetState extends State<ChatWidget> {
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
                     children: [
                       Flexible(
                         child: Text(
-                          userApp?.fullName ?? 'Usuari@',
-                          style: AppStyles.ligthTextTheme.bodyMedium?.copyWith(
-                            color: AppColors.darkGrey,
+                          widget.chat.name ?? userApp?.fullName ?? '',
+                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            color: AppColors.greyscale5,
+                            fontSize: responsive.diagonalPercent(1.8),
                             fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.fade,
                           softWrap: false,
                         ),
                       ),
-                      const SizedBox(width: 15),
-                      TalentCard(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        color: AppColors.brandColor.withOpacity(0.15),
-                        content: Text(
-                          userApp?.type ?? '',
-                          style: AppStyles.ligthTextTheme.bodyMedium
-                              ?.copyWith(color: AppColors.blueColor),
+                      if (userApp != null)
+                        SizedBox(width: responsive.widthPercent(3.8)),
+                      if (userApp != null)
+                        TalentCard(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          color: AppColors.blueColor.withOpacity(0.15),
+                          content: Text(
+                            userApp?.type ?? '',
+                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                              color: AppColors.blueColor,
+                              fontSize: responsive.diagonalPercent(1.8),
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      if (widget.chatObject?['messages'].isNotEmpty &&
-                          widget.chatObject?['messages']?.last?['userId'] ==
+                      if (widget.chat.messages!.isNotEmpty &&
+                          widget.chat.messages!.last.userId ==
                               userService.userApp!.id)
                         Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Icon(
-                            widget.chatObject?['messages']?.last?['read'] ==
-                                    true
+                            widget.chat.messages!.last.messageStatus ==
+                                    MessageStatus.Read
                                 ? Icons.done_all
                                 : Icons.done,
                             size: 16,
@@ -410,11 +302,13 @@ class _ChatWidgetState extends State<ChatWidget> {
                         ),
                       Expanded(
                         child: Text(
-                          widget.chatObject?['messages'].isEmpty
+                          widget.chat.messages!.isEmpty
                               ? ''
-                              : widget.chatObject?['messages']?.last['content'],
-                          style: AppStyles.ligthTextTheme.bodyMedium
-                              ?.copyWith(color: AppColors.greyscale5),
+                              : widget.chat.messages!.last.content ?? '',
+                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            color: AppColors.greyscale5,
+                            fontSize: responsive.diagonalPercent(1.8),
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -443,18 +337,81 @@ class _ChatWidgetState extends State<ChatWidget> {
                 //     fontSize: AppDimens.textSemiMedium,
                 //   ),
                 // ),
-                if (newMessagesNumber > 0)
-                  TalentCard(
-                    color: AppColors.brandColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    content: Text(newMessagesNumber.toString(),
-                        style: AppStyles.darkTextTheme.bodyLarge),
-                  )
+                // if (newMessagesNumber > 0)
+                //   TalentCard(
+                //     color: AppColors.blueColor,
+                //     padding: const EdgeInsets.symmetric(horizontal: 10),
+                //     content: Text(
+                //       newMessagesNumber.toString(),
+                //       style: AppStyles.darkTextTheme.bodyLarge,
+                //     ),
+                //   )
               ],
             ),
           ],
         ),
       ),
+      // onLongPressStart: (LongPressStartDetails details) {
+      //   showMenu(
+      //       context: context,
+      //       color: AppColors.shadowGrey,
+      //       shape: const RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.all(Radius.circular(15)),
+      //       ),
+      //       position: _getRelativeRect(details.globalPosition),
+      //       items: <PopupMenuEntry<MessagesHomeChatMenu>>[
+      //         PopupMenuItem<MessagesHomeChatMenu>(
+      //           value: MessagesHomeChatMenu.markRead,
+      //           child: Row(
+      //             children: [
+      //               SvgPicture.asset(
+      //                 'assets/images/icon_check.svg',
+      //                 color: AppColors.whiteColor,
+      //               ),
+      //               const SizedBox(width: 10),
+      //               Text(
+      //                 Localization.of(context)
+      //                     .string('messages_home_chat_mark_read'),
+      //                 style: AppStyles.darkTextTheme.bodyLarge,
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //         PopupMenuItem<MessagesHomeChatMenu>(
+      //           value: MessagesHomeChatMenu.delete,
+      //           child: Row(
+      //             children: [
+      //               SvgPicture.asset(
+      //                 'assets/images/icon_delete.svg',
+      //                 color: AppColors.whiteColor,
+      //               ),
+      //               const SizedBox(width: 10),
+      //               Text(
+      //                 Localization.of(context)
+      //                     .string('messages_home_chat_delete'),
+      //                 style: AppStyles.darkTextTheme.bodyLarge,
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ]).then((value) {
+      //     if (value == null) return;
+
+      //     switch (value) {
+      //       case MessagesHomeChatMenu.markRead:
+      //         if (widget.chatObject != null) {
+      //           // widget.viewModel.markAsReaded(widget.chatObject!);
+      //         }
+      //         break;
+      //       case MessagesHomeChatMenu.delete:
+      //         if (widget.chatObject != null) {
+      //           // widget.viewModel.removeChat(
+      //           //     widget.chatObject!); // Remove current user from chat
+      //         }
+      //         break;
+      //     }
+      //   });
+      // },
     );
   }
 

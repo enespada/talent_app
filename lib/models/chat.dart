@@ -5,11 +5,15 @@ class Chat {
   DocumentReference? id;
   List<DocumentReference>? users;
   List<Message>? messages;
+  String? name;
+  //Parametros que no estan en firebase
+  String? urlImage;
 
   Chat({
     this.id,
     this.users,
     this.messages,
+    this.name,
   });
 
   Chat.fromJson(Map<String, dynamic> json) {
@@ -22,6 +26,7 @@ class Chat {
     for (dynamic messageData in json['messages']) {
       messages!.add(Message.fromJson(messageData));
     }
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -29,6 +34,7 @@ class Chat {
     data['id'] = id;
     data['users'] = users;
     data['messages'] = messages;
+    data['name'] = name;
 
     return data;
   }

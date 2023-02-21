@@ -1,4 +1,5 @@
 //chats
+export 'package:talent_app/screens/chats/chat_screen.dart';
 export 'package:talent_app/screens/chats/chats_screen.dart';
 
 //explorer

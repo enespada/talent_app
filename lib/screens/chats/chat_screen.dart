@@ -1,0 +1,794 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/services.dart';
+import 'package:talent_app/style/styles.dart';
+import 'package:talent_app/utils/utils.dart';
+
+enum MessagesChatMenu { example1, example2 }
+
+enum MessagesChatState { sending, sent, received }
+
+// Map<String, dynamic>? _chatObject;
+// ScrollController? _listScrollController;
+
+class ChatScreen extends StatefulWidget {
+  final Chat chat;
+  final UserApp? userApp;
+
+  const ChatScreen({
+    Key? key,
+    required this.chat,
+    this.userApp,
+  }) : super(key: key);
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final formKey = GlobalKey<FormState>();
+  // final typeFieldController = TextEditingController();
+  // final _chatViewModel = inject<ChatViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    // userContact = UserApp.fromJson(widget.user?.data() as Map<String, dynamic>);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    String title = widget.chat.name ?? widget.userApp?.fullName ?? '';
+
+    return Scaffold(
+      // backgroundColor: AppColors.whiteColor,
+      appBar: _ChatAppBar(
+        title: title,
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          fontSize: responsive.diagonalPercent(2.2),
+        ),
+        chat: widget.chat,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // _MessagesHomeAppBar(
+            //   onSelected: (item) {},
+            //   user: userContact,
+            // ),
+            const Divider(height: 1),
+            // Expanded(
+            //   child: _MessagesList(
+            //     // userContactId: userContact.id!,
+            //     // viewModel: _chatViewModel,
+            //     chatId: widget.chatId,
+            //   ),
+            // ),
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: _BottomNavigationBar(
+            //     formKey: formKey,
+            //     // typeFieldController: typeFieldController,
+            //     responsive: responsive,
+            //     // viewModel: _chatViewModel,
+            //     chatId: widget.chatId,
+            //     destinationUser: userContact,
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // _chatViewModel.dispose();
+  }
+}
+
+class _MessagesList extends StatefulWidget {
+  // final ChatViewModel viewModel;
+  final String chatId;
+  final String userContactId;
+
+  const _MessagesList({
+    // required this.viewModel,
+    required this.chatId,
+    Key? key,
+    required this.userContactId,
+  }) : super(key: key);
+
+  @override
+  State<_MessagesList> createState() => _MessagesListState();
+}
+
+class _MessagesListState extends State<_MessagesList> {
+  List<Widget> messageWidgets = List.empty(growable: true);
+
+  @override
+  void initState() {
+    super.initState();
+
+    // _listScrollController = ScrollController();
+
+    // widget.viewModel.fetchChat(widget.chatId); // TODO CHANGE
+    // widget.viewModel.chatState.stream.listen((state) {
+    //   if (!mounted) {
+    //     return;
+    //   }
+
+    //   if (state.status == Status.COMPLETED) {
+    //     messageWidgets = List.empty(growable: true);
+    //     _chatObject = state.data;
+    //     (state.data?['messages'] as List).asMap().forEach((index, message) {
+    //       String previousDate = index > 0
+    //           ? DateFormat.yMd().format(DateTime.fromMillisecondsSinceEpoch(
+    //               (_chatObject?['messages']?[index - 1]?['date'] as Timestamp)
+    //                   .millisecondsSinceEpoch))
+    //           : '';
+    //       String date = DateFormat.yMd().format(
+    //           DateTime.fromMillisecondsSinceEpoch(
+    //               (message?['date'] as Timestamp).millisecondsSinceEpoch));
+
+    //       if (date != previousDate) {
+    //         messageWidgets.add(_MessagesTimestamp(
+    //             text: AdvancedDateFormatter(Localization.of(context))
+    //                 .getVerboseDateTimeRepresentation(
+    //                     DateTime.fromMillisecondsSinceEpoch(
+    //                         (message?['date'] as Timestamp)
+    //                             .millisecondsSinceEpoch))));
+    //       }
+
+    //       if (message['userId'] == UserViewModel.userData?.reference) {
+    //         messageWidgets.add(_MessagesItemLocal(
+    //           text: message['content'],
+    //           time: DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(
+    //               (message['date'] as Timestamp).millisecondsSinceEpoch)),
+    //           state: message['read'] == true
+    //               ? MessagesChatState.received
+    //               : MessagesChatState.sent,
+    //         ));
+    //         messageWidgets.add(const SizedBox(height: 15));
+    //       } else {
+    //         messageWidgets.add(
+    //           _MessagesItemVisitor(
+    //               userContactId: widget.userContactId,
+    //               text: message['content'],
+    //               time: DateFormat.Hm().format(
+    //                   DateTime.fromMillisecondsSinceEpoch(
+    //                       (message['date'] as Timestamp)
+    //                           .millisecondsSinceEpoch))),
+    //         );
+    //         messageWidgets.add(const SizedBox(height: 15));
+    //       }
+    //     });
+
+    //     if (!mounted) {
+    //       return;
+    //     }
+
+    //     setState(() {});
+
+    //     SchedulerBinding.instance.addPostFrameCallback((_) {
+    //       _listScrollController?.animateTo(
+    //         _listScrollController?.position.maxScrollExtent ?? 0.0,
+    //         duration: const Duration(milliseconds: 350),
+    //         curve: Curves.easeOut,
+    //       );
+
+    //       // Mark as readed
+    //       if (_chatObject != null) {
+    //         widget.viewModel.markAsReaded(_chatObject!);
+    //       }
+    //     });
+    //   }
+    // });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: responsive.widthPercent(4),
+        right: responsive.widthPercent(4),
+      ),
+      child: ListView.builder(
+        // controller: _listScrollController,
+        physics: const BouncingScrollPhysics(),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(children: messageWidgets),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _MessagesTimestamp extends StatelessWidget {
+  const _MessagesTimestamp({
+    required this.text,
+    Key? key,
+  }) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: AppStyles.ligthTextTheme.bodyMedium
+                ?.copyWith(color: AppColors.darkGrey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// class _MessagesItemVisitor extends StatelessWidget {
+//   const _MessagesItemVisitor({
+//     required this.text,
+//     required this.time,
+//     Key? key,
+//     required this.userContactId,
+//   }) : super(key: key);
+
+//   final String text;
+//   final bool hideProfilePic = false;
+//   final String time;
+//   final String userContactId;
+
+//   //TODO: Change these variables for chat entity
+//   final int newMessagesNumber =
+//       3; // If <= 0 : neither shadow border nor number circle
+//   final bool isOnline = false; // If true : Online icon bottom right
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisSize: MainAxisSize.min,
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         if (hideProfilePic)
+//           const SizedBox(
+//             width: 52,
+//           ),
+//         if (!hideProfilePic)
+//           SizedBox(
+//             width: 52,
+//             height: 52,
+//             child: Stack(
+//               children: [
+//                 Padding(
+//                     padding: const EdgeInsets.all(5),
+//                     child: ClipRRect(
+//                       borderRadius: BorderRadius.circular(12.0),
+//                       child: FutureBuilder(
+//                           future: Utils.profileImageURL(userContactId),
+//                           builder: (_, AsyncSnapshot<String> snapshot) {
+//                             if (snapshot.hasData) {
+//                               return Image(
+//                                 image:
+//                                     CachedNetworkImageProvider(snapshot.data!),
+//                                 fit: BoxFit.cover,
+//                                 width: 36,
+//                                 height: 36,
+//                               );
+//                             } else {
+//                               return const Image(
+//                                 image: AssetImage('assets/images/profile.png'),
+//                                 fit: BoxFit.cover,
+//                                 width: 36,
+//                                 height: 36,
+//                               );
+//                             }
+//                           }),
+//                     )),
+//                 if (isOnline)
+//                   Align(
+//                     alignment: Alignment.bottomRight,
+//                     child: SvgPicture.asset('assets/images/icon_online.svg'),
+//                   )
+//               ],
+//             ),
+//           ),
+//         const SizedBox(width: 10),
+//         Expanded(
+//           child: Container(
+//             padding: const EdgeInsets.all(10),
+//             decoration: BoxDecoration(
+//               color: AppColors.lightGrey,
+//               borderRadius: const BorderRadius.only(
+//                   topRight: Radius.circular(12),
+//                   bottomRight: Radius.circular(12),
+//                   bottomLeft: Radius.circular(12)),
+//               border: Border.all(color: AppColors.lightGrey),
+//             ),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   text,
+//                   style: AppStyles.ligthTextTheme.bodyMedium
+//                       ?.copyWith(color: AppColors.darkGrey),
+//                 ),
+//                 const SizedBox(width: 10),
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.end,
+//                   children: [
+//                     Text(
+//                       time,
+//                       style: AppStyles.ligthTextTheme.bodyMedium
+//                           ?.copyWith(color: AppColors.darkGrey, fontSize: 11),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//         const SizedBox(width: 30),
+//       ],
+//     );
+//   }
+// }
+
+class _MessagesItemLocal extends StatelessWidget {
+  const _MessagesItemLocal({
+    required this.text,
+    required this.time,
+    Key? key,
+    required this.state,
+  }) : super(key: key);
+
+  final String text;
+
+  //TODO: Change these variables for chat entity
+  final int newMessagesNumber =
+      3; // If <= 0 : neither shadow border nor number circle
+  final bool isOnline = true; // If true : Online icon bottom right
+  final MessagesChatState state;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget stateIcon;
+
+    switch (state) {
+      case MessagesChatState.sending:
+        stateIcon = const Icon(Icons.access_time_outlined,
+            color: AppColors.whiteColor, size: 15);
+        break;
+      case MessagesChatState.sent:
+        stateIcon =
+            const Icon(Icons.done, color: AppColors.whiteColor, size: 15);
+        break;
+      case MessagesChatState.received:
+        stateIcon =
+            const Icon(Icons.done_all, color: AppColors.brandColor, size: 15);
+        break;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(width: 100),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                  bottomLeft: Radius.circular(12)),
+              color: AppColors.greyscale5,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: AppStyles.ligthTextTheme.bodyMedium
+                      ?.copyWith(color: AppColors.whiteColor),
+                ),
+                const SizedBox(width: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      time,
+                      style: AppStyles.ligthTextTheme.bodyMedium
+                          ?.copyWith(color: AppColors.whiteColor, fontSize: 11),
+                    ),
+                    const SizedBox(width: 5),
+                    stateIcon,
+                  ],
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final TextStyle? style;
+  final Chat chat;
+
+  @override
+  final Size preferredSize;
+  // @override
+  // TODO: implement preferredSize
+  // Size get preferredSize => preferredSize;
+
+  const _ChatAppBar({
+    Key? key,
+    required this.title,
+    required this.style,
+    required this.chat,
+  })  : preferredSize = const Size.fromHeight(kToolbarHeight),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final Responsive responsive = Responsive.of(context);
+    final UserService userService = Provider.of<UserService>(context);
+    final ChatsService chatsService = Provider.of<ChatsService>(context);
+
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.only(
+          top: responsive.heightPercent(2),
+          left: responsive.widthPercent(4),
+          right: responsive.widthPercent(4),
+          bottom: responsive.heightPercent(2),
+        ),
+        color: AppColors.whiteColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                GestureDetector(
+                  child: const Icon(Icons.arrow_back,
+                      color: AppColors.brandColor, size: 36),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const SizedBox(width: 15),
+                FutureBuilder(
+                  future: chatsService.getChatImageUrl(
+                    chat: chat,
+                    activeUser: userService.userApp!,
+                  ),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    return Container(
+                      height: responsive.diagonalPercent(7.5),
+                      width: responsive.diagonalPercent(7.5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: (snapshot.hasData)
+                            ? DecorationImage(
+                                image:
+                                    CachedNetworkImageProvider(snapshot.data!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: style),
+                    // Text(
+                    //   user?.type ?? '',
+                    //   style: AppStyles.ligthTextTheme.bodyMedium?.copyWith(
+                    //     color: AppColors.darkGrey,
+                    //   ),
+                    // ),
+                  ],
+                )
+              ],
+            ),
+            Visibility(
+              visible: false,
+              child: PopupMenuButton<MessagesChatMenu>(
+                // Callback that sets the selected popup menu item.
+                onSelected: (MessagesChatMenu item) {
+                  // onSelected(item);
+                },
+                position: PopupMenuPosition.under,
+                color: AppColors.whiteColor,
+                icon: const Icon(
+                  Icons.more_vert_outlined,
+                  color: Colors.black,
+                ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<MessagesChatMenu>>[
+                  PopupMenuItem<MessagesChatMenu>(
+                    value: MessagesChatMenu.example1,
+                    child: Text(
+                      'Example 1',
+                      style: AppStyles.ligthTextTheme.bodyLarge,
+                    ),
+                  ),
+                  PopupMenuItem<MessagesChatMenu>(
+                    value: MessagesChatMenu.example2,
+                    child: Text(
+                      'Example 2',
+                      style: AppStyles.ligthTextTheme.bodyLarge,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// class _MessagesHomeAppBar extends StatelessWidget {
+//   final Function(MessagesChatMenu) onSelected;
+//   final UserApp? user;
+
+//   const _MessagesHomeAppBar({
+//     Key? key,
+//     required this.onSelected,
+//     this.user,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final Responsive responsive = Responsive.of(context);
+
+//     return Container(
+//       color: AppColors.whiteColor,
+//       padding: EdgeInsets.only(
+//         top: responsive.heightPercent(2),
+//         bottom: responsive.heightPercent(2),
+//         left: responsive.widthPercent(4),
+//         right: responsive.widthPercent(4),
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Row(
+//             children: [
+//               GestureDetector(
+//                 child: const Icon(Icons.arrow_back,
+//                     color: AppColors.brandColor, size: 36),
+//                 onTap: () {
+//                   Navigator.of(context).pop();
+//                 },
+//               ),
+//               const SizedBox(width: 15),
+//               ClipRRect(
+//                 borderRadius: BorderRadius.circular(12.0),
+//                 child: FutureBuilder(
+//                     future: urlImag(user!.id!),
+//                     builder: (_, AsyncSnapshot<String> snapshot) {
+//                       if (snapshot.hasData) {
+//                         return Image(
+//                           image: CachedNetworkImageProvider(snapshot.data!),
+//                           fit: BoxFit.cover,
+//                           width: 36,
+//                           height: 36,
+//                         );
+//                       } else {
+//                         return const Image(
+//                           image: AssetImage('assets/images/profile.png'),
+//                           fit: BoxFit.cover,
+//                           width: 36,
+//                           height: 36,
+//                         );
+//                       }
+//                     }),
+//               ),
+//               const SizedBox(width: 15),
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     user?.fullname ?? 'Usuari@',
+//                     style: AppStyles.ligthTextTheme.bodyLarge?.copyWith(
+//                       color: AppColors.darkGrey,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                   Text(
+//                     user?.type ?? '',
+//                     style: AppStyles.ligthTextTheme.bodyMedium?.copyWith(
+//                       color: AppColors.darkGrey,
+//                     ),
+//                   ),
+//                 ],
+//               )
+//             ],
+//           ),
+//           Visibility(
+//             visible: false,
+//             child: PopupMenuButton<MessagesChatMenu>(
+//               // Callback that sets the selected popup menu item.
+//               onSelected: (MessagesChatMenu item) {
+//                 onSelected(item);
+//               },
+//               position: PopupMenuPosition.under,
+//               color: AppColors.whiteColor,
+//               icon: const Icon(
+//                 Icons.more_vert_outlined,
+//                 color: Colors.black,
+//               ),
+//               shape: const RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.all(
+//                   Radius.circular(15),
+//                 ),
+//               ),
+//               itemBuilder: (BuildContext context) =>
+//                   <PopupMenuEntry<MessagesChatMenu>>[
+//                 PopupMenuItem<MessagesChatMenu>(
+//                   value: MessagesChatMenu.example1,
+//                   child: Text(
+//                     'Example 1',
+//                     style: AppStyles.ligthTextTheme.bodyLarge,
+//                   ),
+//                 ),
+//                 PopupMenuItem<MessagesChatMenu>(
+//                   value: MessagesChatMenu.example2,
+//                   child: Text(
+//                     'Example 2',
+//                     style: AppStyles.ligthTextTheme.bodyLarge,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+class _BottomNavigationBar extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+  final TextEditingController typeFieldController;
+  final Responsive responsive;
+  // final ChatViewModel viewModel;
+  final String chatId;
+  final UserApp? destinationUser;
+  Color iconColor = AppColors.mediunLightGrey;
+
+  _BottomNavigationBar({
+    Key? key,
+    required this.formKey,
+    required this.responsive,
+    required this.typeFieldController,
+    // required this.viewModel,
+    required this.chatId,
+    required this.destinationUser,
+  }) : super(key: key);
+
+  @override
+  State<_BottomNavigationBar> createState() => _BottomNavigationBarState();
+}
+
+class _BottomNavigationBarState extends State<_BottomNavigationBar> {
+  // final _notificationViewModel = inject<NotificationsViewModel>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.responsive.width,
+      padding: const EdgeInsets.all(25),
+      child: Form(
+        key: widget.formKey,
+        child: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: widget.typeFieldController,
+                keyboardType: TextInputType.text,
+                keyboardAppearance: Brightness.light,
+                style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                  color: AppColors.greyscale5,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14.0,
+                    horizontal: 25.0,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.lightGrey,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    borderSide: BorderSide(width: 0, style: BorderStyle.none),
+                  ),
+                  hintText: Localization.of(context)
+                      .string('messages_chat_type_hint'),
+                  hintStyle: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                    color: AppColors.mediunLightGrey,
+                  ),
+                  suffixIcon: InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      // if (_chatObject != null &&
+                      //     widget.typeFieldController.text.isNotEmpty) {
+                      //   final updatedChat = _chatObject;
+                      //   updatedChat!['messages'] = _chatObject!['messages']
+                      //     ..add({
+                      //       'id': UniqueKey().hashCode.toString(),
+                      //       'userId': UserViewModel.userData?.reference,
+                      //       'userName': UserViewModel.user?.fullname,
+                      //       'userAvatar': UserViewModel.user?.imgSrc,
+                      //       'date': Timestamp.now(),
+                      //       'content': widget.typeFieldController.text
+                      //     });
+
+                      //   widget.viewModel.updateChat(widget.chatId, updatedChat);
+
+                      //   // Send notification
+                      //   _notificationViewModel.sendNotification(
+                      //       Localization.of(context).string(
+                      //           'notification_message_title',
+                      //           params: [UserViewModel.user?.fullname ?? '']),
+                      //       widget.typeFieldController.text,
+                      //       widget.destinationUser?.fcmToken ?? '');
+
+                      //   widget.typeFieldController.text = '';
+                      // }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(
+                        'assets/images/icon_send.svg',
+                        color: widget.iconColor,
+                      ),
+                    ),
+                  ),
+                ),
+                onChanged: (text) {
+                  widget.iconColor = (text.isNotEmpty)
+                      ? AppColors.brandColor
+                      : AppColors.mediunLightGrey;
+                  setState(() {});
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

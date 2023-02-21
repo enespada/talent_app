@@ -10,11 +10,12 @@ import 'package:talent_app/utils/utils.dart';
 
 class UserService extends ChangeNotifier {
   UserApp? userApp;
-  DocumentSnapshot<Map<String, dynamic>>? userAppData;
+  String? profileUrlImage;
   List<Post> userPosts = [];
   List<UserApp> followers = [];
   List<UserApp> following = [];
   bool isLoading = false;
+  bool isLoadingImage = false;
 
   Future<UserApp?> getUser() async {
     final fbFirestore = FirebaseFirestore.instance;
@@ -22,7 +23,6 @@ class UserService extends ChangeNotifier {
 
     final snapshot = await fbFirestore.collection("users").doc(user?.uid).get();
 
-    userAppData = snapshot;
     userApp = UserApp.fromJson(snapshot.data()!);
     return userApp;
   }
@@ -215,6 +215,34 @@ class UserService extends ChangeNotifier {
               "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
           .getDownloadURL();
       return storageRef.toString();
+    }
+  }
+
+  Future<void> getProfileImageURL2(String id) async {
+    if (isLoadingImage) return;
+    isLoadingImage = true;
+    notifyListeners();
+
+    try {
+      if (id == '') {
+        profileUrlImage = '';
+        return;
+      }
+
+      final storageRef = await FirebaseStorage.instance
+          .refFromURL(
+              "${NetworkEndpoints.FirebaseStorageBaseUrl}/$id/profile.png")
+          .getDownloadURL();
+
+      profileUrlImage = storageRef.toString();
+      return;
+    } catch (e) {
+      final storageRef = await FirebaseStorage.instance
+          .refFromURL(
+              "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
+          .getDownloadURL();
+      profileUrlImage = storageRef.toString();
+      return;
     }
   }
 

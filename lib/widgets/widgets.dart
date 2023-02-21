@@ -9,4 +9,5 @@ export 'package:talent_app/widgets/edit_profile_fact.dart';
 export 'package:talent_app/widgets/post_widget.dart';
 export 'package:talent_app/widgets/posts_list_widget.dart';
 export 'package:talent_app/widgets/square_editable_avatar.dart';
+export 'package:talent_app/widgets/talent_card.dart';
 export 'package:talent_app/widgets/yellow_text_button.dart';
