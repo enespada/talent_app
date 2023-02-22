@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Util {
   static String adaptNumFollow(double value) {
@@ -58,5 +59,23 @@ class Util {
       }
     }
     return string;
+  }
+
+  // static double stringHeight(String string) {
+  //   TextPainter textPainter = TextPainter()
+  //     ..text = TextSpan(text: string)
+  //     ..textDirection = TextDirection.ltr
+  //     ..layout(minWidth: 0, maxWidth: double.infinity);
+
+  //   return textPainter.size.height;
+  // }
+
+  static double stringWidth(String string) {
+    TextPainter textPainter = TextPainter()
+      ..text = TextSpan(text: string)
+      ..textDirection = TextDirection.ltr
+      ..layout(minWidth: 0, maxWidth: double.infinity);
+
+    return textPainter.size.width;
   }
 }

@@ -149,16 +149,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
               break;
             case 1:
               // context.navigatePopReplacing(ExplorerHomePage());
-              Navigator.pushReplacementNamed(
-                context,
-                ExplorerScreen.routeName,
-              );
+              Navigator.pushReplacementNamed(context, ExplorerScreen.routeName);
               break;
             case 2:
-              Navigator.pushNamed(
-                context,
-                UploadPostHomeScreen.routeName,
-              );
+              Navigator.pushNamed(context, UploadPostHomeScreen.routeName);
               break;
             case 3:
               // context.navigatePopReplacing(MessagesHomePage());

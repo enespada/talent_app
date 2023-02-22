@@ -42,7 +42,18 @@ class Message {
     data['content'] = content;
     data['dateTime'] = dateTime;
     data['userId'] = userId;
-    data['messageStatus'] = messageStatus;
+    switch (messageStatus) {
+      case MessageStatus.Sending:
+        data['messageStatus'] = 'Sending';
+        break;
+      case MessageStatus.Sent:
+        data['messageStatus'] = 'Sent';
+        break;
+      case MessageStatus.Read:
+        data['messageStatus'] = 'Read';
+        break;
+      default:
+    }
 
     return data;
   }

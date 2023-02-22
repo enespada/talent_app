@@ -1,5 +1,5 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:talent_app/models/models.dart';
@@ -69,5 +69,16 @@ class ChatsService extends ChangeNotifier {
           .getDownloadURL();
       return storageRef.toString();
     }
+  }
+
+  Future<void> uploadMessage(Chat chat, Message message) async {
+    await chat.id!.update({
+      "messages": FieldValue.arrayUnion([message.toJson()]),
+    });
+    // chats!.map((Chat c) {
+    //   if (c.id == chat.id) {
+    //     c.messages!.add(message);
+    //   }
+    // });
   }
 }
