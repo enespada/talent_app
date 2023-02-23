@@ -61,6 +61,14 @@ class Util {
     return string;
   }
 
+  static String messageDateTimeToString(DateTime dateTime) {
+    DateTime dateTimeNow = DateTime.now();
+    print(dateTimeNow.difference(dateTime).inDays);
+    if (dateTimeNow.difference(dateTime).inDays < 1) return 'Hoy';
+    if (dateTimeNow.difference(dateTime).inDays == 1) return 'Ayer';
+    return '${dateTime.day}-${dateTime.month}-${dateTime.year}';
+  }
+
   // static double stringHeight(String string) {
   //   TextPainter textPainter = TextPainter()
   //     ..text = TextSpan(text: string)

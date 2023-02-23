@@ -23,14 +23,14 @@ class Message {
     dateTime = json['dateTime'];
     userId = json['userId'];
     switch (json['messageStatus']) {
-      case 'Read':
-        messageStatus = MessageStatus.Read;
+      case 'Sending':
+        messageStatus = MessageStatus.Sending;
         break;
-      // case 'Sending':
-      //   messageStatus = MessageStatus.Sending;
-      //   break;
       case 'Sent':
         messageStatus = MessageStatus.Sent;
+        break;
+      case 'Read':
+        messageStatus = MessageStatus.Read;
         break;
       default:
     }

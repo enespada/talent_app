@@ -59,13 +59,12 @@ class MessageWidget extends StatelessWidget {
               right: myMessage ? margenMensajePantalla : 0,
               bottom: 7,
             ),
-            constraints: BoxConstraints(
-              minWidth: 0,
-              maxWidth: maxWidth,
-            ),
+            constraints: BoxConstraints(minWidth: 0, maxWidth: maxWidth),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: myMessage ? AppColors.greyscale5 : AppColors.greyscale1,
+              color: myMessage
+                  ? AppColors.greyscale5
+                  : AppColors.greyscale1.withOpacity(0.5),
               borderRadius: BorderRadius.circular(radius),
             ),
             child: (!oneLineMessage)
@@ -129,18 +128,24 @@ class _HourAndTick extends StatelessWidget {
     switch (message.messageStatus!) {
       case MessageStatus.Sending:
         stateIcon = const Icon(
-          Icons.access_time_outlined,
+          Icons.done,
           color: AppColors.greyscale2,
           size: 15,
         );
         break;
       case MessageStatus.Sent:
-        stateIcon =
-            const Icon(Icons.done, color: AppColors.greyscale2, size: 15);
+        stateIcon = const Icon(
+          Icons.done_all,
+          color: AppColors.greyscale2,
+          size: 15,
+        );
         break;
       case MessageStatus.Read:
-        stateIcon =
-            const Icon(Icons.done_all, color: AppColors.blueColor, size: 15);
+        stateIcon = const Icon(
+          Icons.done_all,
+          color: AppColors.blueColor,
+          size: 15,
+        );
         break;
     }
 

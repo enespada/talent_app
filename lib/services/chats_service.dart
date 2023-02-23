@@ -8,7 +8,6 @@ import 'package:talent_app/utils/utils.dart';
 class ChatsService extends ChangeNotifier {
   List<Chat>? chats;
   Chat? currentChat;
-  String? currentChatImageUrl;
   bool isLoadingChats = false;
   bool isLoadingImage = false;
 

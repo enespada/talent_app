@@ -51,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       content: text,
       dateTime: Timestamp.now(),
       userId: userService.userApp!.id,
-      messageStatus: MessageStatus.Sent,
+      messageStatus: MessageStatus.Sending,
     );
     final MessageWidget newMessageWidget = MessageWidget(
       message: newMessage,
@@ -60,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 500),
       ),
     );
-    widget.chat.messages!.insert(0, newMessage);
+    widget.chat.messages!.add(newMessage);
     newMessageWidget.animationController.forward();
     await chatsService.uploadMessage(widget.chat, newMessage);
     // socketService.socket.emit('mensaje-personal', {
@@ -226,7 +226,8 @@ class _MessagesListState extends State<_MessagesList>
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
+    // final Responsive responsive = Responsive.of(context);
+    DateTime? dtPrevious;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -236,13 +237,129 @@ class _MessagesListState extends State<_MessagesList>
         reverse: true,
         itemCount: widget.chat.messages!.length,
         itemBuilder: (context, index) {
-          return MessageWidget(
-            animationController: AnimationController(
-              vsync: this,
-              duration: const Duration(milliseconds: 0),
-            )..forward(),
-            message: widget.chat.messages![index],
-          );
+          Message currentMessage =
+              widget.chat.messages![widget.chat.messages!.length - index - 1];
+          //=======================SI ES EL ULTIMO=========================
+          if (index == widget.chat.messages!.length - 1) {
+            String s2 = Util.messageDateTimeToString(
+              DateTime.fromMillisecondsSinceEpoch(
+                currentMessage.dateTime!.millisecondsSinceEpoch,
+              ),
+            );
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(s2),
+                ),
+                MessageWidget(
+                  animationController: AnimationController(
+                    vsync: this,
+                    duration: const Duration(milliseconds: 0),
+                  )..forward(),
+                  message: currentMessage,
+                ),
+              ],
+            );
+          }
+          //C1: Mensaje actual es el primero
+          if (dtPrevious == null) {
+            dtPrevious = DateTime.fromMillisecondsSinceEpoch(
+                currentMessage.dateTime!.millisecondsSinceEpoch);
+            return MessageWidget(
+              animationController: AnimationController(
+                vsync: this,
+                duration: const Duration(milliseconds: 0),
+              )..forward(),
+              message: currentMessage,
+            );
+          } else {
+            DateTime dtCurrent = DateTime.fromMillisecondsSinceEpoch(
+              currentMessage.dateTime!.millisecondsSinceEpoch,
+            );
+            //C2: Mensajes actual y anterior de fechas distintas
+            if (dtPrevious!.day != dtCurrent.day ||
+                dtPrevious!.month != dtCurrent.month ||
+                dtPrevious!.year != dtCurrent.year) {
+              String s = Util.messageDateTimeToString(dtPrevious!);
+              dtPrevious = DateTime.fromMillisecondsSinceEpoch(
+                  currentMessage.dateTime!.millisecondsSinceEpoch);
+              //=======================SI ES EL ULTIMO=========================
+              if (index == widget.chat.messages!.length - 1) {
+                String s2 = Util.messageDateTimeToString(
+                  DateTime.fromMillisecondsSinceEpoch(
+                    currentMessage.dateTime!.millisecondsSinceEpoch,
+                  ),
+                );
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(' quqeee $s2'),
+                    ),
+                    MessageWidget(
+                      animationController: AnimationController(
+                        vsync: this,
+                        duration: const Duration(milliseconds: 0),
+                      )..forward(),
+                      message: currentMessage,
+                    ),
+                    Padding(padding: const EdgeInsets.all(8.0), child: Text(s)),
+                  ],
+                );
+              }
+              return Column(
+                children: [
+                  MessageWidget(
+                    animationController: AnimationController(
+                      vsync: this,
+                      duration: const Duration(milliseconds: 0),
+                    )..forward(),
+                    message: currentMessage,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(s),
+                  ),
+                ],
+              );
+            }
+            //C3: Mensajes actual y anterior de fechas la misma fecha
+            else {
+              dtPrevious = DateTime.fromMillisecondsSinceEpoch(
+                  currentMessage.dateTime!.millisecondsSinceEpoch);
+              //=======================SI ES EL ULTIMO=========================
+              if (index == widget.chat.messages!.length - 1) {
+                String s2 = Util.messageDateTimeToString(
+                  DateTime.fromMillisecondsSinceEpoch(
+                    currentMessage.dateTime!.millisecondsSinceEpoch,
+                  ),
+                );
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(s2),
+                    ),
+                    MessageWidget(
+                      animationController: AnimationController(
+                        vsync: this,
+                        duration: const Duration(milliseconds: 0),
+                      )..forward(),
+                      message: currentMessage,
+                    ),
+                  ],
+                );
+              }
+              return MessageWidget(
+                animationController: AnimationController(
+                  vsync: this,
+                  duration: const Duration(milliseconds: 0),
+                )..forward(),
+                message: currentMessage,
+              );
+            }
+          }
         },
       ),
     );
