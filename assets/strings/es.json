@@ -109,6 +109,7 @@
   "sign_in_username": "Email",
   "sign_in": "Iniciar sesión",
   "sign_out": "Cerrar sesión",
+  "sign_up": "Crear cuenta",
   "upload_challenge_available_date_error": "Debes introducir una fecha.",
   "upload_challenge_description_error": "Debes introducir una descripción",
   "upload_challenge_places_error": "Debes introducir por lo menos una ubicación.",

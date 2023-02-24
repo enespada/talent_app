@@ -66,6 +66,8 @@ class MyApp extends StatelessWidget {
           ProfileScreen.routeName: (context) => const ProfileScreen(),
           EditProfileScreen.routeName: (context) => const EditProfileScreen(),
           SettingsScreen.routeName: (context) => const SettingsScreen(),
+          //register
+          RegisterScreen.routeName: (context) => const RegisterScreen(),
           //splash
           SplashScreen.routeName: (context) => const SplashScreen(),
           //upload

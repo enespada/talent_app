@@ -109,6 +109,7 @@
   "sign_in_username": "Email",
   "sign_in": "Sign in",
   "sign_out": "Sign out",
+  "sign_up": "Sign up",
   "upload_challenge_available_date_error": "You must enter a date.",
   "upload_challenge_description_error": "You must enter a description",
   "upload_challenge_places_error": "You must enter at least a location.",

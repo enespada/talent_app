@@ -63,9 +63,17 @@ class Util {
 
   static String messageDateTimeToString(DateTime dateTime) {
     DateTime dateTimeNow = DateTime.now();
-    print(dateTimeNow.difference(dateTime).inDays);
-    if (dateTimeNow.difference(dateTime).inDays < 1) return 'Hoy';
-    if (dateTimeNow.difference(dateTime).inDays == 1) return 'Ayer';
+
+    if (dateTime.day == dateTimeNow.day &&
+        dateTime.month == dateTimeNow.month &&
+        dateTime.year == dateTimeNow.year) return 'Hoy';
+    print(dateTimeNow.subtract(const Duration(days: 1)));
+    DateTime dateTimeYesterday = dateTimeNow.subtract(const Duration(days: 1));
+    if (dateTime.day == dateTimeYesterday.day &&
+        dateTime.month == dateTimeYesterday.month &&
+        dateTime.year == dateTimeYesterday.year) {
+      return 'Ayer';
+    }
     return '${dateTime.day}-${dateTime.month}-${dateTime.year}';
   }
 

@@ -21,6 +21,9 @@ export 'package:talent_app/screens/profile/edit_profile_screen.dart';
 export 'package:talent_app/screens/profile/profile_screen.dart';
 export 'package:talent_app/screens/profile/settings_screen.dart';
 
+//register
+export 'package:talent_app/screens/register/register_screen.dart';
+
 //splash
 export 'package:talent_app/screens/splash/splash_screen.dart';
 

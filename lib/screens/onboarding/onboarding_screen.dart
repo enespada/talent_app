@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talent_app/screens/login/login_screen.dart';
+import 'package:talent_app/screens/register/register_screen.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/yellow_text_button.dart';
@@ -104,6 +105,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         //     // widget: Container(),
                         //   ),
                         // );
+
+                        Navigator.pushNamed(context, RegisterScreen.routeName);
                       },
                     ),
                   ),

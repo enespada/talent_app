@@ -13,9 +13,9 @@ class UserApp {
   String? email;
   String? phone;
   String? country;
+  String? fcmToken;
   DocumentReference? sport;
   DocumentReference? modality;
-  String? imgSrc;
   String? userName;
   String? birthday;
   String? bio;
@@ -30,9 +30,9 @@ class UserApp {
     this.email,
     this.phone,
     this.country,
+    this.fcmToken,
     this.sport,
     this.modality,
-    this.imgSrc,
     this.userName,
     this.birthday,
     this.bio,
@@ -65,10 +65,9 @@ class UserApp {
     email = json["email"];
     phone = json["phone"];
     country = json["country"];
-    // fcmToken = json["fcmToken"];
+    fcmToken = json["fcmToken"];
     sport = json["sport"];
     modality = json["modality"];
-    imgSrc = json["imgSrc"];
     userName = json["userName"];
     birthday = json["birthday"].toString();
     bio = json["bio"];
@@ -91,14 +90,13 @@ class UserApp {
         "email": email,
         "phone": phone,
         "country": country,
+        "fcmToken": fcmToken,
         "sport": sport,
         "modality": modality,
-        "imgSrc": imgSrc,
         "userName": userName,
         "birthday": birthday,
         "bio": bio,
         "isProfileCompleted": isProfileCompleted,
-        // "challengesNumber": challengesNumber,
         "followers": followers,
         "following": following,
       };

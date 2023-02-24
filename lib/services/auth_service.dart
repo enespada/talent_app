@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -42,6 +44,16 @@ class AuthService extends ChangeNotifier {
     const storage = FlutterSecureStorage();
     await storage.write(key: 'acces_token', value: token);
     return userCredential.user?.uid;
+  }
+
+  DocumentReference newUserReference(String uid) {
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    return fbFirestore.collection("users").doc(uid);
+  }
+
+  Future<void> newUserRefcmToken(UserApp userApp) async {
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    userApp.fcmToken = await FirebaseMessaging.instance.getToken();
   }
 
   Future<bool> isAuthenticated() async {

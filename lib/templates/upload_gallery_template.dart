@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_this
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -49,10 +51,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   // Image? currentImage;
   AssetEntityImage? currentImage;
   bool isLoading = false;
-  final ScrollController scrollController = ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
+  final ScrollController scrollController = ScrollController();
 
   //----------------------------------Metodos-----------------------------------
 
@@ -107,10 +106,18 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   //de la pagina page
   Future<void> bringAlbumPageFiles() async {
     if (this.albums.isNotEmpty) {
-      this.images += await this.albums[this.indexAlbum].getAssetListPaged(
+      print('--------------------------');
+      print(this.albums[this.indexAlbum]);
+      this.images += await this
+          .albums[this.indexAlbum]
+          .getAssetListPaged(
             page: page,
             size: 20,
-          );
+            // size: ,
+          )
+          .catchError((error, stackTrace) {
+        print(error);
+      });
       // this.titleAlbum = this.albums[this.indexAlbum].name;
     }
     // else {
@@ -123,7 +130,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     this.selectedImages = widget.selectedImages;
     bringAlbums();
     scrollController.addListener(() {
-      if ((scrollController.position.pixels + 200) >=
+      if ((scrollController.position.pixels + 50) >=
           scrollController.position.maxScrollExtent) {
         fetchPhotos();
       }
@@ -135,10 +142,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     if (this.isLoading) return;
     this.isLoading = true;
     setState(() {});
-    this.page++;
+
     print(scrollController.position);
+    this.page++;
     await bringAlbumPageFiles();
     await Future.delayed(const Duration(seconds: 3));
+
     this.isLoading = false;
     setState(() {});
 
@@ -297,7 +306,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    addAutomaticKeepAlives: true,
+                    // addAutomaticKeepAlives: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: responsive.widthPercent(2),
@@ -310,7 +319,8 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                           onTap: () async {
                             final ImagePicker _picker = ImagePicker();
                             final XFile? photo = await _picker.pickImage(
-                                source: ImageSource.camera);
+                              source: ImageSource.camera,
+                            );
 
                             //Guardamos la imagen tomada con la camara en la galeria
                             if (photo != null) {
