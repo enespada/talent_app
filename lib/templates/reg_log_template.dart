@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/screens/register/register_user_type_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
@@ -213,22 +214,21 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                         print('Login fallido');
                                       }
                                     } else {
-                                      String? uid = await authService.signUp(
+                                      userApp = UserApp(
+                                        email: _tecEmail.text,
+                                        followers: [],
+                                        following: [],
+                                        phone: '',
+                                        birthday: '',
+                                        userName: '',
+                                      );
+                                      authService.userApp = userApp;
+                                      await authService.signUp(
                                           _tecEmail.text, _tecPassword.text);
-                                      if (uid != null) {
-                                        DocumentReference userRef =
-                                            authService.newUserReference(uid);
-                                        userApp = UserApp(
-                                          id: userRef,
-                                          email: _tecEmail.text,
-                                          followers: [],
-                                          following: [],
-                                          phone: '',
-                                          birthday: '',
-                                          userName: '',
-                                        );
-                                        authService.newUserRefcmToken(userApp!);
-                                      }
+                                      Navigator.pushNamed(
+                                        context,
+                                        RegisterUserTypeScreen.routeName,
+                                      );
                                     }
                                   }
                                 : null,

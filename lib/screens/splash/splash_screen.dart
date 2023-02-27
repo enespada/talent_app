@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:talent_app/screens/register/register_user_type_screen.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
@@ -35,9 +36,16 @@ class SplashScreen extends StatelessWidget {
 
     if (authenticated) {
       await userService.getUser();
-      postsService.getFollowingPosts(userService.userApp!);
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-      return;
+      if (userService.userApp!.type == null) {
+        authService.userApp = userService.userApp;
+        Navigator.pushReplacementNamed(
+            context, RegisterUserTypeScreen.routeName);
+        return;
+      } else {
+        postsService.getFollowingPosts(userService.userApp!);
+        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+        return;
+      }
     } else {
       Navigator.pushReplacementNamed(context, OnboardingScreen.routeName);
       return;

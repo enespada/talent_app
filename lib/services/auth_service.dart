@@ -34,16 +34,20 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<String?> signUp(String user, String password) async {
+  Future<void> signUp(String user, String password) async {
     final UserCredential userCredential =
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: user,
       password: password,
     );
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    userApp!.id = newUserReference(userCredential.user?.uid ?? '');
+    await newUserRefcmToken(userApp!);
+    fbFirestore.collection('users').doc(userApp!.id!.id).set(userApp!.toJson());
     final token = await userCredential.user?.getIdToken(true);
     const storage = FlutterSecureStorage();
     await storage.write(key: 'acces_token', value: token);
-    return userCredential.user?.uid;
+    // return userCredential.user?.uid;
   }
 
   DocumentReference newUserReference(String uid) {
@@ -60,5 +64,14 @@ class AuthService extends ChangeNotifier {
     const storage = FlutterSecureStorage();
     String accesToken = await storage.read(key: 'acces_token') ?? '';
     return accesToken.isNotEmpty;
+  }
+
+  Future<void> deleteUser() async {
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    const storage = FlutterSecureStorage();
+    await fbFirestore.collection('users').doc(userApp!.id!.id).delete();
+    await storage.delete(key: 'access_token');
+
+    await FirebaseAuth.instance.currentUser?.delete();
   }
 }

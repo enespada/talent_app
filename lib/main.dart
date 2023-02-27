@@ -6,6 +6,7 @@ import 'package:talent_app/firebase_options.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
 import 'package:talent_app/screens/login/login_screen.dart';
 import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
+import 'package:talent_app/screens/register/register_user_type_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/screens/splash/splash_screen.dart';
 import 'package:talent_app/screens/upload/upload_post_home_screen.dart';
@@ -68,6 +69,8 @@ class MyApp extends StatelessWidget {
           SettingsScreen.routeName: (context) => const SettingsScreen(),
           //register
           RegisterScreen.routeName: (context) => const RegisterScreen(),
+          RegisterUserTypeScreen.routeName: (context) =>
+              const RegisterUserTypeScreen(),
           //splash
           SplashScreen.routeName: (context) => const SplashScreen(),
           //upload
