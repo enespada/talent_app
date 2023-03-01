@@ -166,5 +166,9 @@
   "wall_settings_title": "Ajustes",
   "posts_screen_my_posts": "Mis posts",
   "home_screen_title": "Posts",
-  "chats_screen_title": "Chats"
+  "chats_screen_title": "Chats",
+  "common_notice": "Aviso",
+  "common_yes": "Sí",
+  "common_no": "No",
+  "leave_register_message": "¿Estás seguro de que deseas abandonar el proceso de registro en la app?"
 }

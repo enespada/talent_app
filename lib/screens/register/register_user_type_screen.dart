@@ -59,10 +59,41 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomBackButton(
-                    onTap: () async {
-                      await authService.deleteUser();
-                      Navigator.pushReplacementNamed(
-                          context, SplashScreen.routeName);
+                    onTap: () {
+                      Util.showCustomDialog(
+                        context: context,
+                        child: Text(
+                          Localization.of(context)
+                              .string("leave_register_message"),
+                          style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                            fontSize: responsive.diagonalPercent(2),
+                          ),
+                        ),
+                        actions: [
+                          MaterialButton(
+                            onPressed: () async {
+                              await authService.deleteUser();
+                              Navigator.pushReplacementNamed(
+                                context,
+                                SplashScreen.routeName,
+                              );
+                            },
+                            elevation: 0.0,
+                            textColor: AppColors.whiteColor,
+                            child: Text(
+                              Localization.of(context).string("common_yes"),
+                            ),
+                          ),
+                          MaterialButton(
+                            onPressed: () => Navigator.pop(context),
+                            elevation: 0.0,
+                            textColor: AppColors.whiteColor,
+                            child: Text(
+                              Localization.of(context).string("common_no"),
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ),
                   Container(

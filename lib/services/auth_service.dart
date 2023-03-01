@@ -5,24 +5,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/utils/utils.dart';
 
 class AuthService extends ChangeNotifier {
   UserApp? userApp;
+  AuthCredential? _authCredential;
   bool isLoading = false;
+
+  static const refreshTokenKey = 'refresh_token';
+  static const accessTokenKey = 'access_token';
+  static const expiresInKey = 'expires_in';
 
   Future<bool> login(String user, String password) async {
     if (isLoading) return false;
     isLoading = true;
     notifyListeners();
     try {
+      final FirebaseAuth fbAuth = FirebaseAuth.instance;
       final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await fbAuth.signInWithEmailAndPassword(
         email: user,
         password: password,
       );
+      //token
       final token = await userCredential.user?.getIdToken(true);
       const storage = FlutterSecureStorage();
-      await storage.write(key: 'acces_token', value: token);
+      await storage.write(key: accessTokenKey, value: token);
+      //_authCredential
+      _authCredential =
+          EmailAuthProvider.credential(email: user, password: password);
 
       isLoading = false;
       notifyListeners();
@@ -35,19 +46,34 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> signUp(String user, String password) async {
+    if (isLoading) return;
+    isLoading = true;
+    notifyListeners();
+
+    final FirebaseAuth fbAuth = FirebaseAuth.instance;
     final UserCredential userCredential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        await fbAuth.createUserWithEmailAndPassword(
       email: user,
       password: password,
     );
+    //token
+    final token = await userCredential.user?.getIdToken(true);
+    const storage = FlutterSecureStorage();
+    await storage.write(key: accessTokenKey, value: token);
+    //_authCredential
+    _authCredential =
+        EmailAuthProvider.credential(email: user, password: password);
+    // _userCredential!.credential = PhoneAuthProvider.credentialFromToken(token);
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     userApp!.id = newUserReference(userCredential.user?.uid ?? '');
     await newUserRefcmToken(userApp!);
-    fbFirestore.collection('users').doc(userApp!.id!.id).set(userApp!.toJson());
-    final token = await userCredential.user?.getIdToken(true);
-    const storage = FlutterSecureStorage();
-    await storage.write(key: 'acces_token', value: token);
-    // return userCredential.user?.uid;
+    await fbFirestore
+        .collection('users')
+        .doc(userApp!.id!.id)
+        .set(userApp!.toJson());
+
+    isLoading = false;
+    notifyListeners();
   }
 
   DocumentReference newUserReference(String uid) {
@@ -56,22 +82,38 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> newUserRefcmToken(UserApp userApp) async {
-    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    userApp.fcmToken = await FirebaseMessaging.instance.getToken();
+    FirebaseMessaging fbMessaging = FirebaseMessaging.instance;
+    userApp.fcmToken = await fbMessaging.getToken();
   }
 
   Future<bool> isAuthenticated() async {
     const storage = FlutterSecureStorage();
-    String accesToken = await storage.read(key: 'acces_token') ?? '';
+    String accesToken = await storage.read(key: accessTokenKey) ?? '';
     return accesToken.isNotEmpty;
   }
 
-  Future<void> deleteUser() async {
-    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+  Future<void> refreshToken() async {
     const storage = FlutterSecureStorage();
-    await fbFirestore.collection('users').doc(userApp!.id!.id).delete();
-    await storage.delete(key: 'access_token');
+    final String refreshToken = await storage.read(key: refreshTokenKey) ?? '';
+    //   final response = await Dio().post(
+    //     NetworkEndpoints.refreshTokenUrl,
+    //     data: {refreshTokenKey: refreshToken},
+    //   );
+    //   return accesToken.isNotEmpty;
+  }
 
+  Future<void> deleteUser() async {
+    final FirebaseAuth fbAuth = FirebaseAuth.instance;
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    //Borramos el usuario de Firestore
+    await fbFirestore.collection('users').doc(userApp!.id!.id).delete();
+    //Borramos el usuario de Auth
+    await fbAuth.currentUser!.reauthenticateWithCredential(
+      _authCredential!,
+    );
     await FirebaseAuth.instance.currentUser?.delete();
+    //Borramos el token
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: accessTokenKey);
   }
 }

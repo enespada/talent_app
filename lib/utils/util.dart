@@ -1,5 +1,10 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:talent_app/style/styles.dart';
+import 'package:talent_app/utils/utils.dart';
 
 class Util {
   static String adaptNumFollow(double value) {
@@ -94,4 +99,112 @@ class Util {
 
     return textPainter.size.width;
   }
+
+  static Future<dynamic> showLoadingDialog({
+    required BuildContext context,
+    Widget? child,
+    List<Widget>? actions,
+  }) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: const AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            content: Center(
+              child: SizedBox(
+                height: 70,
+                width: 70,
+                child: CircularProgressIndicator(
+                  color: AppColors.blueColor,
+                  strokeWidth: 4,
+                ),
+              ),
+            ),
+            backgroundColor: Colors.transparent,
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<dynamic> showCustomDialog({
+    required BuildContext context,
+    Widget? child,
+    List<Widget>? actions,
+  }) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        final Responsive responsive = Responsive.of(context);
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            title: Text(
+              Localization.of(context).string("common_notice"),
+              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(3),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: child,
+            backgroundColor: AppColors.blackColor,
+            actions: actions,
+          ),
+        );
+      },
+    );
+  }
+
+  //   Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {
+  //   return showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return BackdropFilter(
+  //         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+  //         child: AlertDialog(
+  //           title: Center(
+  //             child: Text(
+  //               Localization.of(context).string("wall_followers_delete"),
+  //               style: AppStyles.darkTextTheme.displayMedium,
+  //             ),
+  //           ),
+  //           actionsAlignment: MainAxisAlignment.end,
+  //           backgroundColor: AppColors.greyscale5,
+  //           content: Text(
+  //             Localization.of(context).string("wall_followers_message",
+  //                 params: [followerToRemove.fullName!]),
+  //             style: AppStyles.darkTextTheme.bodyLarge,
+  //           ),
+  //           actions: [
+  //             MaterialButton(
+  //               onPressed: () => onPressedDialogX(context, followerToRemove),
+  //               elevation: 0.0,
+  //               textColor: AppColors.mediunLightGrey,
+  //               child: Text(
+  //                 Localization.of(context).string("wall_followers_yes"),
+  //               ),
+  //             ),
+  //             MaterialButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               elevation: 5,
+  //               textColor: AppColors.brandColor,
+  //               child: Text(
+  //                 Localization.of(context).string("wall_followers_no"),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

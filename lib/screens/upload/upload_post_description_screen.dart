@@ -64,78 +64,6 @@ class _UploadPostDescriptionScreenState
     userService.userPosts.insert(0, resultPost);
   }
 
-  Future<dynamic> showCustomDialog(BuildContext context) {
-    return showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-          child: const AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            content: Center(
-              child: SizedBox(
-                height: 70,
-                width: 70,
-                child: CircularProgressIndicator(
-                  color: AppColors.blueColor,
-                  strokeWidth: 4,
-                ),
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-          ),
-        );
-      },
-    );
-  }
-
-  //   Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {
-  //   return showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return BackdropFilter(
-  //         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-  //         child: AlertDialog(
-  //           title: Center(
-  //             child: Text(
-  //               Localization.of(context).string("wall_followers_delete"),
-  //               style: AppStyles.darkTextTheme.displayMedium,
-  //             ),
-  //           ),
-  //           actionsAlignment: MainAxisAlignment.end,
-  //           backgroundColor: AppColors.greyscale5,
-  //           content: Text(
-  //             Localization.of(context).string("wall_followers_message",
-  //                 params: [followerToRemove.fullName!]),
-  //             style: AppStyles.darkTextTheme.bodyLarge,
-  //           ),
-  //           actions: [
-  //             MaterialButton(
-  //               onPressed: () => onPressedDialogX(context, followerToRemove),
-  //               elevation: 0.0,
-  //               textColor: AppColors.mediunLightGrey,
-  //               child: Text(
-  //                 Localization.of(context).string("wall_followers_yes"),
-  //               ),
-  //             ),
-  //             MaterialButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               elevation: 5,
-  //               textColor: AppColors.brandColor,
-  //               child: Text(
-  //                 Localization.of(context).string("wall_followers_no"),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
@@ -148,7 +76,7 @@ class _UploadPostDescriptionScreenState
         title: Localization.of(context).string('upload_new_post'),
         action: GestureDetector(
           onTap: () async {
-            showCustomDialog(context);
+            Util.showLoadingDialog(context: context);
             if (userService.userPosts.isEmpty) await userService.getPosts();
             await uploadPost(userService, postsService);
             Navigator.pop(context);
