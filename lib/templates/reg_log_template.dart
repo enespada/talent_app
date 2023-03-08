@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
-import 'package:talent_app/screens/register/register_user_type_screen.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
@@ -14,13 +11,13 @@ import 'package:talent_app/widgets/widgets.dart';
 class RegLogTemplate extends StatefulWidget {
   final String title;
   final String subtitle;
-  final bool isLogin;
+  final String? userType;
 
   const RegLogTemplate({
     Key? key,
     required this.title,
     required this.subtitle,
-    required this.isLogin,
+    this.userType,
   }) : super(key: key);
 
   @override
@@ -32,7 +29,8 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
   final _tecEmail = TextEditingController();
   final _tecPassword = TextEditingController();
   bool _passwordHidden = true;
-  bool _isValidEmail = false, _isValidPwd = false;
+  bool _isValidEmail = false;
+  bool _isValidPwd = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +58,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //------------------------Boton atras----------------------------
                   CustomBackButton(onTap: () => Navigator.pop(context)),
                   SizedBox(height: responsive.heightPercent(2)),
 
@@ -76,7 +75,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   Text(
                     widget.subtitle,
                     style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(2.5),
+                      fontSize: responsive.diagonalPercent(2.3),
                     ),
                   ),
                   SizedBox(height: responsive.heightPercent(5)),
@@ -185,81 +184,54 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   ),
                   SizedBox(height: responsive.heightPercent(5)),
 
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: YellowTextButton(
-                            title: Localization.of(context).string('sign_in'),
-                            backgroundDisabled: AppColors.greyscale1,
-                            foregroundDisabled: AppColors.greyscale4,
-                            onPressed: (_isValidEmail &&
-                                    _isValidPwd &&
-                                    !authService.isLoading)
-                                ? () async {
-                                    if (widget.isLogin) {
-                                      bool loginOK = await authService.login(
-                                          _tecEmail.text, _tecPassword.text);
-                                      if (loginOK) {
-                                        print('Login correcto');
-                                        await userService.getUser();
-                                        postsService.getFollowingPosts(
-                                            userService.userApp!);
+                  YellowTextButton(
+                    title: Localization.of(context).string('sign_in'),
+                    backgroundDisabled: AppColors.greyscale1,
+                    foregroundDisabled: AppColors.greyscale4,
+                    onPressed: (_isValidEmail &&
+                            _isValidPwd &&
+                            !authService.isLoading)
+                        ? () async {
+                            if (widget.userType == null) {
+                              bool loginOK = await authService.login(
+                                  _tecEmail.text, _tecPassword.text);
+                              if (loginOK) {
+                                print('Login correcto');
+                                await userService.getUser();
+                                postsService
+                                    .getFollowingPosts(userService.userApp!);
 
-                                        Navigator.pushReplacementNamed(
-                                            context, HomeScreen.routeName);
-                                      } else {
-                                        print('Login fallido');
-                                      }
-                                    } else {
-                                      userApp = UserApp(
-                                        email: _tecEmail.text,
-                                        followers: [],
-                                        following: [],
-                                        phone: '',
-                                        birthday: '',
-                                        userName: '',
-                                      );
-                                      authService.userApp = userApp;
-                                      await authService.signUp(
-                                          _tecEmail.text, _tecPassword.text);
-                                      Navigator.pushNamed(
-                                        context,
-                                        RegisterUserTypeScreen.routeName,
-                                      );
-                                    }
-                                  }
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: Platform.isIOS
-                                ? MainAxisAlignment.spaceBetween
-                                : MainAxisAlignment.center,
-                            children: [
-                              // CustomSocialButton(
-                              //   assetImage: 'assets/images/google_icon.svg',
-                              //   paddingVertical: 10.0,
-                              //   onPressed: () => _viewModel.loginWithGoogle(),
-                              // ),
-                              // Visibility(
-                              //   visible: Platform.isIOS,
-                              //   child: const CustomSocialButton(
-                              //     colorIcon: AppColors.mediunLightGrey,
-                              //     paddingVertical: 10.0,
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  HomeScreen.routeName,
+                                );
+                              } else {
+                                print('Login fallido');
+                              }
+                            } else {
+                              userApp = UserApp(
+                                email: _tecEmail.text,
+                                followers: [],
+                                following: [],
+                                phone: '',
+                                birthday: null,
+                                userName: '',
+                                fullName: '',
+                                bio: '',
+                                country: '',
+                                type: widget.userType,
+                              );
+                              authService.userApp = userApp;
+                              await authService.signUp(
+                                  _tecEmail.text, _tecPassword.text);
+                              Navigator.pushReplacementNamed(
+                                context,
+                                HomeScreen.routeName,
+                              );
+                            }
+                          }
+                        : null,
+                  ),
                 ],
               ),
             ),

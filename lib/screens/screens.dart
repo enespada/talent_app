@@ -6,9 +6,7 @@ export 'package:talent_app/screens/chats/chats_screen.dart';
 export 'package:talent_app/screens/explorer/explorer_screen.dart';
 
 //home
-export 'package:talent_app/screens/home/challenges_page.dart';
 export 'package:talent_app/screens/home/home_screen.dart';
-export 'package:talent_app/widgets/posts_list_widget.dart';
 
 //login
 export 'package:talent_app/screens/login/login_screen.dart';
@@ -18,11 +16,14 @@ export 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 
 //profile
 export 'package:talent_app/screens/profile/edit_profile_screen.dart';
+export 'package:talent_app/screens/profile/posts_screen.dart';
+export 'package:talent_app/screens/profile/profile_follow_screen.dart';
 export 'package:talent_app/screens/profile/profile_screen.dart';
 export 'package:talent_app/screens/profile/settings_screen.dart';
 
 //register
 export 'package:talent_app/screens/register/register_screen.dart';
+export 'package:talent_app/screens/register/register_user_type_screen.dart';
 
 //splash
 export 'package:talent_app/screens/splash/splash_screen.dart';

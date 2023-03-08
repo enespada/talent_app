@@ -58,64 +58,69 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //------------------------Boton atras----------------------------
                   CustomBackButton(
                     onTap: () {
-                      Util.showCustomDialog(
-                        context: context,
-                        child: Text(
-                          Localization.of(context)
-                              .string("leave_register_message"),
-                          style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
-                            fontSize: responsive.diagonalPercent(2),
-                          ),
-                        ),
-                        actions: [
-                          MaterialButton(
-                            onPressed: () async {
-                              await authService.deleteUser();
-                              Navigator.pushReplacementNamed(
-                                context,
-                                SplashScreen.routeName,
-                              );
-                            },
-                            elevation: 0.0,
-                            textColor: AppColors.whiteColor,
-                            child: Text(
-                              Localization.of(context).string("common_yes"),
-                            ),
-                          ),
-                          MaterialButton(
-                            onPressed: () => Navigator.pop(context),
-                            elevation: 0.0,
-                            textColor: AppColors.whiteColor,
-                            child: Text(
-                              Localization.of(context).string("common_no"),
-                            ),
-                          ),
-                        ],
-                      );
+                      Navigator.pop(context);
+                      // Util.showCustomDialog(
+                      //   context: context,
+                      //   child: Text(
+                      //     Localization.of(context)
+                      //         .string("leave_register_message"),
+                      //     style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                      //       fontSize: responsive.diagonalPercent(2),
+                      //     ),
+                      //   ),
+                      //   actions: [
+                      //     MaterialButton(
+                      //       onPressed: () async {
+                      //         await authService.deleteUser();
+                      //         Navigator.pushReplacementNamed(
+                      //           context,
+                      //           SplashScreen.routeName,
+                      //         );
+                      //       },
+                      //       elevation: 0.0,
+                      //       textColor: AppColors.whiteColor,
+                      //       child: Text(
+                      //         Localization.of(context).string("common_yes"),
+                      //       ),
+                      //     ),
+                      //     MaterialButton(
+                      //       onPressed: () => Navigator.pop(context),
+                      //       elevation: 0.0,
+                      //       textColor: AppColors.whiteColor,
+                      //       child: Text(
+                      //         Localization.of(context).string("common_no"),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // );
                     },
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      Localization.of(context)
-                          .string('register_profile_type_title'),
-                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                        fontSize: responsive.diagonalPercent(5),
-                      ),
+                  SizedBox(height: responsive.heightPercent(2)),
+
+                  //---------------------------Titulo----------------------------
+                  Text(
+                    Localization.of(context)
+                        .string('register_profile_type_title'),
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      fontSize: responsive.diagonalPercent(5),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    child: Text(
-                      Localization.of(context)
-                          .string('register_profile_type_subtitle'),
-                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                        fontSize: responsive.diagonalPercent(2),
-                      ),
+                  SizedBox(height: responsive.heightPercent(3)),
+
+                  //------------------------Subtitulo----------------------------
+                  Text(
+                    Localization.of(context)
+                        .string('register_profile_type_subtitle'),
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      fontSize: responsive.diagonalPercent(2.3),
                     ),
                   ),
+                  SizedBox(height: responsive.heightPercent(3)),
+
+                  //-----------------------Tipo de usuario------------------------
                   ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -126,7 +131,7 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                         onTap: () {
                           _selectedIndex = index;
                           // widget.user?.type = type[index];
-                          authService.userApp?.type = type[index];
+                          // authService.userApp?.type = type[index];
                           setState(() {});
                         },
                         child: CustomCheck(
@@ -156,21 +161,23 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                   SizedBox(height: responsive.heightPercent(14)),
                   Container(
                     margin: const EdgeInsets.only(bottom: 30),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: YellowTextButton(
-                        title: Localization.of(context).string('btn_next'),
-                        backgroundDisabled: AppColors.greyscale1,
-                        foregroundDisabled: AppColors.greyscale4,
-                        onPressed: (_selectedIndex != -1)
-                            ? () {
-                                // widget.pageController.nextPage(
-                                //   duration: const Duration(milliseconds: 800),
-                                //   curve: Curves.easeInOut,
-                                // );
-                              }
-                            : null,
-                      ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: YellowTextButton(
+                      title: Localization.of(context).string('btn_next'),
+                      backgroundDisabled: AppColors.greyscale1,
+                      foregroundDisabled: AppColors.greyscale4,
+                      onPressed: (_selectedIndex != -1)
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RegisterScreen(
+                                    userType: type[_selectedIndex],
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
                     ),
                   ),
                 ],

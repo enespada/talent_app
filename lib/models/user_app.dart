@@ -17,7 +17,7 @@ class UserApp {
   DocumentReference? sport;
   DocumentReference? modality;
   String? userName;
-  String? birthday;
+  DateTime? birthday;
   String? bio;
   bool? isProfileCompleted;
   List<DocumentReference?>? followers;
@@ -69,7 +69,9 @@ class UserApp {
     sport = json["sport"];
     modality = json["modality"];
     userName = json["userName"];
-    birthday = json["birthday"].toString();
+    birthday = DateTime.fromMillisecondsSinceEpoch(
+      (json["birthday"] as Timestamp).millisecondsSinceEpoch,
+    );
     bio = json["bio"];
     isProfileCompleted = json["isProfileCompleted"];
     // challengesNumber = json["challengesNumber"] ?? 0;

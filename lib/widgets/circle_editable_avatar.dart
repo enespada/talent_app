@@ -56,6 +56,7 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
               margin: const EdgeInsets.all(20),
               height: widget.size - widget.size * 0.25,
               width: widget.size - widget.size * 0.25,
+              // color: Colors.red,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size),
                 child: (widget.file == null)

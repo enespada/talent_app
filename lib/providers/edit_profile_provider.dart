@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:talent_app/models/models.dart';
 
 class EditProfileProvider extends ChangeNotifier {
@@ -6,6 +7,9 @@ class EditProfileProvider extends ChangeNotifier {
   TextEditingController tecUserName = new TextEditingController();
   TextEditingController tecBio = new TextEditingController();
   TextEditingController tecPhone = new TextEditingController();
+  TextEditingController tecBirthday = new TextEditingController();
+  DateTime? birthday;
+  TextEditingController tecCountry = new TextEditingController();
   Sport? sport;
   Modality? modality;
   ImageProvider<Object>? initialProfileImage;
@@ -17,6 +21,15 @@ class EditProfileProvider extends ChangeNotifier {
     tecUserName.text = userApp.userName!;
     tecBio.text = userApp.bio!;
     tecPhone.text = userApp.phone!;
+    // String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(userApp.birthday));
+    if (userApp.birthday != null) {
+      birthday = userApp.birthday!;
+      tecBirthday.text =
+          '${userApp.birthday!.day}/${userApp.birthday!.month}/${userApp.birthday!.year}';
+    } else {
+      tecBirthday.text = 'dd/mm/yyyy';
+    }
+    tecCountry.text = userApp.country!;
 
     // if (sport != null) this.sport = sport;
     // for (Sport s in sports) {
@@ -38,6 +51,10 @@ class EditProfileProvider extends ChangeNotifier {
     if (tecFullName.text.isEmpty) return false;
     if (tecPhone.text.isEmpty) return false;
     if (tecPhone.text.substring(0, 1) != '+') return false;
+    if (tecBirthday.text.isEmpty) return false;
+    if (tecCountry.text.isEmpty) return false;
+    if (sport == null) return false;
+    if (modality == null) return false;
     return true;
   }
 }

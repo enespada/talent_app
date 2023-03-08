@@ -1,15 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:talent_app/models/models.dart';
-import 'package:talent_app/utils/utils.dart';
 
 class AuthService extends ChangeNotifier {
   UserApp? userApp;
-  AuthCredential? _authCredential;
   bool isLoading = false;
 
   static const refreshTokenKey = 'refresh_token';
@@ -31,9 +29,6 @@ class AuthService extends ChangeNotifier {
       final token = await userCredential.user?.getIdToken(true);
       const storage = FlutterSecureStorage();
       await storage.write(key: accessTokenKey, value: token);
-      //_authCredential
-      _authCredential =
-          EmailAuthProvider.credential(email: user, password: password);
 
       isLoading = false;
       notifyListeners();
@@ -60,10 +55,6 @@ class AuthService extends ChangeNotifier {
     final token = await userCredential.user?.getIdToken(true);
     const storage = FlutterSecureStorage();
     await storage.write(key: accessTokenKey, value: token);
-    //_authCredential
-    _authCredential =
-        EmailAuthProvider.credential(email: user, password: password);
-    // _userCredential!.credential = PhoneAuthProvider.credentialFromToken(token);
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     userApp!.id = newUserReference(userCredential.user?.uid ?? '');
     await newUserRefcmToken(userApp!);
@@ -102,15 +93,22 @@ class AuthService extends ChangeNotifier {
     //   return accesToken.isNotEmpty;
   }
 
+  Future<void> logOut() async {
+    //Borramos el token
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: accessTokenKey);
+    userApp = null;
+  }
+
   Future<void> deleteUser() async {
     final FirebaseAuth fbAuth = FirebaseAuth.instance;
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     //Borramos el usuario de Firestore
     await fbFirestore.collection('users').doc(userApp!.id!.id).delete();
-    //Borramos el usuario de Auth
-    await fbAuth.currentUser!.reauthenticateWithCredential(
-      _authCredential!,
-    );
+    //TODO: Borrar el usuario de Auth
+    // await fbAuth.currentUser!.reauthenticateWithCredential(
+    //   _authCredential!,
+    // );
     await FirebaseAuth.instance.currentUser?.delete();
     //Borramos el token
     const storage = FlutterSecureStorage();

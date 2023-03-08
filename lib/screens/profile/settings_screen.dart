@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/auth_service.dart';
+import 'package:talent_app/services/posts_service.dart';
+import 'package:talent_app/services/services.dart';
 
 import 'package:talent_app/style/app_colors.dart';
+import 'package:talent_app/style/app_styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import '../../widgets/widgets.dart';
 
@@ -33,11 +39,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = Provider.of<AuthService>(context);
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: false,
+    );
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: false,
+    );
     final Responsive responsive = Responsive.of(context);
-    final double spaceBetweenOptions = responsive.heightPercent(4);
+    final double spaceBetweenOptions = responsive.heightPercent(2.5);
 
     return Scaffold(
       backgroundColor: AppColors.whiteBackground,
+      //------------------------------appBar------------------------------------
+      appBar: CustomAppBar(
+        title: Localization.of(context).string('wall_settings_title'),
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          fontSize: responsive.diagonalPercent(3),
+          fontWeight: FontWeight.bold,
+          color: AppColors.greyscale5,
+        ),
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Icon(
+            Icons.arrow_back,
+            color: AppColors.blueColor,
+            size: responsive.heightPercent(3),
+          ),
+        ),
+      ),
+
       //-------------------------------body-------------------------------------
       body: SafeArea(
         child: Stack(
@@ -46,24 +79,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  //--------------------Ajustes y flecha atras----------------------
-                  CustomAppBar(
-                    title:
-                        Localization.of(context).string('wall_settings_title'),
-                    style: TextStyle(
-                      fontSize: responsive.widthPercent(7),
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.blackColor,
-                    ),
-                    leading: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.blueColor,
-                        size: responsive.heightPercent(3),
-                      ),
-                    ),
-                  ),
                   SizedBox(height: responsive.heightPercent(6)),
 
                   //-----------------------Opciones ajustes-------------------------
@@ -97,9 +112,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _SettingOption(
                           title: Localization.of(context)
                               .string('wall_settings_logOut'),
-                          onTap: () {
+                          onTap: () async {
                             //TODO: cerrar sesion
                             // _viewModel.signOut();
+                            await authService.logOut();
+                            postsService.postsToShow.clear();
+                            userService.userApp = null;
+                            userService.followers.clear();
+                            userService.following.clear();
+                            userService.profileUrlImage == null;
+                            userService.userPosts.clear();
+                            Navigator.pushReplacementNamed(
+                              context,
+                              SplashScreen.routeName,
+                            );
                           },
                           iconData: Icons.logout,
                           logOut: true,
@@ -146,16 +172,16 @@ class _SettingOption extends StatelessWidget {
         leading: Icon(
           iconData,
           // size: responsive.widthPercent(10),
-          size: (responsive.widthPercent(10) > 35)
+          size: (responsive.widthPercent(8) > 35)
               ? 35
-              : responsive.widthPercent(10),
-          color: AppColors.darkGrey,
+              : responsive.widthPercent(8),
+          color: AppColors.greyscale5,
         ),
         title: Text(
           title,
-          style: TextStyle(
+          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+            fontSize: responsive.diagonalPercent(2.5),
             color: AppColors.greyscale5,
-            fontSize: responsive.widthPercent(6),
           ),
         ),
         trailing: (logOut != null && logOut == true)
@@ -165,7 +191,7 @@ class _SettingOption extends StatelessWidget {
               )
             : const Icon(
                 Icons.arrow_forward_ios,
-                color: AppColors.coinGrey,
+                color: AppColors.greyscale1,
               ),
       ),
     );

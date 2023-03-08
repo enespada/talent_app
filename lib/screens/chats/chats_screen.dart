@@ -51,6 +51,8 @@ class ChatsScreen extends StatelessWidget {
         title: Localization.of(context).string("chats_screen_title"),
         style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
+          fontWeight: FontWeight.bold,
+          color: AppColors.greyscale5,
         ),
       ),
 

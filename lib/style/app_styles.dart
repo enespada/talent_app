@@ -4,33 +4,33 @@ import 'package:talent_app/style/app_colors.dart';
 
 class AppStyles {
   // App Theme
-  // static ThemeData appTheme = ThemeData(
-  //   textTheme: ligthTextTheme,
-  //   brightness: Brightness.light,
-  //   primarySwatch: Colors.blue,
-  //   useMaterial3: true,
-  // ).copyWith(
-  //   pageTransitionsTheme: const PageTransitionsTheme(
-  //     builders: <TargetPlatform, PageTransitionsBuilder>{
-  //       TargetPlatform.android: ZoomPageTransitionsBuilder(),
-  //       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-  //     },
-  //   ),
-  // );
+  static ThemeData lightTheme = ThemeData(
+    textTheme: ligthTextTheme,
+    brightness: Brightness.light,
+    primarySwatch: Colors.blue,
+    useMaterial3: true,
+  ).copyWith(
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
+  );
 
-  // static ThemeData appDarkTheme = ThemeData(
-  //   textTheme: darkTextTheme,
-  //   brightness: Brightness.dark,
-  //   primarySwatch: Colors.blue,
-  //   useMaterial3: true,
-  // ).copyWith(
-  //   pageTransitionsTheme: const PageTransitionsTheme(
-  //     builders: <TargetPlatform, PageTransitionsBuilder>{
-  //       TargetPlatform.android: ZoomPageTransitionsBuilder(),
-  //       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-  //     },
-  //   ),
-  // );
+  static ThemeData darkTheme = ThemeData(
+    textTheme: darkTextTheme,
+    brightness: Brightness.dark,
+    primarySwatch: Colors.blue,
+    useMaterial3: true,
+  ).copyWith(
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
+  );
 
   static TextTheme ligthTextTheme = TextTheme(
     bodyLarge: GoogleFonts.urbanist(

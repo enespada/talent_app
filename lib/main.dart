@@ -65,10 +65,10 @@ class MyApp extends StatelessWidget {
           OnboardingScreen.routeName: (context) => const OnboardingScreen(),
           //profile
           ProfileScreen.routeName: (context) => const ProfileScreen(),
-          EditProfileScreen.routeName: (context) => const EditProfileScreen(),
+          // EditProfileScreen.routeName: (context) => const EditProfileScreen(),
           SettingsScreen.routeName: (context) => const SettingsScreen(),
           //register
-          RegisterScreen.routeName: (context) => const RegisterScreen(),
+          // RegisterScreen.routeName: (context) => const RegisterScreen(),
           RegisterUserTypeScreen.routeName: (context) =>
               const RegisterUserTypeScreen(),
           //splash

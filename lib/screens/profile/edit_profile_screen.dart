@@ -1,19 +1,15 @@
 // ignore_for_file: unnecessary_new
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
-import 'package:talent_app/services/sports_service.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
@@ -22,7 +18,14 @@ import 'package:talent_app/widgets/widgets.dart';
 class EditProfileScreen extends StatefulWidget {
   static const String routeName = 'edit_profile_screen';
 
-  const EditProfileScreen({Key? key}) : super(key: key);
+  bool? isProfileCompleted;
+
+  EditProfileScreen({
+    Key? key,
+    this.isProfileCompleted,
+  }) : super(key: key) {
+    isProfileCompleted ??= true;
+  }
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -37,6 +40,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     userAppToUpdate.userName = editProfileProvider.tecUserName.text;
     userAppToUpdate.bio = editProfileProvider.tecBio.text;
     userAppToUpdate.phone = editProfileProvider.tecPhone.text;
+    userAppToUpdate.birthday = editProfileProvider.birthday;
+    userAppToUpdate.country = editProfileProvider.tecCountry.text;
     userAppToUpdate.sport = editProfileProvider.sport!.id;
     userAppToUpdate.modality = editProfileProvider.modality!.id;
 
@@ -76,6 +81,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteBackground,
+      //-----------------------------appBar---------------------------------------
+      appBar: CustomAppBar(
+        title: Localization.of(context).string('wall_profile_title'),
+        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          fontSize: responsive.diagonalPercent(3),
+          fontWeight: FontWeight.bold,
+        ),
+        leading: (widget.isProfileCompleted!)
+            ? GestureDetector(
+                onTap: () => Navigator.pushReplacementNamed(
+                  context,
+                  ProfileScreen.routeName,
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.blueColor,
+                  size: responsive.heightPercent(3),
+                ),
+              )
+            : Container(),
+      ),
+
       //-------------------------------body-------------------------------------
       body: SafeArea(
         child: GestureDetector(
@@ -84,23 +111,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                //--------------------Mi perfil y flecha atras------------------
-                CustomAppBar(
-                  title: Localization.of(context).string('wall_profile_title'),
-                  style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                    fontSize: responsive.diagonalPercent(3.5),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  leading: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.blueColor,
-                      size: responsive.heightPercent(3),
-                    ),
-                  ),
-                ),
-
                 //-----------------------Info mi perfil-------------------------
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -121,6 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           } else {
                             circleEditableAvatar.image = const Image(
                               image: AssetImage('assets/images/profile.png'),
+                              fit: BoxFit.cover,
                             );
                           }
                           return Center(
@@ -141,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: spaceBetweenFacts),
 
-                      //-------------------Datos principales----------------------
+                      //-------------------Informacion personal----------------------
                       Text(
                         Localization.of(context)
                             .string('wall_profile_personal_info'),
@@ -173,6 +184,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         text: Localization.of(context)
                             .string('wall_profile_phone'),
                         textEditingController: editProfileProvider.tecPhone,
+                      ),
+                      SizedBox(height: spaceBetweenFacts),
+                      EditProfileFact(
+                        text: Localization.of(context)
+                            .string('wall_profile_birthday'),
+                        textEditingController: editProfileProvider.tecBirthday,
+                        isBirthday: true,
+                      ),
+                      SizedBox(height: spaceBetweenFacts),
+                      EditProfileFact(
+                        text: Localization.of(context)
+                            .string('wall_profile_country'),
+                        textEditingController: editProfileProvider.tecCountry,
                       ),
                       SizedBox(height: spaceBetweenFacts + 30),
 
@@ -226,11 +250,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 : () async {
                                     if (editProfileProvider.isValid()) {
                                       await _saveChanges(
-                                          userService,
-                                          circleEditableAvatar.file,
-                                          editProfileProvider);
+                                        userService,
+                                        circleEditableAvatar.file,
+                                        editProfileProvider,
+                                      );
                                     } else {
                                       //TODO: alertdialog
+                                      Util.showCustomDialog(
+                                        context: context,
+                                        child: Text(
+                                          Localization.of(context).string(
+                                            "edit_profile_empty_fields",
+                                          ),
+                                          style: AppStyles
+                                              .darkTextTheme.bodyLarge!
+                                              .copyWith(
+                                            fontSize:
+                                                responsive.diagonalPercent(2),
+                                          ),
+                                        ),
+                                        actions: [
+                                          MaterialButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            elevation: 0.0,
+                                            textColor: AppColors.whiteColor,
+                                            child: Text(
+                                              Localization.of(context)
+                                                  .string("common_ok"),
+                                            ),
+                                          ),
+                                        ],
+                                      );
                                     }
                                   },
                           ),
@@ -239,27 +290,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(height: spaceBetweenFacts),
 
                       //--------------------Descartar cambios--------------------
-                      GestureDetector(
-                        onTap: (userService.isLoading)
-                            ? null
-                            : () async {
-                                Navigator.pop(context);
-                              },
-                        child: SizedBox(
-                          width: responsive.width,
-                          child: Text(
-                            Localization.of(context)
-                                .string('wall_profile_discard'),
-                            style: GoogleFonts.urbanist(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18,
-                              color: AppColors.blackColor,
-                              decoration: TextDecoration.underline,
+                      if (widget.isProfileCompleted!)
+                        GestureDetector(
+                          onTap: (userService.isLoading)
+                              ? null
+                              : () async {
+                                  Navigator.pop(context);
+                                },
+                          child: SizedBox(
+                            width: responsive.width,
+                            child: Text(
+                              Localization.of(context)
+                                  .string('wall_profile_discard'),
+                              style: GoogleFonts.urbanist(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                                color: AppColors.blackColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
                       SizedBox(height: spaceBetweenFacts + 90),
                     ],
                   ),

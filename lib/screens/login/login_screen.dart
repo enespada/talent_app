@@ -13,8 +13,47 @@ class LoginScreen extends StatelessWidget {
     return RegLogTemplate(
       title: Localization.of(context).string('sign_in'),
       subtitle: Localization.of(context).string('login_welcome'),
-      isLogin: true,
     );
+
+    // final Responsive responsive = Responsive.of(context);
+
+    // return Scaffold(
+    //   body: GestureDetector(
+    //     onTap: FocusScope.of(context).unfocus,
+    //     child: SafeArea(
+    //       child: Container(
+    //         margin: const EdgeInsets.symmetric(horizontal: 15),
+    //         height: responsive.height,
+    //         width: responsive.width,
+    //         decoration: BoxDecoration(
+    //           image: DecorationImage(
+    //             image: Image.asset('assets/images/background_lineas.png').image,
+    //             fit: BoxFit.cover,
+    //           ),
+    //         ),
+    //         //--------------------------Contenido------------------------------
+    //         child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: [
+    //             //------------------------Boton atras----------------------------
+    //             CustomBackButton(onTap: () => Navigator.pop(context)),
+    //             SizedBox(height: responsive.heightPercent(2)),
+
+    //             Container(
+    //               padding: const EdgeInsets.symmetric(horizontal: 25),
+    //               height: responsive.heightPercent(75),
+    //               width: responsive.width,
+    //               child: RegLogTemplate(
+    //                 title: Localization.of(context).string('sign_in'),
+    //                 subtitle: Localization.of(context).string('login_welcome'),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 

@@ -53,6 +53,14 @@ class UserService extends ChangeNotifier {
       data.addAll({"phone": userAppToUpdate.phone});
       userApp!.phone = userAppToUpdate.phone;
     }
+    if (userApp!.birthday != userAppToUpdate.birthday) {
+      data.addAll({"birthday": userAppToUpdate.birthday});
+      userApp!.birthday = userAppToUpdate.birthday;
+    }
+    if (userApp!.country != userAppToUpdate.country) {
+      data.addAll({"country": userAppToUpdate.country});
+      userApp!.country = userAppToUpdate.country;
+    }
     if (data.isNotEmpty) {
       await fbFirestore
           .collection("users")
@@ -218,33 +226,33 @@ class UserService extends ChangeNotifier {
     }
   }
 
-  Future<void> getProfileImageURL2(String id) async {
-    if (isLoadingImage) return;
-    isLoadingImage = true;
-    notifyListeners();
+  // Future<void> getProfileImageURL2(String id) async {
+  //   if (isLoadingImage) return;
+  //   isLoadingImage = true;
+  //   notifyListeners();
 
-    try {
-      if (id == '') {
-        profileUrlImage = '';
-        return;
-      }
+  //   try {
+  //     if (id == '') {
+  //       profileUrlImage = '';
+  //       return;
+  //     }
 
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL(
-              "${NetworkEndpoints.FirebaseStorageBaseUrl}/$id/profile.png")
-          .getDownloadURL();
+  //     final storageRef = await FirebaseStorage.instance
+  //         .refFromURL(
+  //             "${NetworkEndpoints.FirebaseStorageBaseUrl}/$id/profile.png")
+  //         .getDownloadURL();
 
-      profileUrlImage = storageRef.toString();
-      return;
-    } catch (e) {
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL(
-              "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
-          .getDownloadURL();
-      profileUrlImage = storageRef.toString();
-      return;
-    }
-  }
+  //     profileUrlImage = storageRef.toString();
+  //     return;
+  //   } catch (e) {
+  //     final storageRef = await FirebaseStorage.instance
+  //         .refFromURL(
+  //             "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
+  //         .getDownloadURL();
+  //     profileUrlImage = storageRef.toString();
+  //     return;
+  //   }
+  // }
 
   Future<void> uploadImageProfile(String imgPath) async {
     final fbStorage = FirebaseStorage.instance.ref();

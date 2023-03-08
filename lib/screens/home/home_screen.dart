@@ -48,7 +48,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: PostsListWidget(posts: postsService.postsToShow),
+        child: (postsService.postsToShow.isEmpty)
+            ? Padding(
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                child: Center(
+                  child: Text(
+                    Localization.of(context).string("no_posts_to_show"),
+                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      color: AppColors.greyscale2,
+                      fontSize: responsive.diagonalPercent(2.8),
+                    ),
+                  ),
+                ),
+              )
+            : PostsListWidget(posts: postsService.postsToShow),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------

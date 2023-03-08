@@ -154,6 +154,8 @@
   "wall_profile_name": "Name",
   "wall_profile_personal_info": "Personal information",
   "wall_profile_phone": "Phone",
+  "wall_profile_birthday": "Birthdate",
+  "wall_profile_country": "Country",
   "wall_profile_save_changes": "Save changes",
   "wall_profile_sport_category": "Sports category",
   "wall_profile_sport": "Sport",
@@ -170,5 +172,8 @@
   "common_notice": "Notice",
   "common_yes": "Yes",
   "common_no": "No",
-  "leave_register_message": "Are your sure about leaving the register process?"
+  "common_ok": "Ok",
+  "leave_register_message": "Are your sure about leaving the register process?",
+  "no_posts_to_show": "Still there are no posts to show!",
+  "edit_profile_empty_fields": "Fill the fields before continuing"
 }
