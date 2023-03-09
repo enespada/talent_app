@@ -24,24 +24,23 @@ class ChatsScreen extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
     final ChatsService chatsService = Provider.of<ChatsService>(context);
 
-    Widget body;
-
-    if (chatsService.isLoadingChats) {
-      body = const Center(
-        child: CircularProgressIndicator(color: AppColors.blueColor),
-      );
-    } else {
-      body = ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: chatsService.chats!.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ChatWidget(chat: chatsService.chats![index]),
-          );
-        },
-      );
-    }
+    // Widget body;
+    // if (chatsService.isLoadingChats) {
+    //   body = const Center(
+    //     child: CircularProgressIndicator(color: AppColors.blueColor),
+    //   );
+    // } else {
+    //   body = ListView.builder(
+    //     physics: const BouncingScrollPhysics(),
+    //     itemCount: chatsService.chats!.length,
+    //     itemBuilder: (BuildContext context, int index) {
+    //       return Container(
+    //         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    //         child: ChatWidget(chat: chatsService.chats![index]),
+    //       );
+    //     },
+    //   );
+    // }
 
     return Scaffold(
       // backgroundColor: AppColors.greyscale0,
@@ -59,7 +58,21 @@ class ChatsScreen extends StatelessWidget {
       //--------------------------------body----------------------------------
       body: SafeArea(
         // child: ChatsListWidget(),
-        child: body,
+        child: (chatsService.isLoadingChats)
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.blueColor),
+              )
+            : ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: chatsService.chats!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    child: ChatWidget(chat: chatsService.chats![index]),
+                  );
+                },
+              ),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------
@@ -124,7 +137,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
     } else {
       for (DocumentReference userId in widget.chat.users!) {
-        if (userId != userService.userApp) {
+        if (userId != userService.userApp!.id) {
           // userApp = await userId.get();
           userId.get().then((DocumentSnapshot<Object?> value) {
             userApp = UserApp.fromJson(value.data() as Map<String, dynamic>);
@@ -209,15 +222,8 @@ class _ChatWidgetState extends State<ChatWidget> {
       child: Container(
         height: responsive.heightPercent(11),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        // decoration: (newMessagesNumber > 0)
-        //     ? const BoxDecoration(boxShadow: [
-        //         BoxShadow(color: AppColors.lightGrey, blurRadius: 12.0),
-        //         BoxShadow(color: AppColors.whiteColor),
-        //       ])
-        //     : null,
         child: Row(
           children: [
-            // if (userApp != null)
             FutureBuilder(
               future: chatsService.getChatImageUrl(
                 chat: widget.chat,

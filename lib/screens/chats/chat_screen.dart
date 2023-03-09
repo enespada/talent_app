@@ -30,7 +30,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   // final formKey = GlobalKey<FormState>();
   final TextEditingController tec = TextEditingController();
-  Color iconColor = AppColors.mediunLightGrey;
+  Color iconColor = AppColors.greyscale2;
 
   @override
   void initState() {
@@ -92,107 +92,111 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
       //--------------------------------body-------------------------------------
       body: SafeArea(
-        child: Column(
-          children: [
-            //---------------------------Mensajes----------------------------------
-            Expanded(
-              child: _MessagesList(
-                // userContactId: userContact.id!,
-                // viewModel: _chatViewModel,
-                // chatId: widget.chatId,
-                chat: widget.chat,
+        child: GestureDetector(
+          onTap: FocusScope.of(context).unfocus,
+          child: Column(
+            children: [
+              //---------------------------Mensajes----------------------------------
+              Expanded(
+                child: _MessagesList(
+                  // userContactId: userContact.id!,
+                  // viewModel: _chatViewModel,
+                  // chatId: widget.chatId,
+                  chat: widget.chat,
+                ),
               ),
-            ),
 
-            //-------------------------Escribe...--------------------------------
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: responsive.width,
-                padding: const EdgeInsets.all(25),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: tec,
-                        keyboardType: TextInputType.text,
-                        keyboardAppearance: Brightness.light,
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                          color: AppColors.greyscale5,
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0,
-                            horizontal: 25.0,
+              //-------------------------Escribe...--------------------------------
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  width: responsive.width,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: tec,
+                          keyboardType: TextInputType.text,
+                          keyboardAppearance: Brightness.light,
+                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            color: AppColors.greyscale5,
                           ),
-                          filled: true,
-                          fillColor: AppColors.lightGrey,
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide:
-                                BorderSide(width: 0, style: BorderStyle.none),
-                          ),
-                          hintText: Localization.of(context)
-                              .string('messages_chat_type_hint'),
-                          hintStyle:
-                              AppStyles.darkTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.mediunLightGrey,
-                          ),
-                          suffixIcon: InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () async {
-                              // if (_chatObject != null &&
-                              //     widget.typeFieldController.text.isNotEmpty) {
-                              //   final updatedChat = _chatObject;
-                              //   updatedChat!['messages'] = _chatObject!['messages']
-                              //     ..add({
-                              //       'id': UniqueKey().hashCode.toString(),
-                              //       'userId': UserViewModel.userData?.reference,
-                              //       'userName': UserViewModel.user?.fullname,
-                              //       'userAvatar': UserViewModel.user?.imgSrc,
-                              //       'date': Timestamp.now(),
-                              //       'content': widget.typeFieldController.text
-                              //     });
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14.0,
+                              horizontal: 25.0,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.lightGrey,
+                            border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              borderSide:
+                                  BorderSide(width: 0, style: BorderStyle.none),
+                            ),
+                            hintText: Localization.of(context)
+                                .string('messages_chat_type_hint'),
+                            hintStyle:
+                                AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                              color: AppColors.mediunLightGrey,
+                            ),
+                            suffixIcon: InkWell(
+                              borderRadius: BorderRadius.circular(50),
+                              onTap: () async {
+                                // if (_chatObject != null &&
+                                //     widget.typeFieldController.text.isNotEmpty) {
+                                //   final updatedChat = _chatObject;
+                                //   updatedChat!['messages'] = _chatObject!['messages']
+                                //     ..add({
+                                //       'id': UniqueKey().hashCode.toString(),
+                                //       'userId': UserViewModel.userData?.reference,
+                                //       'userName': UserViewModel.user?.fullname,
+                                //       'userAvatar': UserViewModel.user?.imgSrc,
+                                //       'date': Timestamp.now(),
+                                //       'content': widget.typeFieldController.text
+                                //     });
 
-                              //   widget.viewModel.updateChat(widget.chatId, updatedChat);
+                                //   widget.viewModel.updateChat(widget.chatId, updatedChat);
 
-                              //   // Send notification
-                              //   _notificationViewModel.sendNotification(
-                              //       Localization.of(context).string(
-                              //           'notification_message_title',
-                              //           params: [UserViewModel.user?.fullname ?? '']),
-                              //       widget.typeFieldController.text,
-                              //       widget.destinationUser?.fcmToken ?? '');
+                                //   // Send notification
+                                //   _notificationViewModel.sendNotification(
+                                //       Localization.of(context).string(
+                                //           'notification_message_title',
+                                //           params: [UserViewModel.user?.fullname ?? '']),
+                                //       widget.typeFieldController.text,
+                                //       widget.destinationUser?.fcmToken ?? '');
 
-                              //   widget.typeFieldController.text = '';
-                              // }
-                              await sendMessage(
-                                chatsService: chatsService,
-                                userService: userService,
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: SvgPicture.asset(
-                                'assets/images/icon_send.svg',
-                                color: iconColor,
+                                //   widget.typeFieldController.text = '';
+                                // }
+                                await sendMessage(
+                                  chatsService: chatsService,
+                                  userService: userService,
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: SvgPicture.asset(
+                                  'assets/images/icon_send.svg',
+                                  color: iconColor,
+                                ),
                               ),
                             ),
                           ),
+                          onChanged: (String text) {
+                            iconColor = (text.isNotEmpty)
+                                ? AppColors.blueColor
+                                : AppColors.greyscale2;
+                            setState(() {});
+                          },
                         ),
-                        onChanged: (String text) {
-                          iconColor = (text.isNotEmpty)
-                              ? AppColors.blueColor
-                              : AppColors.greyscale2;
-                          setState(() {});
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -229,87 +233,72 @@ class _MessagesListState extends State<_MessagesList>
     // final Responsive responsive = Responsive.of(context);
     DateTime? dtPrevious;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: ListView.builder(
-        controller: scrollController,
-        physics: const BouncingScrollPhysics(),
-        reverse: true,
-        itemCount: widget.chat.messages!.length,
-        itemBuilder: (context, index) {
-          Message currentMessage =
-              widget.chat.messages![widget.chat.messages!.length - index - 1];
-          //=======================SI ES EL ULTIMO=========================
-          if (index == widget.chat.messages!.length - 1) {
-            String s2 = Util.messageDateTimeToString(
-              DateTime.fromMillisecondsSinceEpoch(
-                currentMessage.dateTime!.millisecondsSinceEpoch,
+    return ListView.builder(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
+      reverse: true,
+      itemCount: widget.chat.messages!.length,
+      itemBuilder: (context, index) {
+        Message currentMessage =
+            widget.chat.messages![widget.chat.messages!.length - index - 1];
+        //=======================SI ES EL ULTIMO=========================
+        if (index == widget.chat.messages!.length - 1) {
+          String s2 = Util.messageDateTimeToString(
+            DateTime.fromMillisecondsSinceEpoch(
+              currentMessage.dateTime!.millisecondsSinceEpoch,
+            ),
+          );
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(s2),
               ),
-            );
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(s2),
-                ),
-                MessageWidget(
-                  animationController: AnimationController(
-                    vsync: this,
-                    duration: const Duration(milliseconds: 0),
-                  )..forward(),
-                  message: currentMessage,
-                ),
-              ],
-            );
-          }
-          //C1: Mensaje actual es el primero
-          if (dtPrevious == null) {
+              MessageWidget(
+                animationController: AnimationController(
+                  vsync: this,
+                  duration: const Duration(milliseconds: 0),
+                )..forward(),
+                message: currentMessage,
+              ),
+            ],
+          );
+        }
+        //C1: Mensaje actual es el primero
+        if (dtPrevious == null) {
+          dtPrevious = DateTime.fromMillisecondsSinceEpoch(
+              currentMessage.dateTime!.millisecondsSinceEpoch);
+          return MessageWidget(
+            animationController: AnimationController(
+              vsync: this,
+              duration: const Duration(milliseconds: 0),
+            )..forward(),
+            message: currentMessage,
+          );
+        } else {
+          DateTime dtCurrent = DateTime.fromMillisecondsSinceEpoch(
+            currentMessage.dateTime!.millisecondsSinceEpoch,
+          );
+          //C2: Mensajes actual y anterior de fechas distintas
+          if (dtPrevious!.day != dtCurrent.day ||
+              dtPrevious!.month != dtCurrent.month ||
+              dtPrevious!.year != dtCurrent.year) {
+            String s = Util.messageDateTimeToString(dtPrevious!);
             dtPrevious = DateTime.fromMillisecondsSinceEpoch(
                 currentMessage.dateTime!.millisecondsSinceEpoch);
-            return MessageWidget(
-              animationController: AnimationController(
-                vsync: this,
-                duration: const Duration(milliseconds: 0),
-              )..forward(),
-              message: currentMessage,
-            );
-          } else {
-            DateTime dtCurrent = DateTime.fromMillisecondsSinceEpoch(
-              currentMessage.dateTime!.millisecondsSinceEpoch,
-            );
-            //C2: Mensajes actual y anterior de fechas distintas
-            if (dtPrevious!.day != dtCurrent.day ||
-                dtPrevious!.month != dtCurrent.month ||
-                dtPrevious!.year != dtCurrent.year) {
-              String s = Util.messageDateTimeToString(dtPrevious!);
-              dtPrevious = DateTime.fromMillisecondsSinceEpoch(
-                  currentMessage.dateTime!.millisecondsSinceEpoch);
-              //=======================SI ES EL ULTIMO=========================
-              if (index == widget.chat.messages!.length - 1) {
-                String s2 = Util.messageDateTimeToString(
-                  DateTime.fromMillisecondsSinceEpoch(
-                    currentMessage.dateTime!.millisecondsSinceEpoch,
-                  ),
-                );
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(' quqeee $s2'),
-                    ),
-                    MessageWidget(
-                      animationController: AnimationController(
-                        vsync: this,
-                        duration: const Duration(milliseconds: 0),
-                      )..forward(),
-                      message: currentMessage,
-                    ),
-                    Padding(padding: const EdgeInsets.all(8.0), child: Text(s)),
-                  ],
-                );
-              }
+            //=======================SI ES EL ULTIMO=========================
+            if (index == widget.chat.messages!.length - 1) {
+              String s2 = Util.messageDateTimeToString(
+                DateTime.fromMillisecondsSinceEpoch(
+                  currentMessage.dateTime!.millisecondsSinceEpoch,
+                ),
+              );
               return Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(' quqeee $s2'),
+                  ),
                   MessageWidget(
                     animationController: AnimationController(
                       vsync: this,
@@ -317,51 +306,63 @@ class _MessagesListState extends State<_MessagesList>
                     )..forward(),
                     message: currentMessage,
                   ),
+                  Padding(padding: const EdgeInsets.all(8.0), child: Text(s)),
+                ],
+              );
+            }
+            return Column(
+              children: [
+                MessageWidget(
+                  animationController: AnimationController(
+                    vsync: this,
+                    duration: const Duration(milliseconds: 0),
+                  )..forward(),
+                  message: currentMessage,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(s),
+                ),
+              ],
+            );
+          }
+          //C3: Mensajes actual y anterior de fechas la misma fecha
+          else {
+            dtPrevious = DateTime.fromMillisecondsSinceEpoch(
+                currentMessage.dateTime!.millisecondsSinceEpoch);
+            //=======================SI ES EL ULTIMO=========================
+            if (index == widget.chat.messages!.length - 1) {
+              String s2 = Util.messageDateTimeToString(
+                DateTime.fromMillisecondsSinceEpoch(
+                  currentMessage.dateTime!.millisecondsSinceEpoch,
+                ),
+              );
+              return Column(
+                children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(s),
+                    child: Text(s2),
+                  ),
+                  MessageWidget(
+                    animationController: AnimationController(
+                      vsync: this,
+                      duration: const Duration(milliseconds: 0),
+                    )..forward(),
+                    message: currentMessage,
                   ),
                 ],
               );
             }
-            //C3: Mensajes actual y anterior de fechas la misma fecha
-            else {
-              dtPrevious = DateTime.fromMillisecondsSinceEpoch(
-                  currentMessage.dateTime!.millisecondsSinceEpoch);
-              //=======================SI ES EL ULTIMO=========================
-              if (index == widget.chat.messages!.length - 1) {
-                String s2 = Util.messageDateTimeToString(
-                  DateTime.fromMillisecondsSinceEpoch(
-                    currentMessage.dateTime!.millisecondsSinceEpoch,
-                  ),
-                );
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(s2),
-                    ),
-                    MessageWidget(
-                      animationController: AnimationController(
-                        vsync: this,
-                        duration: const Duration(milliseconds: 0),
-                      )..forward(),
-                      message: currentMessage,
-                    ),
-                  ],
-                );
-              }
-              return MessageWidget(
-                animationController: AnimationController(
-                  vsync: this,
-                  duration: const Duration(milliseconds: 0),
-                )..forward(),
-                message: currentMessage,
-              );
-            }
+            return MessageWidget(
+              animationController: AnimationController(
+                vsync: this,
+                duration: const Duration(milliseconds: 0),
+              )..forward(),
+              message: currentMessage,
+            );
           }
-        },
-      ),
+        }
+      },
     );
   }
 }

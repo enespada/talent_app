@@ -123,7 +123,8 @@ class _HourAndTick extends StatelessWidget {
 
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
         message.dateTime!.millisecondsSinceEpoch);
-    String hourString = '${dateTime.hour}:${dateTime.minute}';
+    String hourString =
+        '${dateTime.hour}:${(dateTime.minute < 10) ? '0${dateTime.minute}' : dateTime.minute}';
     Icon? stateIcon;
     switch (message.messageStatus!) {
       case MessageStatus.Sending:

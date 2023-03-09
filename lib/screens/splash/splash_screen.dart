@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/providers.dart';
-import 'package:talent_app/screens/register/register_user_type_screen.dart';
-
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';

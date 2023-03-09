@@ -19,7 +19,6 @@ class UserApp {
   String? userName;
   DateTime? birthday;
   String? bio;
-  bool? isProfileCompleted;
   List<DocumentReference?>? followers;
   List<DocumentReference?>? following;
 
@@ -36,7 +35,6 @@ class UserApp {
     this.userName,
     this.birthday,
     this.bio,
-    this.isProfileCompleted,
     this.followers,
     this.following,
   });
@@ -73,7 +71,6 @@ class UserApp {
       (json["birthday"] as Timestamp).millisecondsSinceEpoch,
     );
     bio = json["bio"];
-    isProfileCompleted = json["isProfileCompleted"];
     // challengesNumber = json["challengesNumber"] ?? 0;
     followers = [];
     for (dynamic aux in json['followers']) {
@@ -98,7 +95,6 @@ class UserApp {
         "userName": userName,
         "birthday": birthday,
         "bio": bio,
-        "isProfileCompleted": isProfileCompleted,
         "followers": followers,
         "following": following,
       };

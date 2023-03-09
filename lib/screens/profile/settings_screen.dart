@@ -48,6 +48,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context,
       listen: false,
     );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: false,
+    );
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenOptions = responsive.heightPercent(2.5);
 
@@ -122,9 +126,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             userService.following.clear();
                             userService.profileUrlImage == null;
                             userService.userPosts.clear();
-                            Navigator.pushReplacementNamed(
+                            chatsService.chats?.clear();
+                            chatsService.chats = null;
+                            Navigator.pushNamedAndRemoveUntil(
                               context,
                               SplashScreen.routeName,
+                              (route) => false,
                             );
                           },
                           iconData: Icons.logout,

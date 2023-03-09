@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //---------------------Foto perfil--------------------------
                   FutureBuilder(
                     future: userService.getProfileImageURL(
-                        userService.userApp!.id!.path.split('/')[1]),
+                        userService.userApp?.id!.path.split('/')[1] ?? ''),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       return Container(
@@ -230,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               SizedBox(height: responsive.heightPercent(3)),
-              if (userService.userApp!.bio != null)
+              if (userService.userApp?.bio != null)
                 Text(userService.userApp!.bio!),
               const Divider(),
               SizedBox(height: responsive.heightPercent(1)),

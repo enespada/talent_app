@@ -9,7 +9,6 @@ class Post extends Publication {
   Timestamp? datetime;
   DocumentReference? sportType;
   DocumentReference? modality;
-  bool? youLiked; // Don't put on toJson()/fromJson()
 
   Post({
     String? id,

@@ -7,7 +7,6 @@ import 'package:talent_app/utils/utils.dart';
 
 class ChatsService extends ChangeNotifier {
   List<Chat>? chats;
-  Chat? currentChat;
   bool isLoadingChats = false;
   bool isLoadingImage = false;
 
@@ -23,11 +22,8 @@ class ChatsService extends ChangeNotifier {
         .collection('chats')
         .where('users', arrayContains: userApp.id)
         .get();
-    if (data.docs.isEmpty) {
-      chats = [];
-      return;
-    } else {
-      chats = [];
+    chats = [];
+    if (data.docs.isNotEmpty) {
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
         chats!.add(Chat.fromJson(doc.data()));
       }
