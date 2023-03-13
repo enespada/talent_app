@@ -312,7 +312,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                           subtitle: Text(
                             typeString(context, usersToShow[index].type ?? ''),
                             style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.mediunLightGrey,
+                              color: AppColors.greyscale2,
                               fontSize: responsive.widthPercent(3.5),
                               fontWeight: FontWeight.w700,
                             ),
@@ -334,7 +334,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                   },
                                   child: const Icon(
                                     Icons.close,
-                                    color: AppColors.mediunLightGrey,
+                                    color: AppColors.greyscale2,
                                   ),
                                 ),
                               SizedBox(width: responsive.widthPercent(2.5)),
@@ -455,7 +455,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
               MaterialButton(
                 onPressed: () => onPressedDialogX(context, followerToRemove),
                 elevation: 0.0,
-                textColor: AppColors.mediunLightGrey,
+                textColor: AppColors.greyscale2,
                 child: Text(
                   Localization.of(context).string("wall_followers_yes"),
                 ),
@@ -550,7 +550,7 @@ class _TypeFollowContainer extends StatelessWidget {
                 : FontWeight.normal,
             color: (_typeFollow == _typeFollowCompare)
                 ? AppColors.blackColor
-                : AppColors.mediunLightGrey,
+                : AppColors.greyscale2,
           ),
         ),
         decoration: BoxDecoration(

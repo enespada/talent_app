@@ -36,7 +36,7 @@ class _EditProfileFactState extends State<EditProfileFact> {
           width: responsive.widthPercent(20),
           child: Text(
             widget.text,
-            style: const TextStyle(color: AppColors.mediunLightGrey),
+            style: const TextStyle(color: AppColors.greyscale2),
           ),
         ),
         SizedBox(width: responsive.widthPercent(8)),

@@ -165,7 +165,7 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
                     // fontSize: 15,
                   ),
                   color: (_selectedIndex == index)
-                      ? AppColors.shadowGrey
+                      ? AppColors.greyscale4
                       : AppColors.lightGrey,
                   check: (_selectedIndex == index)
                       ? const Icon(

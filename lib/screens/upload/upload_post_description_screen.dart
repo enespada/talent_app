@@ -221,7 +221,7 @@ class _UploadPostDescriptionScreenState
           _ubications.add(Chip(
             label: Text(chipTitle),
             deleteIcon: const Icon(Icons.close),
-            backgroundColor: AppColors.mediunLightGrey,
+            backgroundColor: AppColors.greyscale2,
             shadowColor: Colors.transparent,
             onDeleted: () {
               _ubications.removeWhere((element) {

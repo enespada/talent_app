@@ -399,7 +399,7 @@ class _WallProfileDropdownFact<T> extends StatelessWidget {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<T>(
               dropdownColor: AppColors.whiteColor,
-              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              focusColor: AppColors.greyscale5.withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               value: value,
               icon: const Icon(
@@ -461,7 +461,7 @@ class _WallProfileDropdownFactSports extends StatelessWidget {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<Sport>(
               dropdownColor: AppColors.whiteColor,
-              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              focusColor: AppColors.greyscale5.withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               value: value,
               icon: const Icon(
@@ -528,7 +528,7 @@ class _WallProfileDropdownFactModalities extends StatelessWidget {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<Modality>(
               dropdownColor: AppColors.whiteColor,
-              focusColor: AppColors.darkGrey.withOpacity(0.03),
+              focusColor: AppColors.greyscale5.withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               value: value,
               icon: const Icon(

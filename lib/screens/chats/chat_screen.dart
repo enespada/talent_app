@@ -139,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                                 .string('messages_chat_type_hint'),
                             hintStyle:
                                 AppStyles.darkTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.mediunLightGrey,
+                              color: AppColors.greyscale2,
                             ),
                             suffixIcon: InkWell(
                               borderRadius: BorderRadius.circular(50),

@@ -36,17 +36,13 @@ class AppColors {
   static const Color brandYellow = Color(0xFFDDF247);
   //Main Opacity
   static const Color brandColor15 = Color(0x256F83E9);
-  static const Color brandYellow35 = Color(0x22DEF247);
+  // static const Color brandYellow35 = Color(0x22DEF247);
 
   // GreyScale
-  static const Color darkGrey = Color(0xFF1F2128); //Background
-  static const Color shadowGrey = Color(0xFF2E313C);
-  static const Color mediumDarkGrey = Color(0xFF444A5E);
-
-  static const Color mediunLightGrey = Color(0xFF828796);
-  static const Color coinGrey = Color(0xFFB4BDC5);
+  // static const Color mediumDarkGrey = Color(0xFF444A5E);
+  // static const Color mediunLightGrey = Color(0xFF828796);
+  // static const Color coinGrey = Color(0xFFB4BDC5);
   static const Color lightGrey = Color(0xB2EDEDED);
   //Background
-  static const Color indicatorColor = Color(0xFF7887D8); //Background
-
+  // static const Color indicatorColor = Color(0xFF7887D8); //Background
 }

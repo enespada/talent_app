@@ -192,7 +192,7 @@ class _ChallengesPageState extends State<ChallengesPage>
                                   Icons.adaptive.more,
                                   color: AppColors.whiteColor,
                                 ),
-                                color: AppColors.darkGrey,
+                                color: AppColors.greyscale5,
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(15),
