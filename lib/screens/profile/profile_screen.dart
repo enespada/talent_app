@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double followingValue =
         userService.userApp?.following?.length.toDouble() ?? -1;
     String followingString = Util.adaptNumFollow(followingValue);
-    double publicationsValue = userService.userPosts.length.toDouble() ?? -1;
+    double publicationsValue = userService.userPosts.length.toDouble();
     String publicationsString = Util.adaptNumFollow(publicationsValue);
 
     // final List<Widget> _pages = [
@@ -229,109 +231,124 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: responsive.heightPercent(3)),
+              SizedBox(height: responsive.heightPercent(1.5)),
               if (userService.userApp?.bio != null)
                 Text(userService.userApp!.bio!),
+              if (userService.userApp?.bio != null)
+                SizedBox(height: responsive.heightPercent(1.5)),
               const Divider(),
               SizedBox(height: responsive.heightPercent(1)),
 
               //----------------Seguidores, siguiendo, publicaciones---------------
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    //------------------------Seguidores---------------------------
-                    GestureDetector(
-                      onTap: () async {
-                        await userService.getFollowers();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileFollowScreen(
-                              userApp: userService.userApp!,
-                              typeFollow: TypeFollow.seguidores,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            followersString,
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.5),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            Localization.of(context)
-                                .string('wall_home_followers_text'),
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //---------------------------Seguidos---------------------------
-                    GestureDetector(
-                      onTap: () async {
-                        await userService.getFollowing();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileFollowScreen(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //------------------------Seguidores---------------------------
+                      GestureDetector(
+                        onTap: () async {
+                          await userService.getFollowers();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileFollowScreen(
                                 userApp: userService.userApp!,
-                                typeFollow: TypeFollow.seguidos),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            followingString,
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.5),
-                              fontWeight: FontWeight.bold,
+                                typeFollow: TypeFollow.seguidores,
+                              ),
                             ),
-                          ),
-                          Text(
-                            Localization.of(context)
-                                .string('wall_home_following_text'),
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              followersString,
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_followers_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    //-----------------------------Posts----------------------------
-                    GestureDetector(
-                      child: Column(
-                        children: [
-                          Text(
-                            publicationsString,
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.5),
-                              fontWeight: FontWeight.bold,
+                      //---------------------------Seguidos---------------------------
+                      GestureDetector(
+                        onTap: () async {
+                          await userService.getFollowing();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileFollowScreen(
+                                userApp: userService.userApp!,
+                                typeFollow: TypeFollow.seguidos,
+                              ),
                             ),
-                          ),
-                          Text(
-                            Localization.of(context)
-                                .string('wall_home_publications_text'),
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              followingString,
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_following_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+
+                      //-----------------------------Posts----------------------------
+                      GestureDetector(
+                        child: Column(
+                          children: [
+                            Text(
+                              publicationsString,
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.5),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              Localization.of(context)
+                                  .string('wall_home_publications_text'),
+                              style:
+                                  AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                                fontSize: responsive.diagonalPercent(2.1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              SizedBox(height: responsive.heightPercent(1)),
+              const Divider(),
+              SizedBox(height: responsive.heightPercent(1.5)),
 
               // //---------------Publicaciones, retos y guardados--------------
               // Column(
@@ -395,8 +412,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //     const Divider(),
               //   ],
               // ),
-              SizedBox(height: responsive.heightPercent(1)),
-              const Divider(),
 
               // Expanded(child: _pages[_selectedPage]),
               (userService.userPosts.isEmpty)
@@ -417,12 +432,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     )
                   : Expanded(
-                      child: _PublicationsGrid(
+                      child: PublicationsGrid(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const PostsScreen(),
+                              builder: (context) => PostsListScreen(
+                                title: Localization.of(context)
+                                    .string('posts_screen_my_posts'),
+                                posts: userService.userPosts,
+                              ),
                             ),
                           );
                         },
@@ -438,53 +457,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       bottomNavigationBar: const CustomBottomNavigationBar(
         selectedIndex: 4,
       ),
-    );
-  }
-}
-
-//GridPage
-class _PublicationsGrid extends StatelessWidget {
-  final List<Post> posts;
-  final void Function()? onTap;
-
-  const _PublicationsGrid({
-    Key? key,
-    required this.posts,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
-    final PostsService postsService = Provider.of<PostsService>(context);
-
-    return GridView.builder(
-      physics: const BouncingScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      // shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: responsive.widthPercent(2),
-        mainAxisSpacing: responsive.widthPercent(2),
-      ),
-      itemCount: posts.length,
-      itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          onTap: onTap,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: FutureBuilder(
-              future: postsService.getPostPoster(posts[index]),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  return snapshot.data!;
-                }
-                return Container(color: Colors.white);
-              },
-            ),
-          ),
-        );
-      },
     );
   }
 }

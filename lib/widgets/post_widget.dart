@@ -75,26 +75,29 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   );
                 },
               ),
-              if (userService.userApp!.type == 'scouter')
+              if (userService.userApp!.type == 'scouter' ||
+                  userService.userApp!.type == 'manager')
                 Positioned(
                   bottom: 6,
                   left: responsive.widthPercent(5),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      //TODO: crear chat con el usuario
+                    },
                     child: const Icon(
                       Icons.send,
                       color: AppColors.greyscale5,
                     ),
                   ),
                 ),
-              Positioned(
-                bottom: 6,
-                right: responsive.widthPercent(5),
-                child: const Icon(
-                  Icons.bookmark_border_rounded,
-                  color: AppColors.greyscale5,
-                ),
-              ),
+              // Positioned(
+              //   bottom: 6,
+              //   right: responsive.widthPercent(5),
+              //   child: const Icon(
+              //     Icons.bookmark_border_rounded,
+              //     color: AppColors.greyscale5,
+              //   ),
+              // ),
             ],
           ),
         ),

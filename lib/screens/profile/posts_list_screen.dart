@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:talent_app/services/services.dart';
+import 'package:talent_app/models/models.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-class PostsScreen extends StatelessWidget {
+class PostsListScreen extends StatelessWidget {
   static const String routeName = 'posts_screen';
 
-  const PostsScreen({Key? key}) : super(key: key);
+  final String title;
+  final List<Post> posts;
+
+  const PostsListScreen({
+    Key? key,
+    required this.title,
+    required this.posts,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // final UserService userService = Provider.of<UserService>(context);
+
     final Responsive responsive = Responsive.of(context);
-    final UserService userService = Provider.of<UserService>(context);
 
     return Scaffold(
+      //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
-        title: Localization.of(context).string('posts_screen_my_posts'),
+        title: title,
         style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
@@ -33,8 +41,11 @@ class PostsScreen extends StatelessWidget {
           ),
         ),
       ),
+
+      //--------------------------------body-------------------------------------
       body: SafeArea(
-        child: PostsListWidget(posts: userService.userPosts),
+        // child: PostsListWidget(posts: userService.userPosts),
+        child: PostsListWidget(posts: posts),
       ),
     );
   }

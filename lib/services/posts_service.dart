@@ -10,18 +10,50 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:talent_app/models/models.dart';
 
 class PostsService extends ChangeNotifier {
-  List<Post> postsToShow = [];
-  bool isLoading = false;
+  List<Post> followingUsersPosts = [];
+  List<Post>? allUsersPosts;
+  bool isLoadingFollowing = false;
+  bool isLoadingAll = false;
 
   PostsService() {}
 
-  //Metodo para obtener los posts de la gente que sigue el usuario
-  Future<void> getFollowingPosts(UserApp userApp) async {
-    if (isLoading) return;
-    isLoading = true;
+  //Metodo para obtener los posts de todos los usuarios
+  Future<void> getUsersPosts(UserApp userapp) async {
+    if (isLoadingAll) return;
+    isLoadingAll = true;
     notifyListeners();
 
-    postsToShow.clear();
+    if (allUsersPosts != null) {
+      allUsersPosts!.clear();
+    } else {
+      allUsersPosts = [];
+    }
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection('posts')
+        .where('user', isNotEqualTo: userapp.id)
+        // .orderBy("datetime", descending: true)
+        // .limit(30)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      Post postaux = Post.fromJson(doc.data());
+      await postaux.userId?.get().then((value) => postaux.userApp =
+          UserApp.fromJson(value.data() as Map<String, dynamic>));
+      allUsersPosts!.add(postaux);
+    }
+
+    isLoadingAll = false;
+    notifyListeners();
+  }
+
+  //Metodo para obtener los posts de la gente que sigue el usuario
+  Future<void> getFollowingPosts(UserApp userApp) async {
+    if (isLoadingFollowing) return;
+    isLoadingFollowing = true;
+    notifyListeners();
+
+    followingUsersPosts.clear();
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     if (userApp.following!.isNotEmpty) {
       final data = await fbFirestore
@@ -35,11 +67,11 @@ class PostsService extends ChangeNotifier {
         Post postaux = Post.fromJson(doc.data());
         await postaux.userId?.get().then((value) => postaux.userApp =
             UserApp.fromJson(value.data() as Map<String, dynamic>));
-        postsToShow.add(postaux);
+        followingUsersPosts.add(postaux);
       }
     }
 
-    isLoading = false;
+    isLoadingFollowing = false;
     notifyListeners();
   }
 

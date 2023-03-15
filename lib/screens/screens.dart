@@ -16,7 +16,7 @@ export 'package:talent_app/screens/onboarding/onboarding_screen.dart';
 
 //profile
 export 'package:talent_app/screens/profile/edit_profile_screen.dart';
-export 'package:talent_app/screens/profile/posts_screen.dart';
+export 'package:talent_app/screens/profile/posts_list_screen.dart';
 export 'package:talent_app/screens/profile/profile_follow_screen.dart';
 export 'package:talent_app/screens/profile/profile_screen.dart';
 export 'package:talent_app/screens/profile/settings_screen.dart';

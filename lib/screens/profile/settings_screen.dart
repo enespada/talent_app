@@ -120,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             //TODO: cerrar sesion
                             // _viewModel.signOut();
                             await authService.logOut();
-                            postsService.postsToShow.clear();
+                            postsService.followingUsersPosts.clear();
                             userService.userApp = null;
                             userService.followers.clear();
                             userService.following.clear();

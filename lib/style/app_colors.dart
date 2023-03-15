@@ -25,15 +25,15 @@ class AppColors {
 
   //------------------------------Otros colores---------------------------------
   static const Color backgroundGrey = Color(0xFFF2F2F2);
-  static const Color lightYellow = Color(0xFFDDF247);
+  // static const Color lightYellow = Color(0xFFDDF247);
 
   static const Color transparentGrey = Color(0x80000000);
-  static const Color transparent = Color(0x44000000);
-  static const Color blackTextColor = Color(0xFF333333);
+  // static const Color transparent = Color(0x44000000);
+  // static const Color blackTextColor = Color(0xFF333333);
 
   //Main
   static const Color brandColor = Color(0xFF6F83E9);
-  static const Color brandYellow = Color(0xFFDDF247);
+  // static const Color brandYellow = Color(0xFFDDF247);
   //Main Opacity
   static const Color brandColor15 = Color(0x256F83E9);
   // static const Color brandYellow35 = Color(0x22DEF247);

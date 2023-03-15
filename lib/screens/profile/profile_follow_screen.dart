@@ -55,9 +55,9 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
   }
 
   void changeFollow() async {
-    double followersValue = userApp!.followers!.length.toDouble() ?? -1;
+    double followersValue = userApp!.followers!.length.toDouble();
     followersString = Util.adaptNumFollow(followersValue);
-    double followingValue = userApp!.following!.length.toDouble() ?? -1;
+    double followingValue = userApp!.following!.length.toDouble();
     followingString = Util.adaptNumFollow(followingValue);
   }
 

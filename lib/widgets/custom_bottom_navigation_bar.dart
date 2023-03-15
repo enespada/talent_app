@@ -143,12 +143,16 @@ class CustomBottomNavigationBar extends StatelessWidget {
         onTap: (int index) async {
           switch (index) {
             case 0:
-              if (postsService.postsToShow.isEmpty)
+              if (postsService.followingUsersPosts.isEmpty) {
                 await postsService.getFollowingPosts(userService.userApp!);
+              }
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
               break;
             case 1:
               // context.navigatePopReplacing(ExplorerHomePage());
+              if (postsService.allUsersPosts == null) {
+                postsService.getUsersPosts(userService.userApp!);
+              }
               Navigator.pushReplacementNamed(context, ExplorerScreen.routeName);
               break;
             case 2:
@@ -156,8 +160,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
               break;
             case 3:
               // context.navigatePopReplacing(MessagesHomePage());
-              if (chatsService.chats == null)
+              if (chatsService.chats == null) {
                 await chatsService.getUserChats(userService.userApp!);
+              }
               Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
               break;
             case 4:
