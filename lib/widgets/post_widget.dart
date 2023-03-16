@@ -129,7 +129,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
               ),
               SizedBox(height: responsive.heightPercent(1)),
               Text(
-                Util.postDateTime(widget.post.datetime!),
+                Util.postTimestamp(widget.post.timestamp!),
                 style: TextStyle(
                   color: AppColors.greyscale2,
                   fontSize: responsive.widthPercent(3),

@@ -35,14 +35,14 @@ class ChatsService extends ChangeNotifier {
 
   Future<String> getChatImageUrl({
     required Chat chat,
-    required UserApp activeUser,
+    required UserApp loguedUserApp,
   }) async {
     if (chat.urlImage != null) return chat.urlImage!;
     try {
       if (chat.name == null) {
         String destinationUserId = '';
         for (DocumentReference<Object?> userId in chat.users!) {
-          if (userId != activeUser.id) {
+          if (userId != loguedUserApp.id) {
             destinationUserId = userId.id;
             break;
           }

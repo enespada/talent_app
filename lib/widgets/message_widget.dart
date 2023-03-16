@@ -122,7 +122,7 @@ class _HourAndTick extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
 
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        message.dateTime!.millisecondsSinceEpoch);
+        message.timestamp!.millisecondsSinceEpoch);
     String hourString =
         '${dateTime.hour}:${(dateTime.minute < 10) ? '0${dateTime.minute}' : dateTime.minute}';
     Icon? stateIcon;

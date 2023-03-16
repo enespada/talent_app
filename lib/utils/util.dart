@@ -45,7 +45,7 @@ class Util {
     return string;
   }
 
-  static String postDateTime(Timestamp timestamp) {
+  static String postTimestamp(Timestamp timestamp) {
     String string = '';
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch);

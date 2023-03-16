@@ -50,9 +50,9 @@ class _UploadPostDescriptionScreenState
       UserService userService, PostsService postsService) async {
     Post post = Post(
       description: tecDescription.text,
-      locations: [],
+      // locations: [],
       files: [],
-      datetime: Timestamp.now(),
+      timestamp: Timestamp.now(),
       sportType: userService.userApp!.sport,
       modality: userService.userApp!.modality,
     );

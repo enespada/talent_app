@@ -110,7 +110,7 @@ class UserService extends ChangeNotifier {
       userPosts.add(postaux);
     }
 
-    userPosts.sort((a, b) => b.datetime!.compareTo(a.datetime!));
+    userPosts.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
 
     isLoading = false;
     notifyListeners();

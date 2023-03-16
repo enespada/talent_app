@@ -5,14 +5,14 @@ enum MessageStatus { Read, Sending, Sent }
 class Message {
   String? id;
   String? content;
-  Timestamp? dateTime;
+  Timestamp? timestamp;
   DocumentReference? userId;
   MessageStatus? messageStatus;
 
   Message({
     this.id,
     this.content,
-    this.dateTime,
+    this.timestamp,
     this.userId,
     this.messageStatus,
   });
@@ -20,7 +20,7 @@ class Message {
   Message.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     content = json['content'];
-    dateTime = json['dateTime'];
+    timestamp = json['timestamp'];
     userId = json['userId'];
     switch (json['messageStatus']) {
       case 'Sending':
@@ -40,7 +40,7 @@ class Message {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['content'] = content;
-    data['dateTime'] = dateTime;
+    data['timestamp'] = timestamp;
     data['userId'] = userId;
     switch (messageStatus) {
       case MessageStatus.Sending:

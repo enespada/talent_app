@@ -49,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     Message newMessage = Message(
       id: '3',
       content: text,
-      dateTime: Timestamp.now(),
+      timestamp: Timestamp.now(),
       userId: userService.userApp!.id,
       messageStatus: MessageStatus.Sending,
     );
@@ -245,7 +245,7 @@ class _MessagesListState extends State<_MessagesList>
         if (index == widget.chat.messages!.length - 1) {
           String s2 = Util.messageDateTimeToString(
             DateTime.fromMillisecondsSinceEpoch(
-              currentMessage.dateTime!.millisecondsSinceEpoch,
+              currentMessage.timestamp!.millisecondsSinceEpoch,
             ),
           );
           return Column(
@@ -267,7 +267,7 @@ class _MessagesListState extends State<_MessagesList>
         //C1: Mensaje actual es el primero
         if (dtPrevious == null) {
           dtPrevious = DateTime.fromMillisecondsSinceEpoch(
-              currentMessage.dateTime!.millisecondsSinceEpoch);
+              currentMessage.timestamp!.millisecondsSinceEpoch);
           return MessageWidget(
             animationController: AnimationController(
               vsync: this,
@@ -277,7 +277,7 @@ class _MessagesListState extends State<_MessagesList>
           );
         } else {
           DateTime dtCurrent = DateTime.fromMillisecondsSinceEpoch(
-            currentMessage.dateTime!.millisecondsSinceEpoch,
+            currentMessage.timestamp!.millisecondsSinceEpoch,
           );
           //C2: Mensajes actual y anterior de fechas distintas
           if (dtPrevious!.day != dtCurrent.day ||
@@ -285,12 +285,12 @@ class _MessagesListState extends State<_MessagesList>
               dtPrevious!.year != dtCurrent.year) {
             String s = Util.messageDateTimeToString(dtPrevious!);
             dtPrevious = DateTime.fromMillisecondsSinceEpoch(
-                currentMessage.dateTime!.millisecondsSinceEpoch);
+                currentMessage.timestamp!.millisecondsSinceEpoch);
             //=======================SI ES EL ULTIMO=========================
             if (index == widget.chat.messages!.length - 1) {
               String s2 = Util.messageDateTimeToString(
                 DateTime.fromMillisecondsSinceEpoch(
-                  currentMessage.dateTime!.millisecondsSinceEpoch,
+                  currentMessage.timestamp!.millisecondsSinceEpoch,
                 ),
               );
               return Column(
@@ -329,12 +329,12 @@ class _MessagesListState extends State<_MessagesList>
           //C3: Mensajes actual y anterior de fechas la misma fecha
           else {
             dtPrevious = DateTime.fromMillisecondsSinceEpoch(
-                currentMessage.dateTime!.millisecondsSinceEpoch);
+                currentMessage.timestamp!.millisecondsSinceEpoch);
             //=======================SI ES EL ULTIMO=========================
             if (index == widget.chat.messages!.length - 1) {
               String s2 = Util.messageDateTimeToString(
                 DateTime.fromMillisecondsSinceEpoch(
-                  currentMessage.dateTime!.millisecondsSinceEpoch,
+                  currentMessage.timestamp!.millisecondsSinceEpoch,
                 ),
               );
               return Column(
@@ -632,7 +632,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                 FutureBuilder(
                   future: chatsService.getChatImageUrl(
                     chat: chat,
-                    activeUser: userService.userApp!,
+                    loguedUserApp: userService.userApp!,
                   ),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {

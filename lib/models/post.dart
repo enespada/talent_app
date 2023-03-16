@@ -2,41 +2,44 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:talent_app/models/models.dart';
 
-class Post extends Publication {
+class Post {
+  String? id;
+  DocumentReference? userId;
+  UserApp? userApp;
   String? description;
-  List<String>? locations;
+  // List<String>? locations;
   List<String>? files;
-  Timestamp? datetime;
+  Timestamp? timestamp;
   DocumentReference? sportType;
   DocumentReference? modality;
 
   Post({
     String? id,
-    DocumentReference? user,
+    DocumentReference? userId,
     required this.description,
-    required this.locations,
+    // required this.locations,
     required this.files,
-    required this.datetime,
+    required this.timestamp,
     required this.sportType,
     required this.modality,
-  }) : super(id: id, userId: user);
+  }) : super();
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-
+    data['user'] = userId;
     data['description'] = description;
     // data['locations'] = locations;
     data['files'] = files;
-    data['datetime'] = datetime;
+    data['timestamp'] = timestamp;
     data['sportType'] = sportType;
     data['modality'] = modality;
-    data['user'] = userId;
 
     return data;
   }
 
   Post.fromJson(Map<String, dynamic> json) {
+    userId = json['user'];
     description = json['description'];
     // locations = [];
     // for (String location in json['locations']) {
@@ -46,9 +49,8 @@ class Post extends Publication {
     for (String file in json['files']) {
       files!.add(file);
     }
-    datetime = json['datetime'];
+    timestamp = json['timestamp'];
     sportType = json['sportType'];
     modality = json['modality'];
-    userId = json['user'];
   }
 }

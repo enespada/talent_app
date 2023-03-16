@@ -18,7 +18,7 @@ class PostsService extends ChangeNotifier {
   PostsService() {}
 
   //Metodo para obtener los posts de todos los usuarios
-  Future<void> getUsersPosts(UserApp userapp) async {
+  Future<void> getUsersPosts(UserApp loguedUserApp) async {
     if (isLoadingAll) return;
     isLoadingAll = true;
     notifyListeners();
@@ -31,7 +31,7 @@ class PostsService extends ChangeNotifier {
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final data = await fbFirestore
         .collection('posts')
-        .where('user', isNotEqualTo: userapp.id)
+        .where('user', isNotEqualTo: loguedUserApp.id)
         // .orderBy("datetime", descending: true)
         // .limit(30)
         .get();
@@ -48,17 +48,17 @@ class PostsService extends ChangeNotifier {
   }
 
   //Metodo para obtener los posts de la gente que sigue el usuario
-  Future<void> getFollowingPosts(UserApp userApp) async {
+  Future<void> getFollowingPosts(UserApp loguedUserApp) async {
     if (isLoadingFollowing) return;
     isLoadingFollowing = true;
     notifyListeners();
 
     followingUsersPosts.clear();
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    if (userApp.following!.isNotEmpty) {
+    if (loguedUserApp.following!.isNotEmpty) {
       final data = await fbFirestore
           .collection('posts')
-          .where('user', whereIn: userApp.following)
+          .where('user', whereIn: loguedUserApp.following)
           // .orderBy("datetime", descending: true)
           .limit(30)
           .get();
@@ -124,7 +124,7 @@ class PostsService extends ChangeNotifier {
     }
   }
 
-  Future uploadPost(Post post, List<AssetEntity> selectedImages) async {
+  Future<Post> uploadPost(Post post, List<AssetEntity> selectedImages) async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     //P1: Creamos el post en Firestore para obtener un id
     final DocumentReference reference =

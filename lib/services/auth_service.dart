@@ -56,8 +56,8 @@ class AuthService extends ChangeNotifier {
     const storage = FlutterSecureStorage();
     await storage.write(key: accessTokenKey, value: token);
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    userApp!.id = newUserReference(userCredential.user?.uid ?? '');
-    await newUserRefcmToken(userApp!);
+    userApp!.id = _newUserReference(userCredential.user?.uid ?? '');
+    await _newUserRefcmToken(userApp!);
     await fbFirestore
         .collection('users')
         .doc(userApp!.id!.id)
@@ -67,12 +67,12 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  DocumentReference newUserReference(String uid) {
+  DocumentReference _newUserReference(String uid) {
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     return fbFirestore.collection("users").doc(uid);
   }
 
-  Future<void> newUserRefcmToken(UserApp userApp) async {
+  Future<void> _newUserRefcmToken(UserApp userApp) async {
     FirebaseMessaging fbMessaging = FirebaseMessaging.instance;
     userApp.fcmToken = await fbMessaging.getToken();
   }
@@ -83,15 +83,15 @@ class AuthService extends ChangeNotifier {
     return accesToken.isNotEmpty;
   }
 
-  Future<void> refreshToken() async {
-    const storage = FlutterSecureStorage();
-    final String refreshToken = await storage.read(key: refreshTokenKey) ?? '';
-    //   final response = await Dio().post(
-    //     NetworkEndpoints.refreshTokenUrl,
-    //     data: {refreshTokenKey: refreshToken},
-    //   );
-    //   return accesToken.isNotEmpty;
-  }
+  // Future<void> refreshToken() async {
+  //   const storage = FlutterSecureStorage();
+  //   final String refreshToken = await storage.read(key: refreshTokenKey) ?? '';
+  //     final response = await Dio().post(
+  //       NetworkEndpoints.refreshTokenUrl,
+  //       data: {refreshTokenKey: refreshToken},
+  //     );
+  //     return accesToken.isNotEmpty;
+  // }
 
   Future<void> logOut() async {
     //Borramos el token
