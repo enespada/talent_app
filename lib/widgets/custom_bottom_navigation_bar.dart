@@ -143,7 +143,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         onTap: (int index) async {
           switch (index) {
             case 0:
-              if (postsService.followingUsersPosts.isEmpty) {
+              if (postsService.followingUsersPosts == null) {
                 await postsService.getFollowingPosts(userService.userApp!);
               }
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);

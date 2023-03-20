@@ -33,7 +33,7 @@ class ChatsService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> getChatImageUrl({
+  Future<String> getChatImageURL({
     required Chat chat,
     required UserApp loguedUserApp,
   }) async {
@@ -75,5 +75,10 @@ class ChatsService extends ChangeNotifier {
     //     c.messages!.add(message);
     //   }
     // });
+  }
+
+  void reset() {
+    chats?.clear();
+    chats = null;
   }
 }

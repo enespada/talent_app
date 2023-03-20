@@ -630,7 +630,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 15),
                 FutureBuilder(
-                  future: chatsService.getChatImageUrl(
+                  future: chatsService.getChatImageURL(
                     chat: chat,
                     loguedUserApp: userService.userApp!,
                   ),

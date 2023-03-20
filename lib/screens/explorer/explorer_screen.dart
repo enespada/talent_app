@@ -38,103 +38,99 @@ class ExplorerScreen extends StatelessWidget {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: Column(
-              children: [
-                //----------------------------Buscar--------------------------------
-                Container(
-                  height: responsive.heightPercent(7.2),
-                  width: responsive.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => FocusScope.of(context)
-                                .requestFocus(searchService.focusNode),
-                            child: Icon(
-                              Icons.search,
-                              size: responsive.widthPercent(7),
-                            ),
-                          ),
-                          SizedBox(width: responsive.widthPercent(3.5)),
-                          SizedBox(
-                            height: responsive.heightPercent(7.2),
-                            width: responsive.widthPercent(67),
-                            child: Center(
-                              child: TextField(
-                                controller: searchService.tec,
-                                focusNode: searchService.focusNode,
-                                cursorColor: AppColors.greyscale5,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: Localization.of(context)
-                                      .string('explorer_screen_search'),
-                                  hintStyle: const TextStyle(
-                                      color: AppColors.greyscale3),
-                                  labelStyle: const TextStyle(
-                                      overflow: TextOverflow.ellipsis),
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                                onTap: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(searchService.focusNode);
-                                },
-                                onChanged: (String value) {
-                                  // tec.text = value;
-                                  searchService.suggestUsers();
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: responsive.heightPercent(4)),
-
-                //--------------------------Lista---------------------------------
-                // Expanded(
-                //   child: ListView.builder(
-                //     itemCount: searchService.suggestedUsers.length,
-                //     itemBuilder: (context, index) {
-                //       return ListTile(
-                //         title: Text('Hola $index'),
-                //       );
-                //     },
-                //   ),
-                // ),
-                if (!postsService.isLoadingAll)
-                  Expanded(
-                    child: PublicationsGrid(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PostsListScreen(
-                              title: Localization.of(context)
-                                  .string('home_screen_title'),
-                              posts: postsService.allUsersPosts!,
-                            ),
-                          ),
-                        );
-                      },
-                      posts: postsService.allUsersPosts!,
-                    ),
-                  ),
-                if (postsService.isLoadingAll)
-                  const Center(
+            child: (postsService.isLoadingAll)
+                ? const Center(
                     child: CircularProgressIndicator(
                       color: AppColors.blueColor,
                     ),
+                  )
+                : Column(
+                    children: [
+                      //----------------------------Buscar--------------------------------
+                      Container(
+                        height: responsive.heightPercent(7.2),
+                        width: responsive.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => FocusScope.of(context)
+                                  .requestFocus(searchService.focusNode),
+                              child: Icon(
+                                Icons.search,
+                                size: responsive.widthPercent(7),
+                              ),
+                            ),
+                            SizedBox(width: responsive.widthPercent(3.5)),
+                            SizedBox(
+                              height: responsive.heightPercent(7.2),
+                              width: responsive.widthPercent(67),
+                              child: Center(
+                                child: TextField(
+                                  controller: searchService.tec,
+                                  focusNode: searchService.focusNode,
+                                  cursorColor: AppColors.greyscale5,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    hintText: Localization.of(context)
+                                        .string('explorer_screen_search'),
+                                    hintStyle: const TextStyle(
+                                      color: AppColors.greyscale3,
+                                    ),
+                                    labelStyle: const TextStyle(
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                  onTap: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(searchService.focusNode);
+                                  },
+                                  onChanged: (String value) {
+                                    // tec.text = value;
+                                    searchService.suggestUsers();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: responsive.heightPercent(4)),
+
+                      //--------------------------Lista---------------------------------
+                      // Expanded(
+                      //   child: ListView.builder(
+                      //     itemCount: searchService.suggestedUsers.length,
+                      //     itemBuilder: (context, index) {
+                      //       return ListTile(
+                      //         title: Text('Hola $index'),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
+                      if (!postsService.isLoadingAll)
+                        Expanded(
+                          child: PublicationsGrid(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostsListScreen(
+                                    title: Localization.of(context)
+                                        .string('home_screen_title'),
+                                    posts: postsService.allUsersPosts!,
+                                  ),
+                                ),
+                              );
+                            },
+                            posts: postsService.allUsersPosts!,
+                          ),
+                        ),
+                    ],
                   ),
-              ],
-            ),
           ),
         ),
         //----------------------CustomBottomNavigationBar--------------------------

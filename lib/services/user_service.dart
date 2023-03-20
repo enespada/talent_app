@@ -262,4 +262,12 @@ class UserService extends ChangeNotifier {
         .child("${userApp!.id!.path.split('/')[1]}/profile.png")
         .putFile(file, metadaData);
   }
+
+  void reset() {
+    userApp = null;
+    followers.clear();
+    following.clear();
+    profileUrlImage == null;
+    userPosts.clear();
+  }
 }

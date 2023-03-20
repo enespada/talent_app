@@ -6,7 +6,7 @@ import 'package:talent_app/models/models.dart';
 class ModalitiesService extends ChangeNotifier {
   List<Modality> modalities = [];
 
-  Future getModalitiesBySport(Sport sport) async {
+  Future<void> getModalitiesBySport(Sport sport) async {
     modalities.clear();
 
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;

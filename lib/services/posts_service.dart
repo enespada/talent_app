@@ -10,7 +10,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:talent_app/models/models.dart';
 
 class PostsService extends ChangeNotifier {
-  List<Post> followingUsersPosts = [];
+  List<Post>? followingUsersPosts;
   List<Post>? allUsersPosts;
   bool isLoadingFollowing = false;
   bool isLoadingAll = false;
@@ -53,7 +53,11 @@ class PostsService extends ChangeNotifier {
     isLoadingFollowing = true;
     notifyListeners();
 
-    followingUsersPosts.clear();
+    if (followingUsersPosts != null) {
+      followingUsersPosts!.clear();
+    } else {
+      followingUsersPosts = [];
+    }
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     if (loguedUserApp.following!.isNotEmpty) {
       final data = await fbFirestore
@@ -67,7 +71,7 @@ class PostsService extends ChangeNotifier {
         Post postaux = Post.fromJson(doc.data());
         await postaux.userId?.get().then((value) => postaux.userApp =
             UserApp.fromJson(value.data() as Map<String, dynamic>));
-        followingUsersPosts.add(postaux);
+        followingUsersPosts!.add(postaux);
       }
     }
 
@@ -152,5 +156,10 @@ class PostsService extends ChangeNotifier {
     });
     post.files!.addAll(filesList);
     return post;
+  }
+
+  void reset() {
+    allUsersPosts?.clear();
+    followingUsersPosts?.clear();
   }
 }

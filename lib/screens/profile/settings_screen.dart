@@ -120,14 +120,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             //TODO: cerrar sesion
                             // _viewModel.signOut();
                             await authService.logOut();
-                            postsService.followingUsersPosts.clear();
-                            userService.userApp = null;
-                            userService.followers.clear();
-                            userService.following.clear();
-                            userService.profileUrlImage == null;
-                            userService.userPosts.clear();
-                            chatsService.chats?.clear();
-                            chatsService.chats = null;
+                            postsService.reset();
+                            // userService.userApp = null;
+                            // userService.followers.clear();
+                            // userService.following.clear();
+                            // userService.profileUrlImage == null;
+                            // userService.userPosts.clear();
+                            userService.reset();
+                            // chatsService.chats?.clear();
+                            // chatsService.chats = null;
+                            chatsService.reset();
+
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               SplashScreen.routeName,

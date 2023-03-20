@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: (postsService.followingUsersPosts.isEmpty)
+        child: (postsService.followingUsersPosts!.isEmpty)
             ? Padding(
                 padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Center(
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               )
-            : PostsListWidget(posts: postsService.followingUsersPosts),
+            : PostsListWidget(posts: postsService.followingUsersPosts!),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------

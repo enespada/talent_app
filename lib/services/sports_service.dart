@@ -6,7 +6,7 @@ import 'package:talent_app/models/models.dart';
 class SportsService extends ChangeNotifier {
   List<Sport> sports = [];
 
-  Future getSports() async {
+  Future<void> getSports() async {
     sports.clear();
 
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;

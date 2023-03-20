@@ -225,7 +225,7 @@ class _ChatWidgetState extends State<ChatWidget> {
         child: Row(
           children: [
             FutureBuilder(
-              future: chatsService.getChatImageUrl(
+              future: chatsService.getChatImageURL(
                 chat: widget.chat,
                 loguedUserApp: userService.userApp!,
               ),
