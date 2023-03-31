@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/providers/providers.dart';
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
@@ -11,12 +14,14 @@ import 'package:talent_app/widgets/widgets.dart';
 class RegLogTemplate extends StatefulWidget {
   final String title;
   final String subtitle;
+  final String buttonText;
   final String? userType;
 
   const RegLogTemplate({
     Key? key,
     required this.title,
     required this.subtitle,
+    required this.buttonText,
     this.userType,
   }) : super(key: key);
 
@@ -35,8 +40,24 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = Provider.of<AuthService>(context);
-    final UserService userService = Provider.of<UserService>(context);
-    final PostsService postsService = Provider.of<PostsService>(context);
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: false,
+    );
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: false,
+    );
+    final SportsService sportsService = Provider.of<SportsService>(
+      context,
+      listen: false,
+    );
+    final ModalitiesService modalitiesService = Provider.of<ModalitiesService>(
+      context,
+      listen: false,
+    );
+    final EditProfileProvider editProfileProvider =
+        Provider.of<EditProfileProvider>(context);
 
     final Responsive responsive = Responsive.of(context);
 
@@ -185,30 +206,73 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   SizedBox(height: responsive.heightPercent(5)),
 
                   YellowTextButton(
-                    title: Localization.of(context).string('sign_in'),
+                    title: widget.buttonText,
                     backgroundDisabled: AppColors.greyscale1,
                     foregroundDisabled: AppColors.greyscale4,
                     onPressed: (_isValidEmail &&
                             _isValidPwd &&
                             !authService.isLoading)
                         ? () async {
+                            await sportsService.getSports();
+                            for (Sport s in sportsService.sports) {
+                              if (s.id == userService.userApp!.sport) {
+                                await modalitiesService.getModalitiesBySport(s);
+                                editProfileProvider.sport = s;
+                                break;
+                              }
+                            }
+                            for (Modality m in modalitiesService.modalities) {
+                              if (m.id == userService.userApp!.modality) {
+                                editProfileProvider.modality = m;
+                                break;
+                              }
+                            }
+                            //----------------------Login------------------------
                             if (widget.userType == null) {
-                              bool loginOK = await authService.login(
-                                  _tecEmail.text, _tecPassword.text);
-                              if (loginOK) {
+                              String? loginResult = await authService.login(
+                                _tecEmail.text,
+                                _tecPassword.text,
+                              );
+                              if (loginResult == null) {
                                 print('Login correcto');
                                 await userService.getUser();
                                 postsService
                                     .getFollowingPosts(userService.userApp!);
-
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  HomeScreen.routeName,
-                                );
+                                //Si el usuario no completo sus datos en el registro
+                                //le obligamos a completarlos
+                                if (userService.userApp!.userName!.isEmpty) {
+                                  editProfileProvider.initializeData(
+                                    userService.userApp!,
+                                  );
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(
+                                        isProfileCompleted: false,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    HomeScreen.routeName,
+                                  );
+                                }
                               } else {
-                                print('Login fallido');
+                                Util.showCustomDialog(
+                                  context: context,
+                                  child: Text(
+                                    loginResult,
+                                    style: AppStyles.darkTextTheme.bodyLarge!
+                                        .copyWith(
+                                      fontSize: responsive.diagonalPercent(2.2),
+                                    ),
+                                  ),
+                                );
                               }
-                            } else {
+                            }
+                            //---------------------Register----------------------
+                            else {
                               userApp = UserApp(
                                 email: _tecEmail.text,
                                 followers: [],
@@ -222,12 +286,46 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 type: widget.userType,
                               );
                               authService.userApp = userApp;
-                              await authService.signUp(
-                                  _tecEmail.text, _tecPassword.text);
-                              Navigator.pushReplacementNamed(
-                                context,
-                                HomeScreen.routeName,
+                              String? signUpResult = await authService.signUp(
+                                _tecEmail.text,
+                                _tecPassword.text,
                               );
+                              if (signUpResult == null) {
+                                await userService.getUser();
+                                postsService
+                                    .getFollowingPosts(userService.userApp!);
+                                //Como el usuario aun no ha completado sus datos
+                                //le obligamos a hacerlo
+                                if (userService.userApp!.userName!.isEmpty) {
+                                  editProfileProvider.initializeData(
+                                    userService.userApp!,
+                                  );
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(
+                                        isProfileCompleted: false,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    HomeScreen.routeName,
+                                  );
+                                }
+                              } else {
+                                Util.showCustomDialog(
+                                  context: context,
+                                  child: Text(
+                                    signUpResult,
+                                    style: AppStyles.darkTextTheme.bodyLarge!
+                                        .copyWith(
+                                      fontSize: responsive.diagonalPercent(2.2),
+                                    ),
+                                  ),
+                                );
+                              }
                             }
                           }
                         : null,

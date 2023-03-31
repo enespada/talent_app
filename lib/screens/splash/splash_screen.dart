@@ -44,7 +44,6 @@ class SplashScreen extends StatelessWidget {
       context,
       listen: false,
     );
-
     final EditProfileProvider editProfileProvider =
         Provider.of<EditProfileProvider>(context);
 

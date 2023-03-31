@@ -69,6 +69,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Provider.of<EditProfileProvider>(context);
 
     final Responsive responsive = Responsive.of(context);
+
     final double spaceBetweenFacts = responsive.heightPercent(2.5);
     final double avatarSize = responsive.heightPercent(20);
     CircleEditableAvatar circleEditableAvatar = CircleEditableAvatar(
@@ -320,10 +321,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
         ),
-      ),
-      //-------------------------CustomBottomNavigationBar-----------------------
-      bottomNavigationBar: const CustomBottomNavigationBar(
-        selectedIndex: 4,
       ),
     );
   }

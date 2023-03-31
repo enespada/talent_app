@@ -13,6 +13,7 @@ class LoginScreen extends StatelessWidget {
     return RegLogTemplate(
       title: Localization.of(context).string('sign_in'),
       subtitle: Localization.of(context).string('login_welcome'),
+      buttonText: Localization.of(context).string('sign_in'),
     );
 
     // final Responsive responsive = Responsive.of(context);

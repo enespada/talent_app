@@ -14,6 +14,7 @@ class Chat {
     this.users,
     this.messages,
     this.name,
+    this.urlImage,
   });
 
   Chat.fromJson(Map<String, dynamic> json) {

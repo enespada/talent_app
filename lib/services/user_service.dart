@@ -117,6 +117,7 @@ class UserService extends ChangeNotifier {
   }
 
   Future<void> getFollowers() async {
+    if (userApp == null) return;
     List<DocumentReference?>? idFollowers = [];
     idFollowers.addAll(userApp!.followers!);
     if (idFollowers.isEmpty) return;

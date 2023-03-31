@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return RegLogTemplate(
       title: Localization.of(context).string('sign_up'),
       subtitle: Localization.of(context).string('register_profile_type_title'),
+      buttonText: Localization.of(context).string('sign_up'),
       userType: widget.userType,
     );
 

@@ -14,15 +14,15 @@ class Post {
   DocumentReference? modality;
 
   Post({
-    String? id,
-    DocumentReference? userId,
-    required this.description,
+    this.id,
+    this.userId,
+    this.description,
     // required this.locations,
-    required this.files,
-    required this.timestamp,
-    required this.sportType,
-    required this.modality,
-  }) : super();
+    this.files,
+    this.timestamp,
+    this.sportType,
+    this.modality,
+  });
 
   @override
   Map<String, dynamic> toJson() {

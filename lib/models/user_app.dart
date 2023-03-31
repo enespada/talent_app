@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-UserApp userAppFromJson(String str) => UserApp.fromJson(json.decode(str));
+// UserApp userAppFromJson(String str) => UserApp.fromJson(json.decode(str));
 
-String userAppToJson(UserApp data) => json.encode(data.toJson());
+// String userAppToJson(UserApp data) => json.encode(data.toJson());
 
 class UserApp {
   DocumentReference? id;
@@ -67,9 +65,14 @@ class UserApp {
     sport = json["sport"];
     modality = json["modality"];
     userName = json["userName"];
-    birthday = DateTime.fromMillisecondsSinceEpoch(
-      (json["birthday"] as Timestamp).millisecondsSinceEpoch,
-    );
+    if (json["birthday"] == null) {
+      birthday == null;
+    } else {
+      birthday = DateTime.fromMillisecondsSinceEpoch(
+        (json["birthday"] as Timestamp).millisecondsSinceEpoch,
+      );
+    }
+
     bio = json["bio"];
     // challengesNumber = json["challengesNumber"] ?? 0;
     followers = [];

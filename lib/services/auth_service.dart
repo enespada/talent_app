@@ -14,8 +14,8 @@ class AuthService extends ChangeNotifier {
   static const accessTokenKey = 'access_token';
   static const expiresInKey = 'expires_in';
 
-  Future<bool> login(String user, String password) async {
-    if (isLoading) return false;
+  Future<String?> login(String user, String password) async {
+    // if (isLoading) return '';
     isLoading = true;
     notifyListeners();
     try {
@@ -32,39 +32,53 @@ class AuthService extends ChangeNotifier {
 
       isLoading = false;
       notifyListeners();
-      return true;
+      return null;
+    } on FirebaseAuthException catch (fae) {
+      isLoading = false;
+      notifyListeners();
+      return fae.code;
     } catch (e) {
       isLoading = false;
       notifyListeners();
-      return false;
+      return 'Error';
     }
   }
 
-  Future<void> signUp(String user, String password) async {
-    if (isLoading) return;
+  Future<String?> signUp(String user, String password) async {
+    // if (isLoading) return '';
     isLoading = true;
     notifyListeners();
+    try {
+      final FirebaseAuth fbAuth = FirebaseAuth.instance;
+      final UserCredential userCredential =
+          await fbAuth.createUserWithEmailAndPassword(
+        email: user,
+        password: password,
+      );
+      //token
+      final token = await userCredential.user?.getIdToken(true);
+      const storage = FlutterSecureStorage();
+      await storage.write(key: accessTokenKey, value: token);
+      final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+      userApp!.id = _newUserReference(userCredential.user?.uid ?? '');
+      await _newUserReffcmToken(userApp!);
+      await fbFirestore
+          .collection('users')
+          .doc(userApp!.id!.id)
+          .set(userApp!.toJson());
 
-    final FirebaseAuth fbAuth = FirebaseAuth.instance;
-    final UserCredential userCredential =
-        await fbAuth.createUserWithEmailAndPassword(
-      email: user,
-      password: password,
-    );
-    //token
-    final token = await userCredential.user?.getIdToken(true);
-    const storage = FlutterSecureStorage();
-    await storage.write(key: accessTokenKey, value: token);
-    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    userApp!.id = _newUserReference(userCredential.user?.uid ?? '');
-    await _newUserRefcmToken(userApp!);
-    await fbFirestore
-        .collection('users')
-        .doc(userApp!.id!.id)
-        .set(userApp!.toJson());
-
-    isLoading = false;
-    notifyListeners();
+      isLoading = false;
+      notifyListeners();
+      return null;
+    } on FirebaseAuthException catch (fae) {
+      isLoading = false;
+      notifyListeners();
+      return fae.code;
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      return 'Error';
+    }
   }
 
   DocumentReference _newUserReference(String uid) {
@@ -72,15 +86,15 @@ class AuthService extends ChangeNotifier {
     return fbFirestore.collection("users").doc(uid);
   }
 
-  Future<void> _newUserRefcmToken(UserApp userApp) async {
+  Future<void> _newUserReffcmToken(UserApp userApp) async {
     FirebaseMessaging fbMessaging = FirebaseMessaging.instance;
     userApp.fcmToken = await fbMessaging.getToken();
   }
 
   Future<bool> isAuthenticated() async {
     const storage = FlutterSecureStorage();
-    String accesToken = await storage.read(key: accessTokenKey) ?? '';
-    return accesToken.isNotEmpty;
+    String accessToken = await storage.read(key: accessTokenKey) ?? '';
+    return accessToken.isNotEmpty;
   }
 
   // Future<void> refreshToken() async {
