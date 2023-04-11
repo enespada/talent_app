@@ -80,7 +80,15 @@ class _UploadPostDescriptionScreenState
             if (userService.userPosts.isEmpty) await userService.getPosts();
             await uploadPost(userService, postsService);
             Navigator.pop(context);
-            Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(
+                  userApp: userService.userApp!,
+                  isLoguedUser: true,
+                ),
+              ),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.only(right: 15),

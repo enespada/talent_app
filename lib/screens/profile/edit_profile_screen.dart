@@ -91,9 +91,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         leading: (widget.isProfileCompleted!)
             ? GestureDetector(
-                onTap: () => Navigator.pushReplacementNamed(
+                onTap: () => Navigator.pushReplacement(
                   context,
-                  ProfileScreen.routeName,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      userApp: userService.userApp!,
+                      isLoguedUser: true,
+                    ),
+                  ),
                 ),
                 child: Icon(
                   Icons.arrow_back,

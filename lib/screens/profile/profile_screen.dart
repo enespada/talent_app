@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -17,15 +18,21 @@ import 'package:talent_app/widgets/widgets.dart';
 class ProfileScreen extends StatefulWidget {
   static const String routeName = 'profile_screen';
 
-  const ProfileScreen({Key? key}) : super(key: key);
+  final UserApp userApp;
+  final bool isLoguedUser;
+
+  const ProfileScreen({
+    Key? key,
+    required this.userApp,
+    required this.isLoguedUser,
+  }) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _selectedPage = 0;
-  //Grids a mostrar con los posts, lso challenges o los posts guardados
+  bool isFollowing = false;
 
   @override
   void initState() {
@@ -46,18 +53,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Provider.of<SportsService>(context, listen: false);
     final ModalitiesService modalitiesService =
         Provider.of<ModalitiesService>(context, listen: false);
-    final PostsService postsService = Provider.of<PostsService>(context);
     final EditProfileProvider editProfileProvider =
         Provider.of<EditProfileProvider>(context);
 
-    double followersValue =
-        userService.userApp?.followers?.length.toDouble() ?? -1;
+    double followersValue = widget.userApp.followers?.length.toDouble() ?? -1;
     String followersString = Util.adaptNumFollow(followersValue);
-    double followingValue =
-        userService.userApp?.following?.length.toDouble() ?? -1;
+    double followingValue = widget.userApp.following?.length.toDouble() ?? -1;
     String followingString = Util.adaptNumFollow(followingValue);
     double publicationsValue = userService.userPosts.length.toDouble();
     String publicationsString = Util.adaptNumFollow(publicationsValue);
+
+    if (!widget.isLoguedUser) {
+      isFollowing = false;
+      for (DocumentReference? idFollowing in userService.userApp!.following!) {
+        // stringToCompare = idFollowing
+        //     .toString()
+        //     .split('(')[1]
+        //     .split(')')[0]
+        //     .split('/')[1];
+        if (idFollowing == widget.userApp.id) {
+          isFollowing = true;
+          break;
+        }
+      }
+    }
 
     // final List<Widget> _pages = [
     //   _PublicationsGrid(
@@ -105,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //---------------------Foto perfil--------------------------
                   FutureBuilder(
                     future: userService.getProfileImageURL(
-                        userService.userApp?.id!.path.split('/')[1] ?? ''),
+                        widget.userApp.id!.path.split('/')[1]),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       return Container(
@@ -141,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         //-------------------Nombre------------------------
                         Text(
-                          userService.userApp?.fullName ?? '',
+                          widget.userApp.fullName ?? '',
                           style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
                             fontSize: responsive.diagonalPercent(2.5),
                             fontWeight: FontWeight.bold,
@@ -151,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         //-------------------Deporte------------------------
                         Text(
-                          '${toBeginningOfSentenceCase(userService.userApp?.type ?? '')} | ${userService.userApp?.country ?? ''}',
+                          '${toBeginningOfSentenceCase(widget.userApp.type ?? '')} | ${widget.userApp.country ?? ''}',
                           style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
                             fontSize: responsive.diagonalPercent(2.1),
                             color: AppColors.greyscale2,
@@ -161,70 +180,121 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(height: responsive.heightPercent(1)),
 
                         //----------------Editar y ajustes-------------------
-                        Row(
-                          children: [
-                            //----------------Editar-----------------------
-                            BlueTextButton(
-                              title: Localization.of(context)
-                                  .string('wall_home_primary_button'),
-                              fontSize: responsive.widthPercent(4),
-                              onPressed: () async {
-                                await sportsService.getSports();
-                                for (Sport s in sportsService.sports) {
-                                  if (s.id == userService.userApp!.sport) {
-                                    await modalitiesService
-                                        .getModalitiesBySport(s);
-                                    editProfileProvider.sport = s;
-                                    break;
+                        Visibility(
+                          visible: widget.isLoguedUser,
+                          child: Row(
+                            children: [
+                              //----------------Editar-----------------------
+                              BlueTextButton(
+                                title: Localization.of(context)
+                                    .string('wall_home_primary_button'),
+                                fontSize: responsive.widthPercent(4),
+                                onPressed: () async {
+                                  await sportsService.getSports();
+                                  for (Sport s in sportsService.sports) {
+                                    if (s.id == userService.userApp!.sport) {
+                                      await modalitiesService
+                                          .getModalitiesBySport(s);
+                                      editProfileProvider.sport = s;
+                                      break;
+                                    }
                                   }
-                                }
-                                for (Modality m
-                                    in modalitiesService.modalities) {
-                                  if (m.id == userService.userApp!.modality) {
-                                    editProfileProvider.modality = m;
-                                    break;
+                                  for (Modality m
+                                      in modalitiesService.modalities) {
+                                    if (m.id == userService.userApp!.modality) {
+                                      editProfileProvider.modality = m;
+                                      break;
+                                    }
                                   }
-                                }
-                                editProfileProvider
-                                    .initializeData(userService.userApp!);
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditProfileScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(width: responsive.widthPercent(4)),
+                                  editProfileProvider
+                                      .initializeData(userService.userApp!);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              SizedBox(width: responsive.widthPercent(4)),
 
-                            //----------------------Ajustes----------------------
-                            MaterialButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  SettingsScreen.routeName,
-                                );
-                              },
-                              elevation: 0,
-                              color: AppColors.greyscale0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                side: const BorderSide(
-                                  color: AppColors.blackColor,
-                                  width: 0.5,
+                              //----------------------Ajustes----------------------
+                              MaterialButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    SettingsScreen.routeName,
+                                  );
+                                },
+                                elevation: 0,
+                                color: AppColors.greyscale0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  side: const BorderSide(
+                                    color: AppColors.blackColor,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                child: Text(
+                                  Localization.of(context)
+                                      .string('wall_home_secundary_button'),
+                                  style: TextStyle(
+                                    color: AppColors.greyscale5,
+                                    fontSize: responsive.widthPercent(4),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                Localization.of(context)
-                                    .string('wall_home_secundary_button'),
-                                style: TextStyle(
-                                  color: AppColors.greyscale5,
-                                  fontSize: responsive.widthPercent(4),
-                                  fontWeight: FontWeight.bold,
+                            ],
+                          ),
+                        ),
+
+                        Visibility(
+                          visible: !widget.isLoguedUser,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //----------------Seguir/Siguiendo-----------------------
+                              SizedBox(
+                                width: responsive.widthPercent(25),
+                                child: MaterialButton(
+                                  child: Text(
+                                    (isFollowing)
+                                        ? Localization.of(context)
+                                            .string("wall_followers_following")
+                                        : Localization.of(context)
+                                            .string("wall_followers_follow"),
+                                    style: TextStyle(
+                                      fontSize: responsive.diagonalPercent(1.7),
+                                    ),
+                                  ),
+                                  textColor: (isFollowing)
+                                      ? AppColors.brandColor
+                                      : AppColors.whiteColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 0.0,
+                                  color: (isFollowing)
+                                      ? AppColors.whiteColor
+                                      : AppColors.brandColor,
+                                  onPressed: (isFollowing)
+                                      ? () async {
+                                          //Opcion Siguiendo
+                                          await userService
+                                              .unfollow(widget.userApp);
+                                          setState(() {});
+                                        }
+                                      : () async {
+                                          //Opcion Seguir
+                                          await userService
+                                              .follow(widget.userApp);
+                                          setState(() {});
+                                        },
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -454,8 +524,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
 
       //-------------------------CustomBottomNavigationBar------------------------
-      bottomNavigationBar: const CustomBottomNavigationBar(
-        selectedIndex: 4,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: (!widget.isLoguedUser) ? 1 : 4,
       ),
     );
   }

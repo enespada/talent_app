@@ -158,6 +158,28 @@ class PostsService extends ChangeNotifier {
     return post;
   }
 
+  //Metodo para obtener los posts del usuario
+  Future<List<Post>> getUserPosts(UserApp userApp) async {
+    List<Post> posts = [];
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection('posts')
+        .where('user', isEqualTo: userApp.id)
+        // .orderBy("datetime", descending: true)
+        // .limit(30)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      Post postaux = Post.fromJson(doc.data());
+      postaux.userApp = userApp;
+      posts.add(postaux);
+    }
+
+    posts.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+
+    return posts;
+  }
+
   void reset() {
     allUsersPosts?.clear();
     followingUsersPosts?.clear();

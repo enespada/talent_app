@@ -1,8 +1,10 @@
 // ignore_for_file: unnecessary_this
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/services.dart';
 
@@ -70,14 +72,13 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                       images: postImages,
                     );
                   }
-                  return Container(
-                    color: AppColors.whiteColor,
-                  );
+                  return Container(color: AppColors.whiteColor);
                 },
               ),
-              if (userService.userApp!.type == 'scouter' ||
-                  userService.userApp!.type == 'manager')
-                Positioned(
+              Visibility(
+                visible: userService.userApp!.type == 'scouter' ||
+                    userService.userApp!.type == 'manager',
+                child: Positioned(
                   bottom: 6,
                   left: responsive.widthPercent(5),
                   child: GestureDetector(
@@ -90,14 +91,18 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-              // Positioned(
-              //   bottom: 6,
-              //   right: responsive.widthPercent(5),
-              //   child: const Icon(
-              //     Icons.bookmark_border_rounded,
-              //     color: AppColors.greyscale5,
-              //   ),
-              // ),
+              ),
+              Visibility(
+                visible: widget.post.userId == userService.userApp!.id,
+                child: Positioned(
+                  bottom: 6,
+                  right: responsive.widthPercent(5),
+                  child: const Icon(
+                    Icons.bookmark_border_rounded,
+                    color: AppColors.greyscale5,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -116,6 +121,20 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                         fontSize: responsive.diagonalPercent(2.2),
                         fontWeight: FontWeight.bold,
                       ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap =
+                            (userService.userApp!.id == widget.post.userId)
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                            userApp: widget.post.userApp!,
+                                            isLoguedUser: false),
+                                      ),
+                                    );
+                                  },
                     ),
                     TextSpan(
                       text: '${widget.post.description} ',

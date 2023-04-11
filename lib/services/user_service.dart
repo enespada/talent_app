@@ -191,6 +191,7 @@ class UserService extends ChangeNotifier {
       "following": FieldValue.arrayUnion([userToFollow.id]),
     });
     userApp!.following!.add(userToFollow.id);
+    userToFollow.followers!.add(userApp!.id);
     following.add(userToFollow);
   }
 
@@ -206,6 +207,7 @@ class UserService extends ChangeNotifier {
       "following": FieldValue.arrayRemove([userToUnfollow.id]),
     });
     userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
+    userToUnfollow.followers!.remove(userApp!.id);
     following.remove(userToUnfollow);
   }
 

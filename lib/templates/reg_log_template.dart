@@ -213,20 +213,6 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                             _isValidPwd &&
                             !authService.isLoading)
                         ? () async {
-                            await sportsService.getSports();
-                            for (Sport s in sportsService.sports) {
-                              if (s.id == userService.userApp!.sport) {
-                                await modalitiesService.getModalitiesBySport(s);
-                                editProfileProvider.sport = s;
-                                break;
-                              }
-                            }
-                            for (Modality m in modalitiesService.modalities) {
-                              if (m.id == userService.userApp!.modality) {
-                                editProfileProvider.modality = m;
-                                break;
-                              }
-                            }
                             //----------------------Login------------------------
                             if (widget.userType == null) {
                               String? loginResult = await authService.login(
@@ -290,13 +276,28 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 _tecEmail.text,
                                 _tecPassword.text,
                               );
+                              //Si el sign up es correcto
                               if (signUpResult == null) {
                                 await userService.getUser();
-                                postsService
-                                    .getFollowingPosts(userService.userApp!);
-                                //Como el usuario aun no ha completado sus datos
+                                //Si el usuario aun no ha completado sus datos
                                 //le obligamos a hacerlo
                                 if (userService.userApp!.userName!.isEmpty) {
+                                  await sportsService.getSports();
+                                  for (Sport s in sportsService.sports) {
+                                    if (s.id == userService.userApp!.sport) {
+                                      await modalitiesService
+                                          .getModalitiesBySport(s);
+                                      editProfileProvider.sport = s;
+                                      break;
+                                    }
+                                  }
+                                  for (Modality m
+                                      in modalitiesService.modalities) {
+                                    if (m.id == userService.userApp!.modality) {
+                                      editProfileProvider.modality = m;
+                                      break;
+                                    }
+                                  }
                                   editProfileProvider.initializeData(
                                     userService.userApp!,
                                   );
@@ -309,12 +310,16 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                     ),
                                   );
                                 } else {
+                                  postsService
+                                      .getFollowingPosts(userService.userApp!);
                                   Navigator.pushReplacementNamed(
                                     context,
                                     HomeScreen.routeName,
                                   );
                                 }
-                              } else {
+                              }
+                              //Si el sign up NO es correcto
+                              else {
                                 Util.showCustomDialog(
                                   context: context,
                                   child: Text(

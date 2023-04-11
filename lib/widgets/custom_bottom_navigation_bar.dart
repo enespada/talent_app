@@ -168,7 +168,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
             case 4:
               // context.navigatePopReplacing(const WallHomePage());
               if (userService.userPosts.isEmpty) await userService.getPosts();
-              Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(
+                    userApp: userService.userApp!,
+                    isLoguedUser: true,
+                  ),
+                ),
+              );
               break;
           }
         },

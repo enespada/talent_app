@@ -168,9 +168,14 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
           color: AppColors.greyscale5,
         ),
         leading: GestureDetector(
-          onTap: () => Navigator.pushReplacementNamed(
+          onTap: () => Navigator.pushReplacement(
             context,
-            ProfileScreen.routeName,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                userApp: userApp!,
+                isLoguedUser: userApp!.id == userService.userApp!.id,
+              ),
+            ),
           ),
           child: Icon(
             Icons.arrow_back,
