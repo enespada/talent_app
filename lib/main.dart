@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/firebase_options.dart';
-import 'package:talent_app/providers/edit_profile_provider.dart';
-import 'package:talent_app/screens/login/login_screen.dart';
-import 'package:talent_app/screens/onboarding/onboarding_screen.dart';
-import 'package:talent_app/screens/register/register_user_type_screen.dart';
+import 'package:talent_app/providers/providers.dart';
 import 'package:talent_app/screens/screens.dart';
-import 'package:talent_app/screens/splash/splash_screen.dart';
-import 'package:talent_app/screens/upload/upload_post_home_screen.dart';
-import 'package:talent_app/services/auth_service.dart';
-import 'package:talent_app/services/posts_service.dart';
-import 'package:talent_app/services/search_service.dart';
 import 'package:talent_app/services/services.dart';
-import 'package:talent_app/services/sports_service.dart';
-import 'package:talent_app/services/user_service.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 
 void main() async {
@@ -44,12 +36,14 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Talent App',
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           Localization.delegate,
-          // GlobalMaterialLocalizations.delegate,
-          // GlobalWidgetsLocalizations.delegate,
-          // GlobalCupertinoLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
         initialRoute: SplashScreen.routeName,
         routes: {

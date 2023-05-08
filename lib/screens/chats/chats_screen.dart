@@ -43,12 +43,10 @@ class ChatsScreen extends StatelessWidget {
     // }
 
     return Scaffold(
-      // backgroundColor: AppColors.greyscale0,
-
       //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string("chats_screen_title"),
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
           color: AppColors.greyscale5,
@@ -57,7 +55,6 @@ class ChatsScreen extends StatelessWidget {
 
       //--------------------------------body----------------------------------
       body: SafeArea(
-        // child: ChatsListWidget(),
         child: (chatsService.isLoadingChats)
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.blueColor),
@@ -68,7 +65,9 @@ class ChatsScreen extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
                     child: ChatWidget(chat: chatsService.chats![index]),
                   );
                 },
@@ -305,7 +304,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                       Flexible(
                         child: Text(
                           widget.chat.name ?? userApp?.fullName ?? '',
-                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                             color: AppColors.greyscale5,
                             fontSize: responsive.diagonalPercent(1.8),
                             fontWeight: FontWeight.bold,
@@ -322,7 +321,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                           color: AppColors.blueColor.withOpacity(0.15),
                           content: Text(
                             userApp?.type ?? '',
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                               color: AppColors.blueColor,
                               fontSize: responsive.diagonalPercent(1.8),
                             ),
@@ -338,7 +337,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                           widget.chat.messages!.isEmpty
                               ? ''
                               : widget.chat.messages!.last.content ?? '',
-                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                             color: AppColors.greyscale5,
                             fontSize: responsive.diagonalPercent(1.8),
                           ),

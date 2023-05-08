@@ -17,8 +17,8 @@ class AppColors {
   static const Color greyscale5 = Color(0xFF1F2128);
 
   // Background
-  static const Color whiteBackground = Color(0xFFF6F6F6);
-  static const Color blackBackground = Color(0xFF1F2128);
+  static const Color lightBackground = Color(0xFFF6F6F6);
+  static const Color darkBackground = Color(0xFF1F2128);
 
   static const Color whiteColor = Color(0xFFFFFFFF);
   static const Color blackColor = Color(0xFF000000);

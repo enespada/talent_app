@@ -81,11 +81,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.whiteBackground,
+      backgroundColor: AppColors.lightBackground,
       //-----------------------------appBar---------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string('wall_profile_title'),
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
         ),
@@ -162,7 +162,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Text(
                         Localization.of(context)
                             .string('wall_profile_personal_info'),
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(3),
                           fontWeight: FontWeight.bold,
                         ),
@@ -210,7 +210,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Text(
                         Localization.of(context)
                             .string('wall_profile_sport_category'),
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(3),
                           fontWeight: FontWeight.bold,
                         ),
@@ -268,7 +268,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           Localization.of(context).string(
                                             "edit_profile_empty_fields",
                                           ),
-                                          style: AppStyles
+                                          style: AppThemes
                                               .darkTextTheme.bodyLarge!
                                               .copyWith(
                                             fontSize:

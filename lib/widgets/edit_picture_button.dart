@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
-import 'package:talent_app/style/app_colors.dart';
 
 class EditPictureButton extends StatelessWidget {
   final Widget child;

@@ -3,15 +3,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/screens/screens.dart';
-import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/services.dart';
-
-import 'package:talent_app/style/app_colors.dart';
-import 'package:talent_app/style/app_styles.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
-import 'package:talent_app/widgets/carousel_images.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
 class PostWidget extends StatefulWidget {
@@ -38,11 +35,16 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive.of(context);
-    final PostsService postsService =
-        Provider.of<PostsService>(context, listen: true);
-    final UserService userService =
-        Provider.of<UserService>(context, listen: false);
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: true,
+    );
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: false,
+    );
+
+    final Responsive responsive = Responsive.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +86,21 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   child: GestureDetector(
                     onTap: () {
                       //TODO: crear chat con el usuario
+
+                      Chat chat = Chat(
+                        name: null,
+                        users: [userService.userApp!.id!, widget.post.userId!],
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            chat: widget.chat,
+                            userApp: widget.post.userApp,
+                          ),
+                        ),
+                      );
                     },
                     child: const Icon(
                       Icons.send,
@@ -138,7 +155,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                     ),
                     TextSpan(
                       text: '${widget.post.description} ',
-                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                         color: AppColors.greyscale5,
                         fontSize: responsive.diagonalPercent(1.8),
                       ),

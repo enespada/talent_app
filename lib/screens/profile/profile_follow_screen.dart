@@ -162,7 +162,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
       //---------------------Nombre usuario y flecha atras----------------------
       appBar: CustomAppBar(
         title: userService.userApp!.fullName!,
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.w700,
           color: AppColors.greyscale5,
@@ -307,7 +307,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                           ),
                           title: Text(
                             usersToShow[index].fullName!,
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                               color: AppColors.greyscale5,
                               fontSize: responsive.widthPercent(4),
                               fontWeight: FontWeight.w700,
@@ -316,7 +316,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                           ),
                           subtitle: Text(
                             typeString(context, usersToShow[index].type ?? ''),
-                            style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                               color: AppColors.greyscale2,
                               fontSize: responsive.widthPercent(3.5),
                               fontWeight: FontWeight.w700,
@@ -446,7 +446,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             title: Center(
               child: Text(
                 Localization.of(context).string("wall_followers_delete"),
-                style: AppStyles.darkTextTheme.displayMedium,
+                style: AppThemes.darkTextTheme.displayMedium,
               ),
             ),
             actionsAlignment: MainAxisAlignment.end,
@@ -454,7 +454,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             content: Text(
               Localization.of(context).string("wall_followers_message",
                   params: [followerToRemove.fullName!]),
-              style: AppStyles.darkTextTheme.bodyLarge,
+              style: AppThemes.darkTextTheme.bodyLarge,
             ),
             actions: [
               MaterialButton(
@@ -491,13 +491,13 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             title: Center(
               child: Text(
                 Localization.of(context).string("wall_followers_delete"),
-                style: AppStyles.ligthTextTheme.displayMedium,
+                style: AppThemes.ligthTextTheme.displayMedium,
               ),
             ),
             content: Text(
               Localization.of(context).string("wall_followers_message",
                   params: [followerToRemove.fullName!]),
-              style: AppStyles.ligthTextTheme.bodyLarge,
+              style: AppThemes.ligthTextTheme.bodyLarge,
             ),
             actions: [
               MaterialButton(

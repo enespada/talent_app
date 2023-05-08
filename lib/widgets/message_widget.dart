@@ -74,7 +74,7 @@ class MessageWidget extends StatelessWidget {
                       Text(
                         message.content ?? '',
                         softWrap: true,
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           color: myMessage
                               ? AppColors.whiteColor
                               : AppColors.blackColor,
@@ -91,7 +91,7 @@ class MessageWidget extends StatelessWidget {
                       Text(
                         message.content ?? '',
                         softWrap: true,
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           color: myMessage
                               ? AppColors.whiteColor
                               : AppColors.blackColor,

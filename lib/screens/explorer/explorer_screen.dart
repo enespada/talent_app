@@ -34,7 +34,7 @@ class ExplorerScreen extends StatelessWidget {
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
-        backgroundColor: AppColors.whiteBackground,
+        backgroundColor: AppColors.lightBackground,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),

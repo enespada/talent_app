@@ -84,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       //-------------------------------appBar-----------------------------------
       appBar: _ChatAppBar(
         title: title,
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(2.2),
         ),
         chat: widget.chat,
@@ -119,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                           controller: tec,
                           keyboardType: TextInputType.text,
                           keyboardAppearance: Brightness.light,
-                          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                             color: AppColors.greyscale5,
                           ),
                           decoration: InputDecoration(
@@ -138,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                             hintText: Localization.of(context)
                                 .string('messages_chat_type_hint'),
                             hintStyle:
-                                AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                                AppThemes.darkTextTheme.bodyLarge!.copyWith(
                               color: AppColors.greyscale2,
                             ),
                             suffixIcon: InkWell(

@@ -36,7 +36,7 @@ class YellowTextButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         title,
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           color: AppColors.greyscale5,
           fontSize: responsive.widthPercent(5),
           fontWeight: FontWeight.bold,

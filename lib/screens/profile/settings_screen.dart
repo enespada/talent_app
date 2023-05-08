@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talent_app/screens/screens.dart';
-import 'package:talent_app/services/auth_service.dart';
-import 'package:talent_app/services/posts_service.dart';
-import 'package:talent_app/services/services.dart';
 
-import 'package:talent_app/style/app_colors.dart';
-import 'package:talent_app/style/app_styles.dart';
+import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/services.dart';
+import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
-import '../../widgets/widgets.dart';
+import 'package:talent_app/widgets/widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String routeName = 'settings_screen';
@@ -56,11 +53,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final double spaceBetweenOptions = responsive.heightPercent(2.5);
 
     return Scaffold(
-      backgroundColor: AppColors.whiteBackground,
+      backgroundColor: AppColors.lightBackground,
       //------------------------------appBar------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string('wall_settings_title'),
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
           color: AppColors.greyscale5,
@@ -189,7 +186,7 @@ class _SettingOption extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
             fontSize: responsive.diagonalPercent(2.5),
             color: AppColors.greyscale5,
           ),

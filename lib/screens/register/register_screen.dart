@@ -128,7 +128,7 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
             margin: const EdgeInsets.only(bottom: 10),
             child: Text(
               Localization.of(context).string('register_profile_type_title'),
-              style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(5),
               ),
             ),
@@ -137,7 +137,7 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
             margin: const EdgeInsets.only(bottom: 30),
             child: Text(
               Localization.of(context).string('register_profile_type_subtitle'),
-              style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
               ),
             ),
@@ -158,7 +158,7 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
                 child: CustomCheck(
                   title: "Soy ${respuestasPosibles[index]}",
                   currentIndex: index,
-                  textStyle: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                  textStyle: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                     color: (_selectedIndex == index)
                         ? AppColors.whiteColor
                         : AppColors.greyscale4,

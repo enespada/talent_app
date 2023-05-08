@@ -243,7 +243,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                               value: UploadGalleryTemplateMenu.recent,
                               child: Text(
                                 album.name,
-                                style: AppStyles.ligthTextTheme.bodyLarge!
+                                style: AppThemes.ligthTextTheme.bodyLarge!
                                     .copyWith(
                                   color: AppColors.whiteColor,
                                 ),
@@ -257,7 +257,7 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                             Expanded(
                               child: Text(
                                 this.titleAlbum,
-                                style: AppStyles.ligthTextTheme.bodyLarge!
+                                style: AppThemes.ligthTextTheme.bodyLarge!
                                     .copyWith(
                                   color: AppColors.whiteColor,
                                 ),
@@ -526,7 +526,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
             onTap: widget.onTapAll,
             child: Text(
               'todos',
-              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.common)
                     ? FontWeight.bold
@@ -541,7 +541,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
             onTap: widget.onTapImages,
             child: Text(
               'imágenes',
-              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.image)
                     ? FontWeight.bold
@@ -556,7 +556,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
             onTap: widget.onTapVideos,
             child: Text(
               'vídeos',
-              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.video)
                     ? FontWeight.bold

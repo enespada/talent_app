@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //--------------------------------appBar------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string("home_screen_title"),
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
           color: AppColors.greyscale5,
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     Localization.of(context).string("no_posts_to_show"),
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       color: AppColors.greyscale2,
                       fontSize: responsive.diagonalPercent(2.8),
                     ),
@@ -163,7 +163,7 @@ class _HomeAppBar extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       fontSize: responsive.diagonalPercent(2.5),
                       fontWeight: FontWeight.bold,
                     ),
@@ -187,7 +187,7 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.publications,
                     child: Text(
                       Localization.of(context).string('publications_title'),
-                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                         fontSize: responsive.diagonalPercent(2.1),
                       ),
                     ),
@@ -198,7 +198,7 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.challenges,
                     child: Text(
                       Localization.of(context).string('challenges_title'),
-                      style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                         fontSize: responsive.diagonalPercent(2.1),
                       ),
                     ),

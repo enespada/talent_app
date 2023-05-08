@@ -44,7 +44,7 @@ class _EditProfileFactState extends State<EditProfileFact> {
           Expanded(
             child: TextField(
               controller: widget.textEditingController,
-              style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2.1),
               ),
               decoration: const InputDecoration(
@@ -67,7 +67,7 @@ class _EditProfileFactState extends State<EditProfileFact> {
                 lastDate: DateTime.now(),
                 builder: (context, child) {
                   return Theme(
-                    data: AppStyles.darkTheme.copyWith(
+                    data: AppThemes.darkTheme.copyWith(
                       colorScheme: ColorScheme.fromSeed(
                         seedColor: AppColors.brandColor,
                         primary: AppColors.brandColor,
@@ -89,7 +89,7 @@ class _EditProfileFactState extends State<EditProfileFact> {
             },
             child: Text(
               editProfileProvider.tecBirthday.text,
-              style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2.1),
               ),
             ),

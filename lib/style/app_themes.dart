@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:talent_app/style/app_colors.dart';
 
-class AppStyles {
-  // App Theme
+class AppThemes {
+  static const Color primary = AppColors.blueColor;
+
   static ThemeData lightTheme = ThemeData(
     textTheme: ligthTextTheme,
     brightness: Brightness.light,
-    primarySwatch: Colors.blue,
+    primaryColor: primary,
     useMaterial3: true,
+
+    //appBarTheme
+    appBarTheme: const AppBarTheme(
+      color: AppColors.lightBackground,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+      ),
+    ),
+    scaffoldBackgroundColor: AppColors.lightBackground,
   ).copyWith(
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -21,8 +33,18 @@ class AppStyles {
   static ThemeData darkTheme = ThemeData(
     textTheme: darkTextTheme,
     brightness: Brightness.dark,
-    primarySwatch: Colors.blue,
     useMaterial3: true,
+
+    //appBarTheme
+    appBarTheme: const AppBarTheme(
+      color: primary,
+      toolbarHeight: 0,
+      systemOverlayStyle: SystemUiOverlayStyle(
+          // statusBarColor: Colors.red,
+          // statusBarIconBrightness: Brightness.light,
+          // statusBarBrightness: Brightness.dark,
+          ),
+    ),
   ).copyWith(
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{

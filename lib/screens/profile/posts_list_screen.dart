@@ -27,7 +27,7 @@ class PostsListScreen extends StatelessWidget {
       //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
         title: title,
-        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
           fontSize: responsive.diagonalPercent(3),
           fontWeight: FontWeight.bold,
           color: AppColors.greyscale5,

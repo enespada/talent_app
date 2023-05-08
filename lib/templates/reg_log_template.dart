@@ -86,7 +86,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   //---------------------------Titulo----------------------------
                   Text(
                     widget.title,
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       fontSize: responsive.diagonalPercent(5),
                     ),
                   ),
@@ -95,7 +95,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   //---------------------------Subtitulo-------------------------
                   Text(
                     widget.subtitle,
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       fontSize: responsive.diagonalPercent(2.3),
                     ),
                   ),
@@ -108,7 +108,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                       //-----------------------Email------------------------------
                       Text(
                         Localization.of(context).string('sign_in_username'),
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(2.1),
                         ),
                       ),
@@ -116,7 +116,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                       TextFormField(
                         controller: _tecEmail,
                         keyboardType: TextInputType.emailAddress,
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(2.1),
                         ),
                         onChanged: (String value) {
@@ -156,7 +156,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                       //-----------------------Password------------------------------
                       Text(
                         Localization.of(context).string('sign_in_password'),
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(2.1),
                         ),
                       ),
@@ -165,7 +165,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                         controller: _tecPassword,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _passwordHidden,
-                        style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(2.1),
                         ),
                         onChanged: (String value) {
@@ -249,7 +249,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                   context: context,
                                   child: Text(
                                     loginResult,
-                                    style: AppStyles.darkTextTheme.bodyLarge!
+                                    style: AppThemes.darkTextTheme.bodyLarge!
                                         .copyWith(
                                       fontSize: responsive.diagonalPercent(2.2),
                                     ),
@@ -324,7 +324,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                   context: context,
                                   child: Text(
                                     signUpResult,
-                                    style: AppStyles.darkTextTheme.bodyLarge!
+                                    style: AppThemes.darkTextTheme.bodyLarge!
                                         .copyWith(
                                       fontSize: responsive.diagonalPercent(2.2),
                                     ),

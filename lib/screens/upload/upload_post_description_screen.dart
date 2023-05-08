@@ -95,7 +95,7 @@ class _UploadPostDescriptionScreenState
             child: Center(
               child: Text(
                 Localization.of(context).string('upload_description_publish'),
-                style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+                style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                   fontSize: responsive.diagonalPercent(2),
                   fontWeight: FontWeight.bold,
                   color: AppColors.brandColor,
@@ -125,12 +125,12 @@ class _UploadPostDescriptionScreenState
                     TextField(
                       controller: tecDescription,
                       cursorColor: AppColors.greyscale2,
-                      style: AppStyles.darkTextTheme.bodyLarge,
+                      style: AppThemes.darkTextTheme.bodyLarge,
                       cursorWidth: 3,
                       decoration: InputDecoration(
                         hintText: Localization.of(context)
                             .string('upload_description_description'),
-                        hintStyle: AppStyles.darkTextTheme.bodyLarge,
+                        hintStyle: AppThemes.darkTextTheme.bodyLarge,
                         border: InputBorder.none,
                       ),
                     ),

@@ -149,7 +149,7 @@ class Util {
             ),
             title: Text(
               Localization.of(context).string("common_notice"),
-              style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(3),
                 fontWeight: FontWeight.bold,
               ),

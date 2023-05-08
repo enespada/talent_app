@@ -104,7 +104,7 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                   Text(
                     Localization.of(context)
                         .string('register_profile_type_title'),
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       fontSize: responsive.diagonalPercent(5),
                     ),
                   ),
@@ -114,7 +114,7 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                   Text(
                     Localization.of(context)
                         .string('register_profile_type_subtitle'),
-                    style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                       fontSize: responsive.diagonalPercent(2.3),
                     ),
                   ),
@@ -138,7 +138,7 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                           title: "Soy ${respuestasPosibles[index]}",
                           currentIndex: index,
                           textStyle:
-                              AppStyles.ligthTextTheme.bodyLarge!.copyWith(
+                              AppThemes.ligthTextTheme.bodyLarge!.copyWith(
                             color: (_selectedIndex == index)
                                 ? AppColors.whiteColor
                                 : AppColors.greyscale4,

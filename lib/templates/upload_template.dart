@@ -36,7 +36,7 @@ class _UploadTemplateState extends State<UploadTemplate> {
         ),
         title: Text(
           widget.title,
-          style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
+          style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
             fontSize: responsive.diagonalPercent(3),
             fontWeight: FontWeight.bold,
             color: AppColors.whiteColor,
