@@ -18,16 +18,48 @@ class ChatsService extends ChangeNotifier {
     if (chats != null) chats!.clear();
 
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    final data = await fbFirestore
+    // final data = await fbFirestore
+    //     .collection('chats')
+    //     .where('users', arrayContains: userApp.id)
+    //     .get();
+    // chats = [];
+    // if (data.docs.isNotEmpty) {
+    //   for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+    //     Chat chataux = Chat.fromJson(doc.data());
+    //     chataux.id = doc.reference;
+    //     chats!.add(chataux);
+    //   }
+    // }
+    chats = [];
+    final data = fbFirestore
         .collection('chats')
         .where('users', arrayContains: userApp.id)
-        .get();
-    chats = [];
-    if (data.docs.isNotEmpty) {
-      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
-        chats!.add(Chat.fromJson(doc.data()));
-      }
+        .snapshots();
+    // print('Length: ${await data.length}');
+    QuerySnapshot<Map<String, dynamic>> snapshot = await data.first;
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+      Chat chataux = Chat.fromJson(doc.data());
+      chataux.id = doc.reference;
+      chats!.add(chataux);
     }
+    data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+        for (Chat chat in chats!) {
+          if (chat.id == doc.reference) {
+            Chat chataux = Chat.fromJson(doc.data());
+            if (chat.messages!.length != chataux.messages!.length) {
+              chataux.id = doc.reference;
+              int index = chats!.indexOf(chat);
+              chats!.remove(chat);
+              chats!.insert(index, chataux);
+            }
+            break;
+          }
+        }
+      }
+      print('notify');
+      notifyListeners();
+    });
 
     isLoadingChats = false;
     notifyListeners();
@@ -75,6 +107,20 @@ class ChatsService extends ChangeNotifier {
     //     c.messages!.add(message);
     //   }
     // });
+  }
+
+  Future<Chat> newChat(Chat chat) async {
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    //P1: Creamos el chat en Firestore para obtener un id
+    final DocumentReference reference =
+        await fbFirestore.collection('chats').add(chat.toJson());
+    chat.id = reference;
+
+    if (chats != null) {
+      chats!.add(chat);
+    }
+
+    return chat;
   }
 
   void reset() {

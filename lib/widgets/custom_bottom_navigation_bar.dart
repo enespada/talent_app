@@ -136,6 +136,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       ],
       currentIndex: selectedIndex,
       onTap: (int index) async {
+        if (selectedIndex == index) return;
         switch (index) {
           case 0:
             if (postsService.followingUsersPosts == null) {
@@ -156,7 +157,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           case 3:
             // context.navigatePopReplacing(MessagesHomePage());
             if (chatsService.chats == null) {
-              await chatsService.getUserChats(userService.userApp!);
+              chatsService.getUserChats(userService.userApp!);
             }
             Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
             break;

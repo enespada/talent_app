@@ -22,7 +22,10 @@ class ChatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final ChatsService chatsService = Provider.of<ChatsService>(context);
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: true,
+    );
 
     // Widget body;
     // if (chatsService.isLoadingChats) {

@@ -1,8 +1,4 @@
 // ignore_for_file: unnecessary_new, sort_child_properties_last
-
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
@@ -47,7 +43,9 @@ class _UploadPostDescriptionScreenState
   }
 
   Future<void> uploadPost(
-      UserService userService, PostsService postsService) async {
+    UserService userService,
+    PostsService postsService,
+  ) async {
     Post post = Post(
       description: tecDescription.text,
       // locations: [],
@@ -59,8 +57,10 @@ class _UploadPostDescriptionScreenState
     post.userId = userService.userApp!.id;
     post.userApp = userService.userApp;
 
-    final Post resultPost =
-        await postsService.uploadPost(post, widget.selectedImages);
+    final Post resultPost = await postsService.uploadPost(
+      post,
+      widget.selectedImages,
+    );
     userService.userPosts.insert(0, resultPost);
   }
 

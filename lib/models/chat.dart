@@ -18,7 +18,7 @@ class Chat {
   });
 
   Chat.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    // id = json['id'];
     users = [];
     for (dynamic aux in json['users']) {
       if (aux != null) users?.add(aux as DocumentReference);
@@ -32,7 +32,7 @@ class Chat {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    // data['id'] = id;
     data['users'] = users;
     data['messages'] = messages;
     data['name'] = name;

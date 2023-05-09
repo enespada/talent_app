@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
@@ -602,18 +603,19 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
     final ChatsService chatsService = Provider.of<ChatsService>(context);
 
+    final Responsive responsive = Responsive.of(context);
+
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.only(
-          top: responsive.heightPercent(2),
-          left: responsive.widthPercent(4),
-          right: responsive.widthPercent(4),
-          bottom: responsive.heightPercent(2),
-        ),
+        // padding: EdgeInsets.only(
+        //   top: responsive.heightPercent(2),
+        //   left: responsive.widthPercent(4),
+        //   right: responsive.widthPercent(4),
+        //   bottom: responsive.heightPercent(2),
+        // ),
         color: AppColors.whiteColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -658,7 +660,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Text(title, style: style),
                     // Text(
-                    //   user?.type ?? '',
+                    //   chat.type ?? '',
                     //   style: AppStyles.ligthTextTheme.bodyMedium?.copyWith(
                     //     color: AppColors.darkGrey,
                     //   ),
@@ -667,157 +669,9 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                 )
               ],
             ),
-            // Visibility(
-            //   visible: false,
-            //   child: PopupMenuButton<MessagesChatMenu>(
-            //     // Callback that sets the selected popup menu item.
-            //     onSelected: (MessagesChatMenu item) {
-            //       // onSelected(item);
-            //     },
-            //     position: PopupMenuPosition.under,
-            //     color: AppColors.whiteColor,
-            //     icon: const Icon(
-            //       Icons.more_vert_outlined,
-            //       color: Colors.black,
-            //     ),
-            //     shape: const RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.all(
-            //         Radius.circular(15),
-            //       ),
-            //     ),
-            //     itemBuilder: (BuildContext context) =>
-            //         <PopupMenuEntry<MessagesChatMenu>>[
-            //       PopupMenuItem<MessagesChatMenu>(
-            //         value: MessagesChatMenu.example1,
-            //         child: Text(
-            //           'Example 1',
-            //           style: AppStyles.ligthTextTheme.bodyLarge,
-            //         ),
-            //       ),
-            //       PopupMenuItem<MessagesChatMenu>(
-            //         value: MessagesChatMenu.example2,
-            //         child: Text(
-            //           'Example 2',
-            //           style: AppStyles.ligthTextTheme.bodyLarge,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
     );
   }
 }
-
-// class _BottomNavigationBar extends StatefulWidget {
-//   // final GlobalKey<FormState> formKey;
-//   final TextEditingController typeFieldController;
-//   // final Responsive responsive;
-//   // final ChatViewModel viewModel;
-//   // final String chatId;
-//   final UserApp? destinationUser;
-
-//   _BottomNavigationBar({
-//     Key? key,
-//     // required this.formKey,
-//     // required this.responsive,
-//     required this.typeFieldController,
-//     // required this.viewModel,
-//     // required this.chatId,
-//     required this.destinationUser,
-//   }) : super(key: key);
-
-//   @override
-//   State<_BottomNavigationBar> createState() => _BottomNavigationBarState();
-// }
-
-// class _BottomNavigationBarState extends State<_BottomNavigationBar> {
-//   // final _notificationViewModel = inject<NotificationsViewModel>();
-//   Color iconColor = AppColors.mediunLightGrey;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
-
-//     return Container(
-//       width: responsive.width,
-//       padding: const EdgeInsets.all(25),
-//       child: Row(
-//         children: [
-//           Expanded(
-//             child: TextField(
-//               controller: widget.typeFieldController,
-//               keyboardType: TextInputType.text,
-//               keyboardAppearance: Brightness.light,
-//               style: AppStyles.ligthTextTheme.bodyLarge!.copyWith(
-//                 color: AppColors.greyscale5,
-//               ),
-//               decoration: InputDecoration(
-//                 contentPadding: const EdgeInsets.symmetric(
-//                   vertical: 14.0,
-//                   horizontal: 25.0,
-//                 ),
-//                 filled: true,
-//                 fillColor: AppColors.lightGrey,
-//                 border: const OutlineInputBorder(
-//                   borderRadius: BorderRadius.all(Radius.circular(10)),
-//                   borderSide: BorderSide(width: 0, style: BorderStyle.none),
-//                 ),
-//                 hintText:
-//                     Localization.of(context).string('messages_chat_type_hint'),
-//                 hintStyle: AppStyles.darkTextTheme.bodyLarge!.copyWith(
-//                   color: AppColors.mediunLightGrey,
-//                 ),
-//                 suffixIcon: InkWell(
-//                   borderRadius: BorderRadius.circular(50),
-//                   onTap: () {
-//                     // if (_chatObject != null &&
-//                     //     widget.typeFieldController.text.isNotEmpty) {
-//                     //   final updatedChat = _chatObject;
-//                     //   updatedChat!['messages'] = _chatObject!['messages']
-//                     //     ..add({
-//                     //       'id': UniqueKey().hashCode.toString(),
-//                     //       'userId': UserViewModel.userData?.reference,
-//                     //       'userName': UserViewModel.user?.fullname,
-//                     //       'userAvatar': UserViewModel.user?.imgSrc,
-//                     //       'date': Timestamp.now(),
-//                     //       'content': widget.typeFieldController.text
-//                     //     });
-
-//                     //   widget.viewModel.updateChat(widget.chatId, updatedChat);
-
-//                     //   // Send notification
-//                     //   _notificationViewModel.sendNotification(
-//                     //       Localization.of(context).string(
-//                     //           'notification_message_title',
-//                     //           params: [UserViewModel.user?.fullname ?? '']),
-//                     //       widget.typeFieldController.text,
-//                     //       widget.destinationUser?.fcmToken ?? '');
-
-//                     //   widget.typeFieldController.text = '';
-//                     // }
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.all(10),
-//                     child: SvgPicture.asset(
-//                       'assets/images/icon_send.svg',
-//                       color: iconColor,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               onChanged: (String text) {
-//                 iconColor = (text.isNotEmpty)
-//                     ? AppColors.blueColor
-//                     : AppColors.greyscale2;
-//                 setState(() {});
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

@@ -43,6 +43,10 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
       context,
       listen: false,
     );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: false,
+    );
 
     final Responsive responsive = Responsive.of(context);
 
@@ -84,19 +88,19 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   bottom: 6,
                   left: responsive.widthPercent(5),
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       //TODO: crear chat con el usuario
-
                       Chat chat = Chat(
+                        messages: [],
                         name: null,
                         users: [userService.userApp!.id!, widget.post.userId!],
                       );
-
+                      await chatsService.newChat(chat);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ChatScreen(
-                            chat: widget.chat,
+                            chat: chat,
                             userApp: widget.post.userApp,
                           ),
                         ),
