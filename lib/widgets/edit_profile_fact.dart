@@ -44,9 +44,9 @@ class _EditProfileFactState extends State<EditProfileFact> {
           Expanded(
             child: TextField(
               controller: widget.textEditingController,
-              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                fontSize: responsive.diagonalPercent(2.1),
-              ),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: responsive.diagonalPercent(2.1),
+                  ),
               decoration: const InputDecoration(
                 border: InputBorder.none,
               ),
@@ -89,9 +89,9 @@ class _EditProfileFactState extends State<EditProfileFact> {
             },
             child: Text(
               editProfileProvider.tecBirthday.text,
-              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                fontSize: responsive.diagonalPercent(2.1),
-              ),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: responsive.diagonalPercent(2.1),
+                  ),
             ),
           ),
       ],

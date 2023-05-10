@@ -27,11 +27,10 @@ class PostsListScreen extends StatelessWidget {
       //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
         title: title,
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Icon(

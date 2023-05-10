@@ -74,12 +74,12 @@ class MessageWidget extends StatelessWidget {
                       Text(
                         message.content ?? '',
                         softWrap: true,
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          color: myMessage
-                              ? AppColors.whiteColor
-                              : AppColors.blackColor,
-                          fontSize: responsive.widthPercent(3.8),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: myMessage
+                                  ? AppColors.whiteColor
+                                  : AppColors.blackColor,
+                              fontSize: responsive.widthPercent(3.8),
+                            ),
                       ),
                       const SizedBox(height: 5),
                       _HourAndTick(message: message),
@@ -91,12 +91,12 @@ class MessageWidget extends StatelessWidget {
                       Text(
                         message.content ?? '',
                         softWrap: true,
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          color: myMessage
-                              ? AppColors.whiteColor
-                              : AppColors.blackColor,
-                          fontSize: responsive.widthPercent(3.8),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: myMessage
+                                  ? AppColors.whiteColor
+                                  : AppColors.blackColor,
+                              fontSize: responsive.widthPercent(3.8),
+                            ),
                       ),
                       const SizedBox(height: 5),
                       _HourAndTick(message: message),

@@ -137,11 +137,15 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   children: [
                     TextSpan(
                       text: '${widget.post.userApp!.userName} ',
-                      style: TextStyle(
-                        color: AppColors.greyscale5,
-                        fontSize: responsive.diagonalPercent(2.2),
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: responsive.diagonalPercent(2.2),
+                            fontWeight: FontWeight.bold,
+                          ),
+                      // style: TextStyle(
+                      //   color: AppColors.greyscale5,
+                      //   fontSize: responsive.diagonalPercent(2.2),
+                      //   fontWeight: FontWeight.bold,
+                      // ),
                       recognizer: TapGestureRecognizer()
                         ..onTap =
                             (userService.userApp!.id == widget.post.userId)
@@ -159,10 +163,9 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                     ),
                     TextSpan(
                       text: '${widget.post.description} ',
-                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                        color: AppColors.greyscale5,
-                        fontSize: responsive.diagonalPercent(1.8),
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: responsive.diagonalPercent(1.8),
+                          ),
                     ),
                   ],
                 ),
@@ -170,10 +173,10 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
               SizedBox(height: responsive.heightPercent(1)),
               Text(
                 Util.postTimestamp(widget.post.timestamp!),
-                style: TextStyle(
-                  color: AppColors.greyscale2,
-                  fontSize: responsive.widthPercent(3),
-                ),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: AppColors.greyscale2,
+                      fontSize: responsive.diagonalPercent(1.8),
+                    ),
               ),
               SizedBox(height: responsive.heightPercent(2)),
             ],

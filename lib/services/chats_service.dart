@@ -43,9 +43,13 @@ class ChatsService extends ChangeNotifier {
       chats!.add(chataux);
     }
     data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      //Recorremos los nuevos chats
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+        bool isNewChat = true;
+        //Recorremos los viejos chats
         for (Chat chat in chats!) {
           if (chat.id == doc.reference) {
+            isNewChat = false;
             Chat chataux = Chat.fromJson(doc.data());
             if (chat.messages!.length != chataux.messages!.length) {
               chataux.id = doc.reference;
@@ -56,8 +60,12 @@ class ChatsService extends ChangeNotifier {
             break;
           }
         }
+        if (isNewChat) {
+          Chat chataux = Chat.fromJson(doc.data());
+          chataux.id = doc.reference;
+          chats!.add(chataux);
+        }
       }
-      print('notify');
       notifyListeners();
     });
 
@@ -115,11 +123,9 @@ class ChatsService extends ChangeNotifier {
     final DocumentReference reference =
         await fbFirestore.collection('chats').add(chat.toJson());
     chat.id = reference;
-
-    if (chats != null) {
-      chats!.add(chat);
-    }
-
+    // if (chats != null) {
+    //   chats!.add(chat);
+    // }
     return chat;
   }
 

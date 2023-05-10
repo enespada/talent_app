@@ -85,9 +85,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       //-------------------------------appBar-----------------------------------
       appBar: _ChatAppBar(
         title: title,
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(2.2),
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(2.2),
+            ),
         chat: widget.chat,
       ),
 
@@ -120,9 +120,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                           controller: tec,
                           keyboardType: TextInputType.text,
                           keyboardAppearance: Brightness.light,
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.greyscale5,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: AppColors.greyscale5,
+                                  ),
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                               vertical: 14.0,

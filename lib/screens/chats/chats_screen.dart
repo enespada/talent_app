@@ -49,11 +49,10 @@ class ChatsScreen extends StatelessWidget {
       //--------------------------------appBar----------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string("chats_screen_title"),
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
       ),
 
       //--------------------------------body----------------------------------
@@ -307,11 +306,12 @@ class _ChatWidgetState extends State<ChatWidget> {
                       Flexible(
                         child: Text(
                           widget.chat.name ?? userApp?.fullName ?? '',
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.greyscale5,
-                            fontSize: responsive.diagonalPercent(1.8),
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: AppColors.greyscale5,
+                                    fontSize: responsive.diagonalPercent(1.8),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                           overflow: TextOverflow.fade,
                           softWrap: false,
                         ),
@@ -324,10 +324,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                           color: AppColors.blueColor.withOpacity(0.15),
                           content: Text(
                             userApp?.type ?? '',
-                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.blueColor,
-                              fontSize: responsive.diagonalPercent(1.8),
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: AppColors.blueColor,
+                                      fontSize: responsive.diagonalPercent(1.8),
+                                    ),
                           ),
                         ),
                     ],
@@ -340,10 +341,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                           widget.chat.messages!.isEmpty
                               ? ''
                               : widget.chat.messages!.last.content ?? '',
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.greyscale5,
-                            fontSize: responsive.diagonalPercent(1.8),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: AppColors.greyscale5,
+                                    fontSize: responsive.diagonalPercent(1.8),
+                                  ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

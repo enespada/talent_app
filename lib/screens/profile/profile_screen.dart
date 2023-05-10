@@ -47,10 +47,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final UserService userService = Provider.of<UserService>(context);
-    final SportsService sportsService =
-        Provider.of<SportsService>(context, listen: false);
-    final ModalitiesService modalitiesService =
-        Provider.of<ModalitiesService>(context, listen: false);
+    final SportsService sportsService = Provider.of<SportsService>(
+      context,
+      listen: false,
+    );
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: false,
+    );
+    final ModalitiesService modalitiesService = Provider.of<ModalitiesService>(
+      context,
+      listen: false,
+    );
     final EditProfileProvider editProfileProvider =
         Provider.of<EditProfileProvider>(context);
 
@@ -104,11 +112,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       //----------------------------------appBar----------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string('wall_home_title'),
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
       ),
 
       //----------------------------------body----------------------------------
@@ -161,21 +168,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         //-------------------Nombre------------------------
                         Text(
                           widget.userApp.fullName ?? '',
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            fontSize: responsive.diagonalPercent(2.5),
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontSize: responsive.diagonalPercent(2.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         SizedBox(height: responsive.heightPercent(0.8)),
 
                         //-------------------Deporte------------------------
                         Text(
                           '${toBeginningOfSentenceCase(widget.userApp.type ?? '')} | ${widget.userApp.country ?? ''}',
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            fontSize: responsive.diagonalPercent(2.1),
-                            color: AppColors.greyscale2,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontSize: responsive.diagonalPercent(2.1),
+                                    color: AppColors.greyscale2,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         SizedBox(height: responsive.heightPercent(1)),
 
@@ -281,14 +290,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   onPressed: (isFollowing)
                                       ? () async {
                                           //Opcion Siguiendo
-                                          await userService
-                                              .unfollow(widget.userApp);
+                                          await userService.unfollow(
+                                            widget.userApp,
+                                            postsService,
+                                          );
                                           setState(() {});
                                         }
                                       : () async {
                                           //Opcion Seguir
-                                          await userService
-                                              .follow(widget.userApp);
+                                          await userService.follow(
+                                            widget.userApp,
+                                            postsService,
+                                          );
                                           setState(() {});
                                         },
                                 ),
@@ -334,19 +347,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               followersString,
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.5),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             Text(
                               Localization.of(context)
                                   .string('wall_home_followers_text'),
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.1),
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.1),
+                                  ),
                             ),
                           ],
                         ),
@@ -371,19 +388,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               followingString,
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.5),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             Text(
                               Localization.of(context)
                                   .string('wall_home_following_text'),
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.1),
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.1),
+                                  ),
                             ),
                           ],
                         ),
@@ -395,19 +416,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               publicationsString,
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.5),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             Text(
                               Localization.of(context)
                                   .string('wall_home_publications_text'),
-                              style:
-                                  AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                                fontSize: responsive.diagonalPercent(2.1),
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.diagonalPercent(2.1),
+                                  ),
                             ),
                           ],
                         ),
@@ -494,10 +519,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Center(
                         child: Text(
                           Localization.of(context).string("no_posts_to_show"),
-                          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            color: AppColors.greyscale2,
-                            fontSize: responsive.diagonalPercent(2.5),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: AppColors.greyscale2,
+                                    fontSize: responsive.diagonalPercent(2.5),
+                                  ),
                         ),
                       ),
                     )

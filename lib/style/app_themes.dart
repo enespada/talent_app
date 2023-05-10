@@ -7,7 +7,7 @@ class AppThemes {
   static const Color primary = AppColors.blueColor;
 
   static ThemeData lightTheme = ThemeData(
-    textTheme: ligthTextTheme,
+    textTheme: lightTextTheme,
     brightness: Brightness.light,
     primaryColor: primary,
     useMaterial3: true,
@@ -37,14 +37,13 @@ class AppThemes {
 
     //appBarTheme
     appBarTheme: const AppBarTheme(
-      color: primary,
-      toolbarHeight: 0,
+      color: AppColors.darkBackground,
       systemOverlayStyle: SystemUiOverlayStyle(
-          // statusBarColor: Colors.red,
-          // statusBarIconBrightness: Brightness.light,
-          // statusBarBrightness: Brightness.dark,
-          ),
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+      ),
     ),
+    scaffoldBackgroundColor: AppColors.darkBackground,
   ).copyWith(
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -54,7 +53,7 @@ class AppThemes {
     ),
   );
 
-  static TextTheme ligthTextTheme = TextTheme(
+  static TextTheme lightTextTheme = TextTheme(
     bodyLarge: GoogleFonts.urbanist(
       fontSize: 12,
       fontWeight: FontWeight.w400,

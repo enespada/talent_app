@@ -31,6 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title),
       titleTextStyle: style,
       centerTitle: false,
+      leading: leading ?? Container(),
+      leadingWidth: leading == null ? 0 : null,
     );
 
     // return SafeArea(

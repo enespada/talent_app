@@ -68,6 +68,10 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
       context,
       listen: true,
     );
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: false,
+    );
 
     switch (_typeFollow) {
       case TypeFollow.seguidores:
@@ -158,15 +162,13 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
       //---------------------Nombre usuario y flecha atras----------------------
       appBar: CustomAppBar(
         title: userService.userApp!.fullName!,
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.w700,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.w700,
+            ),
         leading: GestureDetector(
           onTap: () => Navigator.pushReplacement(
             context,
@@ -307,20 +309,21 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                           ),
                           title: Text(
                             usersToShow[index].fullName!,
-                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.greyscale5,
-                              fontSize: responsive.widthPercent(4),
-                              fontWeight: FontWeight.w700,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      fontSize: responsive.widthPercent(4),
+                                      fontWeight: FontWeight.w700,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                           ),
                           subtitle: Text(
                             typeString(context, usersToShow[index].type ?? ''),
-                            style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.greyscale2,
-                              fontSize: responsive.widthPercent(3.5),
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: AppColors.greyscale2,
+                                      fontSize: responsive.widthPercent(3.5),
+                                      fontWeight: FontWeight.w700,
+                                    ),
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -371,8 +374,10 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                   onPressed: (isFollowing)
                                       ? () async {
                                           //Opcion Siguiendo
-                                          await userService
-                                              .unfollow(usersToShow[index]);
+                                          await userService.unfollow(
+                                            usersToShow[index],
+                                            postsService,
+                                          );
                                           changeFollow();
                                           setState(() {});
                                         }
@@ -380,8 +385,10 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                           //Opcion Seguir
                                           // await _viewModel
                                           //     .follow(usersToShow[index]);
-                                          await userService
-                                              .follow(usersToShow[index]);
+                                          await userService.follow(
+                                            usersToShow[index],
+                                            postsService,
+                                          );
                                           // await Future.delayed(
                                           //     const Duration(seconds: 2));
                                           // await _viewModel.getUser();
@@ -491,13 +498,13 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             title: Center(
               child: Text(
                 Localization.of(context).string("wall_followers_delete"),
-                style: AppThemes.ligthTextTheme.displayMedium,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
             ),
             content: Text(
               Localization.of(context).string("wall_followers_message",
                   params: [followerToRemove.fullName!]),
-              style: AppThemes.ligthTextTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             actions: [
               MaterialButton(

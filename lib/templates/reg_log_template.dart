@@ -86,18 +86,18 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   //---------------------------Titulo----------------------------
                   Text(
                     widget.title,
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(5),
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(5),
+                        ),
                   ),
                   SizedBox(height: responsive.heightPercent(3)),
 
                   //---------------------------Subtitulo-------------------------
                   Text(
                     widget.subtitle,
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(2.3),
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.3),
+                        ),
                   ),
                   SizedBox(height: responsive.heightPercent(5)),
 
@@ -108,17 +108,17 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                       //-----------------------Email------------------------------
                       Text(
                         Localization.of(context).string('sign_in_username'),
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(2.1),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(2.1),
+                            ),
                       ),
                       SizedBox(height: responsive.heightPercent(2)),
                       TextFormField(
                         controller: _tecEmail,
                         keyboardType: TextInputType.emailAddress,
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(2.1),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(2.1),
+                            ),
                         onChanged: (String value) {
                           _isValidEmail = value.contains(RegExp(
                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"));
@@ -156,18 +156,18 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                       //-----------------------Password------------------------------
                       Text(
                         Localization.of(context).string('sign_in_password'),
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(2.1),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(2.1),
+                            ),
                       ),
                       SizedBox(height: responsive.heightPercent(2)),
                       TextFormField(
                         controller: _tecPassword,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _passwordHidden,
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(2.1),
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(2.1),
+                            ),
                         onChanged: (String value) {
                           _isValidPwd = value.length >= 6;
                           setState(() {});

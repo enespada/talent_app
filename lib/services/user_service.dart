@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/utils/utils.dart';
 
 class UserService extends ChangeNotifier {
@@ -179,7 +180,7 @@ class UserService extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<void> follow(UserApp userToFollow) async {
+  Future<void> follow(UserApp userToFollow, PostsService postsService) async {
     if (userApp == null) return;
     //Actualizamos la lista de seguidores del usuario seguido
     await userToFollow.id!.update({
@@ -193,9 +194,13 @@ class UserService extends ChangeNotifier {
     userApp!.following!.add(userToFollow.id);
     userToFollow.followers!.add(userApp!.id);
     following.add(userToFollow);
+    await postsService.getFollowingPosts(userApp!);
   }
 
-  Future<void> unfollow(UserApp userToUnfollow) async {
+  Future<void> unfollow(
+    UserApp userToUnfollow,
+    PostsService postsService,
+  ) async {
     if (userApp == null) return;
     //Actualizamos la lista de seguidores del usuario seguido
     await userToUnfollow.id!.update({
@@ -209,6 +214,7 @@ class UserService extends ChangeNotifier {
     userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
     userToUnfollow.followers!.remove(userApp!.id);
     following.remove(userToUnfollow);
+    await postsService.getFollowingPosts(userApp!);
   }
 
   Future<String> getProfileImageURL(String id) async {

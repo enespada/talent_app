@@ -243,10 +243,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                               value: UploadGalleryTemplateMenu.recent,
                               child: Text(
                                 album.name,
-                                style: AppThemes.ligthTextTheme.bodyLarge!
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
                                     .copyWith(
-                                  color: AppColors.whiteColor,
-                                ),
+                                      color: AppColors.whiteColor,
+                                    ),
                               ),
                             ),
                           ),
@@ -257,10 +259,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                             Expanded(
                               child: Text(
                                 this.titleAlbum,
-                                style: AppThemes.ligthTextTheme.bodyLarge!
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
                                     .copyWith(
-                                  color: AppColors.whiteColor,
-                                ),
+                                      color: AppColors.whiteColor,
+                                    ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),

@@ -57,11 +57,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       //------------------------------appBar------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string('wall_settings_title'),
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Icon(
@@ -186,10 +185,10 @@ class _SettingOption extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-            fontSize: responsive.diagonalPercent(2.5),
-            color: AppColors.greyscale5,
-          ),
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(2.5),
+                color: AppColors.greyscale5,
+              ),
         ),
         trailing: (logOut != null && logOut == true)
             ? const SizedBox(

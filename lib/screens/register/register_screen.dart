@@ -128,18 +128,18 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
             margin: const EdgeInsets.only(bottom: 10),
             child: Text(
               Localization.of(context).string('register_profile_type_title'),
-              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                fontSize: responsive.diagonalPercent(5),
-              ),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: responsive.diagonalPercent(5),
+                  ),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 30),
             child: Text(
               Localization.of(context).string('register_profile_type_subtitle'),
-              style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                fontSize: responsive.diagonalPercent(2),
-              ),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: responsive.diagonalPercent(2),
+                  ),
             ),
           ),
           ListView.builder(
@@ -158,13 +158,13 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
                 child: CustomCheck(
                   title: "Soy ${respuestasPosibles[index]}",
                   currentIndex: index,
-                  textStyle: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                    color: (_selectedIndex == index)
-                        ? AppColors.whiteColor
-                        : AppColors.greyscale4,
-                    fontWeight: FontWeight.w600,
-                    // fontSize: 15,
-                  ),
+                  textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: (_selectedIndex == index)
+                            ? AppColors.whiteColor
+                            : AppColors.greyscale4,
+                        fontWeight: FontWeight.w600,
+                        // fontSize: 15,
+                      ),
                   color: (_selectedIndex == index)
                       ? AppColors.greyscale4
                       : AppColors.lightGrey,

@@ -39,11 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
       //--------------------------------appBar------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string("home_screen_title"),
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-          color: AppColors.greyscale5,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
       ),
 
       //--------------------------------body------------------------------------
@@ -54,10 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     Localization.of(context).string("no_posts_to_show"),
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      color: AppColors.greyscale2,
-                      fontSize: responsive.diagonalPercent(2.8),
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: AppColors.greyscale2,
+                          fontSize: responsive.diagonalPercent(2.8),
+                        ),
                   ),
                 ),
               )
@@ -163,10 +162,10 @@ class _HomeAppBar extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(2.5),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.5),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   SizedBox(width: responsive.widthPercent(10)),
                   const Icon(
@@ -187,9 +186,9 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.publications,
                     child: Text(
                       Localization.of(context).string('publications_title'),
-                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                        fontSize: responsive.diagonalPercent(2.1),
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: responsive.diagonalPercent(2.1),
+                          ),
                     ),
                   ),
                 ];
@@ -198,9 +197,9 @@ class _HomeAppBar extends StatelessWidget {
                     value: HomeMenuOption.challenges,
                     child: Text(
                       Localization.of(context).string('challenges_title'),
-                      style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                        fontSize: responsive.diagonalPercent(2.1),
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: responsive.diagonalPercent(2.1),
+                          ),
                     ),
                   ));
                 }

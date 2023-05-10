@@ -104,9 +104,9 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                   Text(
                     Localization.of(context)
                         .string('register_profile_type_title'),
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(5),
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(5),
+                        ),
                   ),
                   SizedBox(height: responsive.heightPercent(3)),
 
@@ -114,9 +114,9 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                   Text(
                     Localization.of(context)
                         .string('register_profile_type_subtitle'),
-                    style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                      fontSize: responsive.diagonalPercent(2.3),
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.3),
+                        ),
                   ),
                   SizedBox(height: responsive.heightPercent(3)),
 
@@ -138,13 +138,13 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                           title: "Soy ${respuestasPosibles[index]}",
                           currentIndex: index,
                           textStyle:
-                              AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                            color: (_selectedIndex == index)
-                                ? AppColors.whiteColor
-                                : AppColors.greyscale4,
-                            fontWeight: FontWeight.w600,
-                            // fontSize: 15,
-                          ),
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: (_selectedIndex == index)
+                                        ? AppColors.whiteColor
+                                        : AppColors.greyscale4,
+                                    fontWeight: FontWeight.w600,
+                                    // fontSize: 15,
+                                  ),
                           color: (_selectedIndex == index)
                               ? AppColors.greyscale4
                               : AppColors.lightGrey,

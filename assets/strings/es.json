@@ -175,5 +175,6 @@
   "common_ok": "Ok",
   "leave_register_message": "¿Estás seguro de que deseas abandonar el proceso de registro en la app?",
   "no_posts_to_show": "¡Aún no hay publicaciones que mostrar!",
-  "edit_profile_empty_fields": "Rellena los campos antes de continuar"
+  "edit_profile_empty_fields": "Rellena los campos antes de continuar",
+  "explorer": "Explorador"
 }

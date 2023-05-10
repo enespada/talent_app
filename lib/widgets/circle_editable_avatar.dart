@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:talent_app/style/app_colors.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'package:talent_app/widgets/widgets.dart';
 
@@ -91,9 +91,13 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
                   ? widget.iconBackgroundColor
                   : const Color(0xFFDDF247),
               onPressed: () async {
-                await _pickImage();
-                //TODO: guardar imagen en firebase
-                // _viewModel.uploadImageProfile(_file!.path, widget.user!.id!);
+                final PermissionState ps =
+                    await PhotoManager.requestPermissionExtend();
+                if (ps.isAuth) {
+                  await _pickImage();
+                  //TODO: guardar imagen en firebase
+                  // _viewModel.uploadImageProfile(_file!.path, widget.user!.id!);
+                }
               },
               child: Icon(
                 Icons.edit_outlined,

@@ -50,7 +50,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await userService.uploadImageProfile(file.path);
       Future.delayed(const Duration(seconds: 2));
     }
-    Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(
+          userApp: userService.userApp!,
+          isLoguedUser: true,
+        ),
+      ),
+    );
   }
 
   @override
@@ -85,10 +93,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       //-----------------------------appBar---------------------------------------
       appBar: CustomAppBar(
         title: Localization.of(context).string('wall_profile_title'),
-        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-          fontSize: responsive.diagonalPercent(3),
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: responsive.diagonalPercent(3),
+              fontWeight: FontWeight.bold,
+            ),
         leading: (widget.isProfileCompleted!)
             ? GestureDetector(
                 onTap: () => Navigator.pushReplacement(
@@ -106,7 +114,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   size: responsive.heightPercent(3),
                 ),
               )
-            : Container(),
+            : null,
       ),
 
       //-------------------------------body-------------------------------------
@@ -162,10 +170,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Text(
                         Localization.of(context)
                             .string('wall_profile_personal_info'),
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(3),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(3),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       EditProfileFact(
@@ -210,10 +218,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Text(
                         Localization.of(context)
                             .string('wall_profile_sport_category'),
-                        style: AppThemes.ligthTextTheme.bodyLarge!.copyWith(
-                          fontSize: responsive.diagonalPercent(3),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(3),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       _WallProfileDropdownFactSports(
