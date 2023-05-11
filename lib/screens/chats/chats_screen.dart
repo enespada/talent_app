@@ -171,16 +171,6 @@ class _ChatWidgetState extends State<ChatWidget> {
     Widget? stateIcon;
     if (widget.chat.messages!.isNotEmpty &&
         widget.chat.messages!.last.userId == userService.userApp!.id) {
-      stateIcon = Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: Icon(
-          widget.chat.messages!.last.messageStatus == MessageStatus.Read
-              ? Icons.done_all
-              : Icons.done,
-          size: 16,
-          color: Colors.black,
-        ),
-      );
       switch (widget.chat.messages!.last.messageStatus!) {
         case MessageStatus.Sending:
           stateIcon = const Icon(
@@ -336,6 +326,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   Row(
                     children: [
                       if (stateIcon != null) stateIcon,
+                      if (stateIcon != null) const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           widget.chat.messages!.isEmpty

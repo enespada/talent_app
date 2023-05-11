@@ -32,7 +32,7 @@ class MessageWidget extends StatelessWidget {
     double contentWidth = Util.stringWidth(message.content!);
     double maxWidth = responsive.widthPercent(70);
 
-    if (contentWidth < responsive.widthPercent(55)) {
+    if (contentWidth < responsive.widthPercent(50)) {
       oneLineMessage = true;
       maxWidth = contentWidth + responsive.widthPercent(22);
       // if (contentWidth < responsive.widthPercent(20)) {
@@ -81,8 +81,11 @@ class MessageWidget extends StatelessWidget {
                               fontSize: responsive.widthPercent(3.8),
                             ),
                       ),
-                      const SizedBox(height: 5),
-                      _HourAndTick(message: message),
+                      const SizedBox(width: 5),
+                      _HourAndTick(
+                        message: message,
+                        myMessage: myMessage,
+                      ),
                     ],
                   )
                 : Row(
@@ -98,8 +101,11 @@ class MessageWidget extends StatelessWidget {
                               fontSize: responsive.widthPercent(3.8),
                             ),
                       ),
-                      const SizedBox(height: 5),
-                      _HourAndTick(message: message),
+                      const SizedBox(width: 5),
+                      _HourAndTick(
+                        message: message,
+                        myMessage: myMessage,
+                      ),
                     ],
                   ),
           ),
@@ -111,10 +117,12 @@ class MessageWidget extends StatelessWidget {
 
 class _HourAndTick extends StatelessWidget {
   final Message message;
+  final bool myMessage;
 
   const _HourAndTick({
     Key? key,
     required this.message,
+    required this.myMessage,
   }) : super(key: key);
 
   @override
@@ -126,26 +134,30 @@ class _HourAndTick extends StatelessWidget {
     String hourString =
         '${dateTime.hour}:${(dateTime.minute < 10) ? '0${dateTime.minute}' : dateTime.minute}';
     Icon? stateIcon;
+
+    double iconSize = (responsive.diagonalPercent(2) >= 15)
+        ? responsive.diagonalPercent(2)
+        : 15;
     switch (message.messageStatus!) {
       case MessageStatus.Sending:
-        stateIcon = const Icon(
+        stateIcon = Icon(
           Icons.done,
           color: AppColors.greyscale2,
-          size: 15,
+          size: iconSize,
         );
         break;
       case MessageStatus.Sent:
-        stateIcon = const Icon(
+        stateIcon = Icon(
           Icons.done_all,
           color: AppColors.greyscale2,
-          size: 15,
+          size: iconSize,
         );
         break;
       case MessageStatus.Read:
-        stateIcon = const Icon(
+        stateIcon = Icon(
           Icons.done_all,
           color: AppColors.blueColor,
-          size: 15,
+          size: iconSize,
         );
         break;
     }
@@ -156,12 +168,12 @@ class _HourAndTick extends StatelessWidget {
         Text(
           hourString,
           style: TextStyle(
-            fontSize: responsive.widthPercent(3.8),
+            fontSize: responsive.diagonalPercent(1.5),
             color: AppColors.greyscale2,
           ),
         ),
-        const SizedBox(width: 5),
-        stateIcon,
+        if (myMessage) const SizedBox(width: 2),
+        if (myMessage) stateIcon,
       ],
     );
   }

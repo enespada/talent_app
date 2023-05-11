@@ -42,7 +42,7 @@ class ChatsService extends ChangeNotifier {
       chataux.id = doc.reference;
       chats!.add(chataux);
     }
-    data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+    data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
       //Recorremos los nuevos chats
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
         bool isNewChat = true;
@@ -51,15 +51,39 @@ class ChatsService extends ChangeNotifier {
           if (chat.id == doc.reference) {
             isNewChat = false;
             Chat chataux = Chat.fromJson(doc.data());
+            //Si hay nuevos mensajes
             if (chat.messages!.length != chataux.messages!.length) {
               chataux.id = doc.reference;
+              int n = chataux.messages!.length;
+              if (n != 0) {
+                for (int i = n - 1; i >= 0; i--) {
+                  //Actualizamos el estado solo de los mensajes de otros usuarios
+                  if (chataux.messages![i].userId != userApp.id) {
+                    if (chataux.messages![i].messageStatus !=
+                        MessageStatus.Sending) {
+                      break;
+                    } else {
+                      chataux.messages![i].messageStatus = MessageStatus.Sent;
+                    }
+                  }
+                }
+              }
               int index = chats!.indexOf(chat);
               chats!.remove(chat);
               chats!.insert(index, chataux);
+              List<Map<String, dynamic>> newMessages = [];
+              for (Message message in chataux.messages!) {
+                newMessages.add(message.toJson());
+              }
+              await fbFirestore
+                  .collection('chats')
+                  .doc(chataux.id!.id)
+                  .update({'messages': newMessages});
             }
             break;
           }
         }
+        //Si hay un nuevo chat
         if (isNewChat) {
           Chat chataux = Chat.fromJson(doc.data());
           chataux.id = doc.reference;

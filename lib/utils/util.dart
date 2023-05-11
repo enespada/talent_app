@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -161,6 +162,13 @@ class Util {
         );
       },
     );
+  }
+
+  static String generateRandomString(int length) {
+    final random = Random.secure();
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 
   //   Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {

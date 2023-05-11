@@ -47,8 +47,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     tec.clear();
     // _focusNode.requestFocus();
 
+    String messageId = Util.generateRandomString(22);
+
     Message newMessage = Message(
-      id: '3',
+      id: messageId,
       content: text,
       timestamp: Timestamp.now(),
       userId: userService.userApp!.id,
@@ -74,14 +76,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
     final ChatsService chatsService = Provider.of<ChatsService>(context);
+
+    final Responsive responsive = Responsive.of(context);
 
     String title = widget.chat.name ?? widget.userApp?.fullName ?? '';
 
     return Scaffold(
-      // backgroundColor: AppColors.whiteColor,
       //-------------------------------appBar-----------------------------------
       appBar: _ChatAppBar(
         title: title,
