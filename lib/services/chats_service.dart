@@ -56,16 +56,21 @@ class ChatsService extends ChangeNotifier {
               chataux.id = doc.reference;
               int n = chataux.messages!.length;
               if (n != 0) {
-                for (int i = n - 1; i >= 0; i--) {
+                int i = n - 1;
+                bool lastMessageInSending = false;
+                while (i >= 0 && !lastMessageInSending) {
                   //Actualizamos el estado solo de los mensajes de otros usuarios
                   if (chataux.messages![i].userId != userApp.id) {
-                    if (chataux.messages![i].messageStatus !=
+                    if (chataux.messages![i].messageStatus ==
                         MessageStatus.Sending) {
-                      break;
-                    } else {
                       chataux.messages![i].messageStatus = MessageStatus.Sent;
+                    } else {
+                      lastMessageInSending = true;
                     }
+                  } else {
+                    lastMessageInSending = true;
                   }
+                  i--;
                 }
               }
               int index = chats!.indexOf(chat);
