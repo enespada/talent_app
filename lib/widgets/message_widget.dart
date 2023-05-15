@@ -34,7 +34,11 @@ class MessageWidget extends StatelessWidget {
 
     if (contentWidth < responsive.widthPercent(50)) {
       oneLineMessage = true;
-      maxWidth = contentWidth + responsive.widthPercent(22);
+      if (myMessage) {
+        maxWidth = contentWidth + responsive.widthPercent(22);
+      } else {
+        maxWidth = contentWidth + responsive.widthPercent(18);
+      }
       // if (contentWidth < responsive.widthPercent(20)) {
       //   maxWidth = responsive.widthPercent(20);
       // } else {

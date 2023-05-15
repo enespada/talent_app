@@ -83,123 +83,100 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     String title = widget.chat.name ?? widget.userApp?.fullName ?? '';
 
-    return Scaffold(
-      //-------------------------------appBar-----------------------------------
-      appBar: _ChatAppBar(
-        title: title,
-        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontSize: responsive.diagonalPercent(2.2),
-            ),
-        chat: widget.chat,
-      ),
-
-      //--------------------------------body-------------------------------------
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: FocusScope.of(context).unfocus,
-          child: Column(
-            children: [
-              //---------------------------Mensajes----------------------------------
-              Expanded(
-                child: _MessagesList(
-                  // userContactId: userContact.id!,
-                  // viewModel: _chatViewModel,
-                  // chatId: widget.chatId,
-                  chat: widget.chat,
-                ),
+    return WillPopScope(
+      onWillPop: () async {
+        chatsService.chatsScreenSS?.resume();
+        await chatsService.chatScreenSS?.cancel();
+        return true;
+      },
+      child: Scaffold(
+        //-------------------------------appBar-----------------------------------
+        appBar: _ChatAppBar(
+          title: title,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(2.2),
               ),
+          chat: widget.chat,
+        ),
 
-              //-------------------------Escribe...--------------------------------
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  width: responsive.width,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: tec,
-                          keyboardType: TextInputType.text,
-                          keyboardAppearance: Brightness.light,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: AppColors.greyscale5,
+        //--------------------------------body-------------------------------------
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: FocusScope.of(context).unfocus,
+            child: Column(
+              children: [
+                //---------------------------Mensajes----------------------------------
+                Expanded(
+                  child: _MessagesList(chat: widget.chat),
+                ),
+
+                //-------------------------Escribe...--------------------------------
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    width: responsive.width,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: tec,
+                            keyboardType: TextInputType.text,
+                            keyboardAppearance: Brightness.light,
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: AppColors.greyscale5,
+                                    ),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14.0,
+                                horizontal: 25.0,
+                              ),
+                              filled: true,
+                              fillColor: AppColors.lightGrey,
+                              border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide(
+                                    width: 0, style: BorderStyle.none),
+                              ),
+                              hintText: Localization.of(context)
+                                  .string('messages_chat_type_hint'),
+                              hintStyle:
+                                  AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                                color: AppColors.greyscale2,
+                              ),
+                              suffixIcon: InkWell(
+                                borderRadius: BorderRadius.circular(50),
+                                onTap: () async {
+                                  await sendMessage(
+                                    chatsService: chatsService,
+                                    userService: userService,
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: SvgPicture.asset(
+                                    'assets/images/icon_send.svg',
+                                    color: iconColor,
                                   ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14.0,
-                              horizontal: 25.0,
-                            ),
-                            filled: true,
-                            fillColor: AppColors.lightGrey,
-                            border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              borderSide:
-                                  BorderSide(width: 0, style: BorderStyle.none),
-                            ),
-                            hintText: Localization.of(context)
-                                .string('messages_chat_type_hint'),
-                            hintStyle:
-                                AppThemes.darkTextTheme.bodyLarge!.copyWith(
-                              color: AppColors.greyscale2,
-                            ),
-                            suffixIcon: InkWell(
-                              borderRadius: BorderRadius.circular(50),
-                              onTap: () async {
-                                // if (_chatObject != null &&
-                                //     widget.typeFieldController.text.isNotEmpty) {
-                                //   final updatedChat = _chatObject;
-                                //   updatedChat!['messages'] = _chatObject!['messages']
-                                //     ..add({
-                                //       'id': UniqueKey().hashCode.toString(),
-                                //       'userId': UserViewModel.userData?.reference,
-                                //       'userName': UserViewModel.user?.fullname,
-                                //       'userAvatar': UserViewModel.user?.imgSrc,
-                                //       'date': Timestamp.now(),
-                                //       'content': widget.typeFieldController.text
-                                //     });
-
-                                //   widget.viewModel.updateChat(widget.chatId, updatedChat);
-
-                                //   // Send notification
-                                //   _notificationViewModel.sendNotification(
-                                //       Localization.of(context).string(
-                                //           'notification_message_title',
-                                //           params: [UserViewModel.user?.fullname ?? '']),
-                                //       widget.typeFieldController.text,
-                                //       widget.destinationUser?.fcmToken ?? '');
-
-                                //   widget.typeFieldController.text = '';
-                                // }
-                                await sendMessage(
-                                  chatsService: chatsService,
-                                  userService: userService,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: SvgPicture.asset(
-                                  'assets/images/icon_send.svg',
-                                  color: iconColor,
                                 ),
                               ),
                             ),
+                            onChanged: (String text) {
+                              iconColor = (text.isNotEmpty)
+                                  ? AppColors.blueColor
+                                  : AppColors.greyscale2;
+                              setState(() {});
+                            },
                           ),
-                          onChanged: (String text) {
-                            iconColor = (text.isNotEmpty)
-                                ? AppColors.blueColor
-                                : AppColors.greyscale2;
-                            setState(() {});
-                          },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

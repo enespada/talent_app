@@ -137,6 +137,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: (int index) async {
         if (selectedIndex == index) return;
+        if (selectedIndex == 3) {
+          await chatsService.chatsScreenSS?.cancel();
+          chatsService.chats?.clear();
+          chatsService.chats = null;
+        }
         switch (index) {
           case 0:
             if (postsService.followingUsersPosts == null) {

@@ -21,11 +21,12 @@ class ChatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
     final ChatsService chatsService = Provider.of<ChatsService>(
       context,
       listen: true,
     );
+
+    final Responsive responsive = Responsive.of(context);
 
     // Widget body;
     // if (chatsService.isLoadingChats) {
@@ -70,7 +71,7 @@ class ChatsScreen extends StatelessWidget {
                       horizontal: 10,
                       vertical: 10,
                     ),
-                    child: ChatWidget(chat: chatsService.chats![index]),
+                    child: _ChatWidget(chat: chatsService.chats![index]),
                   );
                 },
               ),
@@ -113,26 +114,25 @@ class ChatsScreen extends StatelessWidget {
 //   }
 // }
 
-class ChatWidget extends StatefulWidget {
+class _ChatWidget extends StatefulWidget {
   final Chat chat;
 
-  const ChatWidget({
+  const _ChatWidget({
     Key? key,
     required this.chat,
   }) : super(key: key);
 
   @override
-  State<ChatWidget> createState() => _ChatWidgetState();
+  State<_ChatWidget> createState() => _ChatWidgetState();
 }
 
-class _ChatWidgetState extends State<ChatWidget> {
+class _ChatWidgetState extends State<_ChatWidget> {
   //TODO: Change these variables for chat entity
   final int newMessagesNumber = 0;
   final bool isOnline = false;
-  // If true : Online icon bottom right
   UserApp? userApp;
 
-  Future bringUser(UserService userService) async {
+  Future<void> bringUser(UserService userService) async {
     //Si es un grupo (widget.chat.users!.length > 2)
     if (widget.chat.name != null) {
       //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
@@ -153,20 +153,21 @@ class _ChatWidgetState extends State<ChatWidget> {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final UserService userService =
           Provider.of<UserService>(context, listen: false);
       bringUser(userService);
     });
     //TODO: Comprobar si hay mensajes nuevos
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
     final UserService userService = Provider.of<UserService>(context);
     final ChatsService chatsService = Provider.of<ChatsService>(context);
+
+    final Responsive responsive = Responsive.of(context);
 
     Widget? stateIcon;
     if (widget.chat.messages!.isNotEmpty &&
@@ -198,8 +199,11 @@ class _ChatWidgetState extends State<ChatWidget> {
 
     return InkWell(
       onTap: () async {
-        // context.navigateTo(MessagesChatPage(
-        //     chatId: item['id'] ?? '', user: getContactUser(item)));
+        chatsService.chatsScreenSS?.pause();
+        await chatsService.setUpChatStreamSubscription(
+          widget.chat,
+          userService.userApp!,
+        );
         Navigator.push(
           context,
           MaterialPageRoute(

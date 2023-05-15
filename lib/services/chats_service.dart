@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +11,8 @@ class ChatsService extends ChangeNotifier {
   List<Chat>? chats;
   bool isLoadingChats = false;
   bool isLoadingImage = false;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? chatsScreenSS;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? chatScreenSS;
 
   Future<void> getUserChats(UserApp userApp) async {
     if (isLoadingChats) return;
@@ -42,7 +46,9 @@ class ChatsService extends ChangeNotifier {
       chataux.id = doc.reference;
       chats!.add(chataux);
     }
-    data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
+
+    chatsScreenSS =
+        data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
       //Recorremos los nuevos chats
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
         bool isNewChat = true;
@@ -51,7 +57,7 @@ class ChatsService extends ChangeNotifier {
           if (chat.id == doc.reference) {
             isNewChat = false;
             Chat chataux = Chat.fromJson(doc.data());
-            //Si hay nuevos mensajes
+            //Evento 1: Si hay nuevos mensajes, que son de otros usuarios
             if (chat.messages!.length != chataux.messages!.length) {
               chataux.id = doc.reference;
               int n = chataux.messages!.length;
@@ -84,6 +90,14 @@ class ChatsService extends ChangeNotifier {
                   .collection('chats')
                   .doc(chataux.id!.id)
                   .update({'messages': newMessages});
+            } else {
+              //Evento 2: Si cambia el estado de los ultimos mensajes enviados
+              //por nosotros
+              if (chat.messages!.last.messageStatus !=
+                  chataux.messages!.last.messageStatus) {
+                chat.messages!.last.messageStatus =
+                    chataux.messages!.last.messageStatus;
+              }
             }
             break;
           }
@@ -100,6 +114,63 @@ class ChatsService extends ChangeNotifier {
 
     isLoadingChats = false;
     notifyListeners();
+  }
+
+  Future<void> setUpChatStreamSubscription(Chat chat, UserApp userApp) async {
+    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+
+    final data = fbFirestore.collection('chats').doc(chat.id!.id).snapshots();
+    // DocumentSnapshot<Map<String, dynamic>> snapshot = await data.first;
+
+    chatScreenSS =
+        data.listen((DocumentSnapshot<Map<String, dynamic>> doc) async {
+      Chat chataux = Chat.fromJson(doc.data()!);
+      chataux.id = doc.reference;
+
+      //Evento 1: Si hay nuevos mensajes
+      if (chat.messages!.length != chataux.messages!.length) {
+        int n = chataux.messages!.length;
+        if (n != 0) {
+          int i = n - 1;
+          bool lastMessageInSending = false;
+          while (i >= 0 && !lastMessageInSending) {
+            //Actualizamos el estado solo de los mensajes de otros usuarios
+            if (chataux.messages![i].userId != userApp.id) {
+              //Si esta enviado lo cambiamos a leido
+              if (chataux.messages![i].messageStatus == MessageStatus.Sent ||
+                  chataux.messages![i].messageStatus == MessageStatus.Sending) {
+                chataux.messages![i].messageStatus = MessageStatus.Read;
+              } else {
+                lastMessageInSending = true;
+              }
+            } else {
+              lastMessageInSending = true;
+            }
+            i--;
+          }
+        }
+        int index = chats!.indexOf(chat);
+        chats!.remove(chat);
+        chats!.insert(index, chataux);
+        List<Map<String, dynamic>> newMessages = [];
+        for (Message message in chataux.messages!) {
+          newMessages.add(message.toJson());
+        }
+        await fbFirestore
+            .collection('chats')
+            .doc(chataux.id!.id)
+            .update({'messages': newMessages});
+      } else {
+        //Evento 2: Si el estado del ultimo mensaje cambia
+        if (chat.messages!.last.messageStatus !=
+            chataux.messages!.last.messageStatus) {
+          chat.messages!.last.messageStatus =
+              chataux.messages!.last.messageStatus;
+        }
+      }
+
+      notifyListeners();
+    });
   }
 
   Future<String> getChatImageURL({
