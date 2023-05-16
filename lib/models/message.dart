@@ -3,10 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 enum MessageStatus { Read, Sending, Sent }
 
 class Message {
-  String? id;
+  DocumentReference? id;
   String? content;
   Timestamp? timestamp;
   DocumentReference? userId;
+  DocumentReference? chatId;
   MessageStatus? messageStatus;
 
   Message({
@@ -22,6 +23,7 @@ class Message {
     content = json['content'];
     timestamp = json['timestamp'];
     userId = json['userId'];
+    chatId = json['chatId'];
     switch (json['messageStatus']) {
       case 'Sending':
         messageStatus = MessageStatus.Sending;
@@ -42,6 +44,7 @@ class Message {
     data['content'] = content;
     data['timestamp'] = timestamp;
     data['userId'] = userId;
+    data['chatId'] = chatId;
     switch (messageStatus) {
       case MessageStatus.Sending:
         data['messageStatus'] = 'Sending';

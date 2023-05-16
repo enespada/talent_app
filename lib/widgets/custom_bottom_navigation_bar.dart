@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
@@ -138,7 +141,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: (int index) async {
         if (selectedIndex == index) return;
         if (selectedIndex == 3) {
-          await chatsService.chatsScreenSS?.cancel();
+          // await chatsService.chatsScreenSS?.cancel();
+          for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+              in chatsService.chatsScreenSS ?? []) {
+            element.cancel();
+          }
           chatsService.chats?.clear();
           chatsService.chats = null;
         }
@@ -162,7 +169,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           case 3:
             // context.navigatePopReplacing(MessagesHomePage());
             if (chatsService.chats == null) {
-              chatsService.getUserChats(userService.userApp!);
+              await chatsService.getUserChats(userService.userApp!);
             }
             Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
             break;

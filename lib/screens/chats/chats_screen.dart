@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -199,7 +201,10 @@ class _ChatWidgetState extends State<_ChatWidget> {
 
     return InkWell(
       onTap: () async {
-        chatsService.chatsScreenSS?.pause();
+        for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+            in chatsService.chatsScreenSS ?? []) {
+          element.cancel();
+        }
         await chatsService.setUpChatStreamSubscription(
           widget.chat,
           userService.userApp!,

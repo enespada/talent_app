@@ -11,7 +11,7 @@ class ChatsService extends ChangeNotifier {
   List<Chat>? chats;
   bool isLoadingChats = false;
   bool isLoadingImage = false;
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? chatsScreenSS;
+  List<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>>? chatsScreenSS;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? chatScreenSS;
 
   Future<void> getUserChats(UserApp userApp) async {
@@ -34,83 +34,98 @@ class ChatsService extends ChangeNotifier {
     //     chats!.add(chataux);
     //   }
     // }
-    //O2: Con escuchas en
+    //O2: Con escuchas en messages como un array
     chats = [];
-    final data = fbFirestore
+    final chatsSnapshots = fbFirestore
         .collection('chats')
         .where('users', arrayContains: userApp.id)
         .snapshots();
-    QuerySnapshot<Map<String, dynamic>> snapshot = await data.first;
-    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
-      Chat chataux = Chat.fromJson(doc.data());
-      chataux.id = doc.reference;
-      chats!.add(chataux);
-    }
+    QuerySnapshot<Map<String, dynamic>> chatsData = await chatsSnapshots.first;
+    for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
+        in chatsData.docs) {
+      Chat chataux = Chat.fromJson(chatDoc.data());
+      chataux.id = chatDoc.reference;
+      chatsScreenSS ??= [];
+      chatsScreenSS!.add(chatsSnapshots
+          .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
+        //Recorremos los nuevos chats
+        for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
+            in snapshot.docs) {
+          bool isNewChat = true;
+          //Recorremos los viejos chats
+          for (Chat chat in chats!) {
+            if (chat.id == chatDoc.reference) {
+              isNewChat = false;
+              break;
+            }
+          }
+          //Si hay un nuevo chat
+          if (isNewChat) {
+            Chat chataux = Chat.fromJson(chatDoc.data());
+            chataux.id = chatDoc.reference;
+            //Recuperamos los mensajes
+            final messagesSnapshots =
+                chatDoc.reference.collection('messages').snapshots();
+            QuerySnapshot<Map<String, dynamic>> messagesData =
+                await messagesSnapshots.first;
+            List<Message> messages = [];
+            for (QueryDocumentSnapshot<Map<String, dynamic>> messagesDoc
+                in messagesData.docs) {
+              Message m = Message.fromJson(messagesDoc.data());
+              m.id = messagesDoc.reference;
+              messages.add(m);
+            } //ffcDkbujfCSGmChppFPGK8cC1s03
+            messages.sort((a, b) => a.timestamp!.compareTo(b.timestamp!));
+            chataux.messages = [];
+            chataux.messages!.addAll(messages);
+            chats!.add(chataux);
+            chatsScreenSS!.add(messagesSnapshots
+                .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
+              //Recorremos los nuevos mensajes
+              for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                  in snapshot.docs) {
+                Message messageaux = Message.fromJson(doc.data());
+                messageaux.id = doc.reference;
+                bool isNewMessage = true;
+                for (Message message in chataux.messages!) {
+                  if (message.id == doc.reference) {
+                    isNewMessage = false;
 
-    chatsScreenSS =
-        data.listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
-      //Recorremos los nuevos chats
-      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
-        bool isNewChat = true;
-        //Recorremos los viejos chats
-        for (Chat chat in chats!) {
-          if (chat.id == doc.reference) {
-            isNewChat = false;
-            Chat chataux = Chat.fromJson(doc.data());
-            //Evento 1: Si hay nuevos mensajes, que son de otros usuarios
-            if (chat.messages!.length != chataux.messages!.length) {
-              chataux.id = doc.reference;
-              int n = chataux.messages!.length;
-              if (n != 0) {
-                int i = n - 1;
-                bool lastMessageInSending = false;
-                while (i >= 0 && !lastMessageInSending) {
-                  //Actualizamos el estado solo de los mensajes de otros usuarios
-                  if (chataux.messages![i].userId != userApp.id) {
-                    if (chataux.messages![i].messageStatus ==
-                        MessageStatus.Sending) {
-                      chataux.messages![i].messageStatus = MessageStatus.Sent;
-                    } else {
-                      lastMessageInSending = true;
-                    }
-                  } else {
-                    lastMessageInSending = true;
+                    if (messageaux.userId != userApp.id) {
+                      messageaux.messageStatus = MessageStatus.Sent;
+                      await fbFirestore
+                          .collection('chats')
+                          .doc(messageaux.chatId!.id)
+                          .collection('messages')
+                          .doc(doc.reference.id)
+                          .update(messageaux.toJson());
+                    } else {}
                   }
-                  i--;
+                }
+                //Si hay un nuevo message
+                if (isNewMessage) {
+                  chataux.messages ??= [];
+                  chataux.messages!.add(messageaux);
+                } else {
+                  int m = chataux.messages!.length;
+                  int index = 0;
+                  while (index < m) {
+                    if (chataux.messages![index].id == messageaux.id) {
+                      chataux.messages!.removeAt(index);
+                      break;
+                    }
+                    index++;
+                  }
+                  chataux.messages!.insert(index, messageaux);
                 }
               }
-              int index = chats!.indexOf(chat);
-              chats!.remove(chat);
-              chats!.insert(index, chataux);
-              List<Map<String, dynamic>> newMessages = [];
-              for (Message message in chataux.messages!) {
-                newMessages.add(message.toJson());
-              }
-              await fbFirestore
-                  .collection('chats')
-                  .doc(chataux.id!.id)
-                  .update({'messages': newMessages});
-            } else {
-              //Evento 2: Si cambia el estado de los ultimos mensajes enviados
-              //por nosotros
-              if (chat.messages!.last.messageStatus !=
-                  chataux.messages!.last.messageStatus) {
-                chat.messages!.last.messageStatus =
-                    chataux.messages!.last.messageStatus;
-              }
-            }
-            break;
+              notifyListeners();
+            }));
           }
         }
-        //Si hay un nuevo chat
-        if (isNewChat) {
-          Chat chataux = Chat.fromJson(doc.data());
-          chataux.id = doc.reference;
-          chats!.add(chataux);
-        }
-      }
-      notifyListeners();
-    });
+        notifyListeners();
+      }));
+    }
 
     isLoadingChats = false;
     notifyListeners();
@@ -233,7 +248,10 @@ class ChatsService extends ChangeNotifier {
   void reset() {
     chats?.clear();
     chats = null;
-    chatsScreenSS?.cancel();
+    for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+        in chatsScreenSS ?? []) {
+      element.cancel();
+    }
     chatsScreenSS = null;
     chatScreenSS?.cancel();
     chatScreenSS = null;

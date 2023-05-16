@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +49,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     tec.clear();
     // _focusNode.requestFocus();
 
-    String messageId = Util.generateRandomString(22);
+    // String messageId = Util.generateRandomString(22);
 
     Message newMessage = Message(
-      id: messageId,
+      // id: messageId,
       content: text,
       timestamp: Timestamp.now(),
       userId: userService.userApp!.id,
@@ -85,7 +87,11 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     return WillPopScope(
       onWillPop: () async {
-        chatsService.chatsScreenSS?.resume();
+        for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+            in chatsService.chatsScreenSS ?? []) {
+          element.resume();
+        }
+        // chatsService.chatsScreenSS?.resume();
         await chatsService.chatScreenSS?.cancel();
         return true;
       },
