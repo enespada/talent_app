@@ -34,6 +34,7 @@ class ChatsService extends ChangeNotifier {
     //     chats!.add(chataux);
     //   }
     // }
+    //O2: Con escuchas en
     chats = [];
     final data = fbFirestore
         .collection('chats')
