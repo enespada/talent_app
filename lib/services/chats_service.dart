@@ -20,8 +20,8 @@ class ChatsService extends ChangeNotifier {
     notifyListeners();
 
     if (chats != null) chats!.clear();
-
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    //O1: Sin escuchar cambios
     // final data = await fbFirestore
     //     .collection('chats')
     //     .where('users', arrayContains: userApp.id)
@@ -39,7 +39,6 @@ class ChatsService extends ChangeNotifier {
         .collection('chats')
         .where('users', arrayContains: userApp.id)
         .snapshots();
-    // print('Length: ${await data.length}');
     QuerySnapshot<Map<String, dynamic>> snapshot = await data.first;
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
       Chat chataux = Chat.fromJson(doc.data());
@@ -210,6 +209,7 @@ class ChatsService extends ChangeNotifier {
     await chat.id!.update({
       "messages": FieldValue.arrayUnion([message.toJson()]),
     });
+    //O1: Sin escuchar cambios
     // chats!.map((Chat c) {
     //   if (c.id == chat.id) {
     //     c.messages!.add(message);
@@ -232,5 +232,9 @@ class ChatsService extends ChangeNotifier {
   void reset() {
     chats?.clear();
     chats = null;
+    chatsScreenSS?.cancel();
+    chatsScreenSS = null;
+    chatScreenSS?.cancel();
+    chatScreenSS = null;
   }
 }
