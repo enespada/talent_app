@@ -65,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 500),
       ),
     );
-    widget.chat.messages!.add(newMessage);
+    // widget.chat.messages!.add(newMessage);
     newMessageWidget.animationController.forward();
     await chatsService.uploadMessage(widget.chat, newMessage);
     // socketService.socket.emit('mensaje-personal', {
@@ -87,10 +87,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     return WillPopScope(
       onWillPop: () async {
-        for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
-            in chatsService.chatsScreenSS ?? []) {
-          element.resume();
-        }
+        // for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+        //     in chatsService.chatsScreenSS ?? []) {
+        //   element.resume();
+        // }
         // chatsService.chatsScreenSS?.resume();
         await chatsService.chatScreenSS?.cancel();
         return true;

@@ -201,14 +201,14 @@ class _ChatWidgetState extends State<_ChatWidget> {
 
     return InkWell(
       onTap: () async {
-        for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
-            in chatsService.chatsScreenSS ?? []) {
-          element.cancel();
-        }
-        await chatsService.setUpChatStreamSubscription(
-          widget.chat,
-          userService.userApp!,
-        );
+        // for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+        //     in chatsService.chatsScreenSS ?? []) {
+        //   if (!element.isPaused) element.pause();
+        // }
+        // await chatsService.setUpChatStreamSubscription(
+        //   widget.chat,
+        //   userService.userApp!,
+        // );
         Navigator.push(
           context,
           MaterialPageRoute(

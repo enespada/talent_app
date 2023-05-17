@@ -7,7 +7,7 @@ class Message {
   String? content;
   Timestamp? timestamp;
   DocumentReference? userId;
-  DocumentReference? chatId;
+  // DocumentReference? chatId;
   MessageStatus? messageStatus;
 
   Message({
@@ -19,11 +19,9 @@ class Message {
   });
 
   Message.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
     content = json['content'];
     timestamp = json['timestamp'];
     userId = json['userId'];
-    chatId = json['chatId'];
     switch (json['messageStatus']) {
       case 'Sending':
         messageStatus = MessageStatus.Sending;
@@ -40,11 +38,9 @@ class Message {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     data['content'] = content;
     data['timestamp'] = timestamp;
     data['userId'] = userId;
-    data['chatId'] = chatId;
     switch (messageStatus) {
       case MessageStatus.Sending:
         data['messageStatus'] = 'Sending';
@@ -59,5 +55,18 @@ class Message {
     }
 
     return data;
+  }
+
+  String messageStatusToString() {
+    switch (messageStatus) {
+      case MessageStatus.Sending:
+        return 'Sending';
+      case MessageStatus.Sent:
+        return 'Sent';
+      case MessageStatus.Read:
+        return 'Read';
+      default:
+    }
+    return '';
   }
 }

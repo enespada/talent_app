@@ -141,13 +141,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: (int index) async {
         if (selectedIndex == index) return;
         if (selectedIndex == 3) {
-          // await chatsService.chatsScreenSS?.cancel();
-          for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
-              in chatsService.chatsScreenSS ?? []) {
-            element.cancel();
-          }
-          chatsService.chats?.clear();
-          chatsService.chats = null;
+          // chatsService.reset();
         }
         switch (index) {
           case 0:
@@ -170,6 +164,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
             // context.navigatePopReplacing(MessagesHomePage());
             if (chatsService.chats == null) {
               await chatsService.getUserChats(userService.userApp!);
+            } else {
+              for (StreamSubscription<
+                      QuerySnapshot<Map<String, dynamic>>> element
+                  in chatsService.chatsScreenSS ?? []) {
+                element.resume();
+              }
             }
             Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
             break;
