@@ -18,12 +18,12 @@ enum MessagesChatState { sending, sent, received }
 
 class ChatScreen extends StatefulWidget {
   final Chat chat;
-  final UserApp? userApp;
+  // final UserApp? userApp;
 
   const ChatScreen({
     Key? key,
     required this.chat,
-    this.userApp,
+    // this.userApp,
   }) : super(key: key);
 
   @override
@@ -48,11 +48,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     String text = tec.text;
     tec.clear();
     // _focusNode.requestFocus();
-
-    // String messageId = Util.generateRandomString(22);
-
     Message newMessage = Message(
-      // id: messageId,
       content: text,
       timestamp: Timestamp.now(),
       userId: userService.userApp!.id,
@@ -83,7 +79,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     final Responsive responsive = Responsive.of(context);
 
-    String title = widget.chat.name ?? widget.userApp?.fullName ?? '';
+    String title = widget.chat.name ?? widget.chat.userApp?.fullName ?? '';
 
     return WillPopScope(
       onWillPop: () async {
@@ -92,7 +88,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         //   element.resume();
         // }
         // chatsService.chatsScreenSS?.resume();
-        await chatsService.chatScreenSS?.cancel();
+        // await chatsService.chatScreenSS?.cancel();
+        chatsService.activeChat = null;
         return true;
       },
       child: Scaffold(
@@ -103,6 +100,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 fontSize: responsive.diagonalPercent(2.2),
               ),
           chat: widget.chat,
+          onTap: () => Navigator.maybePop(context),
         ),
 
         //--------------------------------body-------------------------------------
@@ -192,7 +190,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    // _chatViewModel.dispose();
   }
 }
 
@@ -573,6 +570,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final TextStyle? style;
   final Chat chat;
+  final void Function()? onTap;
   @override
   final Size preferredSize;
   // @override
@@ -584,6 +582,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     required this.style,
     required this.chat,
+    required this.onTap,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -609,7 +608,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: onTap,
                   child: Icon(
                     Icons.arrow_back,
                     color: AppColors.blueColor,

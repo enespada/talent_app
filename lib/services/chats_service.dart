@@ -8,50 +8,35 @@ import 'package:talent_app/utils/utils.dart';
 
 class ChatsService extends ChangeNotifier {
   List<Chat>? chats;
+  Chat? activeChat;
   bool isLoadingChats = false;
   bool isLoadingImage = false;
   //Array con los listeners de la pantalla de chats:
   //El primero para saber si viene un nuevo chat
-  //Los demas de cada uno de los
-  List<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>>? chatsScreenSS;
-  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? chatScreenSS;
+  //Los demas de cada uno de los chats (?)
+  List<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>>? chatsListeners;
 
-  ChatsService() {}
-
-  Future<void> getUserChats(UserApp userApp) async {
+  Future<void> getUserChats(UserApp loggedUserApp) async {
     if (isLoadingChats) return;
     isLoadingChats = true;
     notifyListeners();
 
     if (chats != null) chats!.clear();
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    //O1: Sin escuchar cambios
-    // final data = await fbFirestore
-    //     .collection('chats')
-    //     .where('users', arrayContains: userApp.id)
-    //     .get();
-    // chats = [];
-    // if (data.docs.isNotEmpty) {
-    //   for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
-    //     Chat chataux = Chat.fromJson(doc.data());
-    //     chataux.id = doc.reference;
-    //     chats!.add(chataux);
-    //   }
-    // }
-    //O2: Con escuchas en messages como un array
     chats = [];
     final chatsSnapshots = fbFirestore
         .collection('chats')
-        .where('users', arrayContains: userApp.id)
+        .where('users', arrayContains: loggedUserApp.id)
         .snapshots();
     QuerySnapshot<Map<String, dynamic>> chatsData = await chatsSnapshots.first;
     for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
         in chatsData.docs) {
       Chat chataux = Chat.fromJson(chatDoc.data());
       chataux.id = chatDoc.reference;
+      await bringUser(chataux, loggedUserApp);
     }
-    chatsScreenSS ??= [];
-    chatsScreenSS!.add(chatsSnapshots
+    chatsListeners ??= [];
+    chatsListeners!.add(chatsSnapshots
         .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
       //Recorremos los nuevos chats
       for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
@@ -68,6 +53,7 @@ class ChatsService extends ChangeNotifier {
         if (isNewChat) {
           Chat chataux = Chat.fromJson(chatDoc.data());
           chataux.id = chatDoc.reference;
+          await bringUser(chataux, loggedUserApp);
           //Recuperamos los mensajes
           final messagesSnapshots =
               chatDoc.reference.collection('messages').snapshots();
@@ -79,23 +65,31 @@ class ChatsService extends ChangeNotifier {
             Message m = Message.fromJson(messagesDoc.data());
             m.id = messagesDoc.reference;
             messages.add(m);
-          } //ffcDkbujfCSGmChppFPGK8cC1s03
+          }
           messages.sort((a, b) => a.timestamp!.compareTo(b.timestamp!));
           chataux.messages = [];
           chataux.messages!.addAll(messages);
           chats!.add(chataux);
-          chatsScreenSS!.add(messagesSnapshots
+          chatsListeners!.add(messagesSnapshots
               .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
-            print(chataux.messages!.length);
-            print(snapshot.docs.length);
             //Recorremos los nuevos mensajes
             for (QueryDocumentSnapshot<Map<String, dynamic>> doc
                 in snapshot.docs) {
               Message messageaux = Message.fromJson(doc.data());
               messageaux.id = doc.reference;
               //Si es un mensaje del usuario destino
-              if (messageaux.userId != userApp.id) {
-                if (messageaux.messageStatus == MessageStatus.Sending) {
+              if (messageaux.userId != loggedUserApp.id) {
+                if (activeChat != null && activeChat!.id == chataux.id) {
+                  messageaux.messageStatus = MessageStatus.Read;
+                  await fbFirestore
+                      .collection('chats')
+                      .doc(chataux.id!.id)
+                      .collection('messages')
+                      .doc(messageaux.id!.id)
+                      .update({
+                    'messageStatus': messageaux.messageStatusToString()
+                  });
+                } else if (messageaux.messageStatus == MessageStatus.Sending) {
                   messageaux.messageStatus = MessageStatus.Sent;
                   await fbFirestore
                       .collection('chats')
@@ -133,6 +127,8 @@ class ChatsService extends ChangeNotifier {
                 chataux.messages!.insert(index, messageaux);
               }
             }
+            chats!.sort((a, b) => b.messages!.last.timestamp!
+                .compareTo(a.messages!.last.timestamp!));
             notifyListeners();
           }));
         }
@@ -144,61 +140,47 @@ class ChatsService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setUpChatStreamSubscription(Chat chat, UserApp userApp) async {
-    FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-
-    final data = fbFirestore.collection('chats').doc(chat.id!.id).snapshots();
-    // DocumentSnapshot<Map<String, dynamic>> snapshot = await data.first;
-
-    chatScreenSS =
-        data.listen((DocumentSnapshot<Map<String, dynamic>> doc) async {
-      Chat chataux = Chat.fromJson(doc.data()!);
-      chataux.id = doc.reference;
-
-      //Evento 1: Si hay nuevos mensajes
-      if (chat.messages!.length != chataux.messages!.length) {
-        int n = chataux.messages!.length;
-        if (n != 0) {
-          int i = n - 1;
-          bool lastMessageInSending = false;
-          while (i >= 0 && !lastMessageInSending) {
-            //Actualizamos el estado solo de los mensajes de otros usuarios
-            if (chataux.messages![i].userId != userApp.id) {
-              //Si esta enviado lo cambiamos a leido
-              if (chataux.messages![i].messageStatus == MessageStatus.Sent ||
-                  chataux.messages![i].messageStatus == MessageStatus.Sending) {
-                chataux.messages![i].messageStatus = MessageStatus.Read;
-              } else {
-                lastMessageInSending = true;
-              }
-            } else {
-              lastMessageInSending = true;
-            }
-            i--;
-          }
-        }
-        int index = chats!.indexOf(chat);
-        chats!.remove(chat);
-        chats!.insert(index, chataux);
-        List<Map<String, dynamic>> newMessages = [];
-        for (Message message in chataux.messages!) {
-          newMessages.add(message.toJson());
-        }
-        await fbFirestore
-            .collection('chats')
-            .doc(chataux.id!.id)
-            .update({'messages': newMessages});
-      } else {
-        //Evento 2: Si el estado del ultimo mensaje cambia
-        if (chat.messages!.last.messageStatus !=
-            chataux.messages!.last.messageStatus) {
-          chat.messages!.last.messageStatus =
-              chataux.messages!.last.messageStatus;
+  Future<void> bringUser(Chat chat, UserApp loggedUserApp) async {
+    //Si es un grupo (widget.chat.users!.length > 2)
+    if (chat.name != null) {
+      //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
+      return;
+    } else {
+      for (DocumentReference userId in chat.users!) {
+        if (userId != loggedUserApp.id) {
+          // userApp = await userId.get();
+          DocumentSnapshot<Object?> value = await userId.get();
+          UserApp chatUser =
+              UserApp.fromJson(value.data() as Map<String, dynamic>);
+          chatUser.id = userId;
+          chat.userApp = chatUser;
+          return;
         }
       }
+    }
+  }
 
-      notifyListeners();
-    });
+  Future<void> readMessages(Chat chat, UserApp userApp) async {
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection('chats')
+        .doc(chat.id!.id)
+        .collection('messages')
+        .where('userId', isNotEqualTo: userApp.id)
+        // .where('messageStatus', isNotEqualTo: 'Read')
+        .get();
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      await chat.id!
+          .collection('messages')
+          .doc(doc.id)
+          .update({'messageStatus': 'Read'});
+      // await fbFirestore
+      //     .collection('chats')
+      //     .doc(chat.id!.id)
+      //     .collection('messages')
+      //     .doc(doc.id)
+      //     .update({'messageStatus': 'Read'});
+    }
   }
 
   Future<String> getChatImageURL({
@@ -235,18 +217,15 @@ class ChatsService extends ChangeNotifier {
   }
 
   Future<void> uploadMessage(Chat chat, Message message) async {
-    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    // await chat.id!.update({
-    //   "messages": FieldValue.arrayUnion([message.toJson()]),
-    // });
     await chat.id!.collection('messages').add(message.toJson());
   }
 
   Future<Chat> newChat(Chat chat) async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    //P1: Creamos el chat en Firestore para obtener un id
+    //Creamos el chat en Firestore para obtener un id
     final DocumentReference reference =
         await fbFirestore.collection('chats').add(chat.toJson());
+    //Ponemos la referencia para poder ir a la chatScreen
     chat.id = reference;
     // if (chats != null) {
     //   chats!.add(chat);
@@ -255,12 +234,11 @@ class ChatsService extends ChangeNotifier {
   }
 
   void reset() {
-    for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
-        in chatsScreenSS ?? []) {
-      element.cancel();
+    for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> chatsListener
+        in chatsListeners ?? []) {
+      chatsListener.cancel();
     }
-    chatScreenSS?.cancel();
-    chatScreenSS = null;
+    chatsListeners?.clear();
     chats?.clear();
     chats = null;
   }

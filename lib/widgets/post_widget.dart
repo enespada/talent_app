@@ -96,14 +96,9 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                         users: [userService.userApp!.id!, widget.post.userId!],
                       );
                       await chatsService.newChat(chat);
-                      Navigator.push(
+                      Navigator.pushReplacementNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                            chat: chat,
-                            userApp: widget.post.userApp,
-                          ),
-                        ),
+                        ChatsScreen.routeName,
                       );
                     },
                     child: const Icon(

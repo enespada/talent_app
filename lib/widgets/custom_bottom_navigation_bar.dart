@@ -167,7 +167,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             } else {
               for (StreamSubscription<
                       QuerySnapshot<Map<String, dynamic>>> element
-                  in chatsService.chatsScreenSS ?? []) {
+                  in chatsService.chatsListeners ?? []) {
                 element.resume();
               }
             }

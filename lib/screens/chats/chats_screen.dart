@@ -58,7 +58,7 @@ class ChatsScreen extends StatelessWidget {
             ),
       ),
 
-      //--------------------------------body----------------------------------
+      //----------------------------------body-----------------------------------
       body: SafeArea(
         child: (chatsService.isLoadingChats)
             ? const Center(
@@ -132,42 +132,49 @@ class _ChatWidgetState extends State<_ChatWidget> {
   //TODO: Change these variables for chat entity
   final int newMessagesNumber = 0;
   final bool isOnline = false;
-  UserApp? userApp;
+  // UserApp? userApp;
 
-  Future<void> bringUser(UserService userService) async {
-    //Si es un grupo (widget.chat.users!.length > 2)
-    if (widget.chat.name != null) {
-      //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
-    } else {
-      for (DocumentReference userId in widget.chat.users!) {
-        if (userId != userService.userApp!.id) {
-          // userApp = await userId.get();
-          userId.get().then((DocumentSnapshot<Object?> value) {
-            userApp = UserApp.fromJson(value.data() as Map<String, dynamic>);
-            setState(() {});
-            return;
-          });
-          break;
-        }
-      }
-    }
-  }
+  // Future<void> bringUser(UserService userService) async {
+  //   //Si es un grupo (widget.chat.users!.length > 2)
+  //   if (widget.chat.name != null) {
+  //     //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
+  //   } else {
+  //     for (DocumentReference userId in widget.chat.users!) {
+  //       if (userId != userService.userApp!.id) {
+  //         // userApp = await userId.get();
+  //         userId.get().then((DocumentSnapshot<Object?> value) {
+  //           userApp = UserApp.fromJson(value.data() as Map<String, dynamic>);
+  //           setState(() {});
+  //           return;
+  //         });
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final UserService userService =
-          Provider.of<UserService>(context, listen: false);
-      bringUser(userService);
-    });
-    //TODO: Comprobar si hay mensajes nuevos
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   final UserService userService = Provider.of<UserService>(
+    //     context,
+    //     listen: false,
+    //   );
+    //   bringUser(userService);
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserService userService = Provider.of<UserService>(context);
-    final ChatsService chatsService = Provider.of<ChatsService>(context);
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: false,
+    );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: true,
+    );
 
     final Responsive responsive = Responsive.of(context);
 
@@ -209,13 +216,12 @@ class _ChatWidgetState extends State<_ChatWidget> {
         //   widget.chat,
         //   userService.userApp!,
         // );
+        chatsService.activeChat = widget.chat;
+        await chatsService.readMessages(widget.chat, userService.userApp!);
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              chat: widget.chat,
-              userApp: userApp,
-            ),
+            builder: (context) => ChatScreen(chat: widget.chat),
           ),
         );
       },
@@ -304,7 +310,9 @@ class _ChatWidgetState extends State<_ChatWidget> {
                     children: [
                       Flexible(
                         child: Text(
-                          widget.chat.name ?? userApp?.fullName ?? '',
+                          widget.chat.name ??
+                              widget.chat.userApp?.fullName ??
+                              '',
                           style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: AppColors.greyscale5,
@@ -315,14 +323,14 @@ class _ChatWidgetState extends State<_ChatWidget> {
                           softWrap: false,
                         ),
                       ),
-                      if (userApp != null)
+                      if (widget.chat.userApp != null)
                         SizedBox(width: responsive.widthPercent(3.8)),
-                      if (userApp != null)
+                      if (widget.chat.userApp != null)
                         TalentCard(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           color: AppColors.blueColor.withOpacity(0.15),
                           content: Text(
-                            userApp?.type ?? '',
+                            widget.chat.userApp?.type ?? '',
                             style:
                                 Theme.of(context).textTheme.bodyLarge!.copyWith(
                                       color: AppColors.blueColor,
