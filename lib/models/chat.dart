@@ -6,9 +6,9 @@ class Chat {
   DocumentReference? id;
   String? name;
   List<DocumentReference>? users;
+  String? urlImage;
   List<Message>? messages;
   //Parametros que no estan en firebase
-  String? urlImage;
   UserApp? userApp;
 
   Chat({
@@ -25,6 +25,7 @@ class Chat {
     for (dynamic aux in json['users']) {
       if (aux != null) users?.add(aux as DocumentReference);
     }
+    messages = json['messages'];
     // messages = [];
     // for (dynamic messageData in json['messages']) {
     //   messages!.add(Message.fromJson(messageData));
@@ -35,6 +36,7 @@ class Chat {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['users'] = users;
+    data['messages'] = messages;
     // data['messages'] = messages;
 
     return data;

@@ -50,7 +50,10 @@ class EditProfileProvider extends ChangeNotifier {
     if (tecFullName.text.isEmpty) return false;
     if (tecFullName.text.isEmpty) return false;
     if (tecPhone.text.isEmpty) return false;
-    if (tecPhone.text.substring(0, 1) != '+') return false;
+    if (int.tryParse(tecPhone.text.trim()) == null) {
+      return false;
+    }
+    // if (tecPhone.text.substring(0, 1) != '+') return false;
     if (tecBirthday.text.isEmpty) return false;
     if (tecCountry.text.isEmpty) return false;
     if (sport == null) return false;
