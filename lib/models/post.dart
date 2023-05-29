@@ -5,13 +5,14 @@ import 'package:talent_app/models/models.dart';
 class Post {
   String? id;
   DocumentReference? userId;
-  UserApp? userApp;
   String? description;
   // List<String>? locations;
   List<String>? files;
   Timestamp? timestamp;
   DocumentReference? sportType;
   DocumentReference? modality;
+  //Parametros que no estan en firebase
+  UserApp? userApp;
 
   Post({
     this.id,

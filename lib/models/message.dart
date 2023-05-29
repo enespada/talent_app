@@ -7,7 +7,6 @@ class Message {
   String? content;
   Timestamp? timestamp;
   DocumentReference? userId;
-  // DocumentReference? chatId;
   MessageStatus? messageStatus;
 
   Message({

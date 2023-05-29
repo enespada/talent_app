@@ -1,9 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// UserApp userAppFromJson(String str) => UserApp.fromJson(json.decode(str));
-
-// String userAppToJson(UserApp data) => json.encode(data.toJson());
-
 class UserApp {
   DocumentReference? id;
   String? type;
@@ -72,9 +68,7 @@ class UserApp {
         (json["birthday"] as Timestamp).millisecondsSinceEpoch,
       );
     }
-
     bio = json["bio"];
-    // challengesNumber = json["challengesNumber"] ?? 0;
     followers = [];
     for (dynamic aux in json['followers']) {
       if (aux != null) followers?.add(aux as DocumentReference);

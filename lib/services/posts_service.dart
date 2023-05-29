@@ -38,8 +38,9 @@ class PostsService extends ChangeNotifier {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       Post postaux = Post.fromJson(doc.data());
-      await postaux.userId?.get().then((value) => postaux.userApp =
-          UserApp.fromJson(value.data() as Map<String, dynamic>));
+      DocumentSnapshot<Object?>? docUser = await postaux.userId?.get();
+      postaux.userApp =
+          UserApp.fromJson(docUser!.data() as Map<String, dynamic>);
       allUsersPosts!.add(postaux);
     }
 
@@ -69,8 +70,9 @@ class PostsService extends ChangeNotifier {
 
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
         Post postaux = Post.fromJson(doc.data());
-        await postaux.userId?.get().then((value) => postaux.userApp =
-            UserApp.fromJson(value.data() as Map<String, dynamic>));
+        DocumentSnapshot<Object?>? docUser = await postaux.userId?.get();
+        postaux.userApp =
+            UserApp.fromJson(docUser!.data() as Map<String, dynamic>);
         followingUsersPosts!.add(postaux);
       }
     }
@@ -158,7 +160,7 @@ class PostsService extends ChangeNotifier {
     return post;
   }
 
-  //Metodo para obtener los posts del usuario
+  //Metodo para obtener los posts del usuario userApp
   Future<List<Post>> getUserPosts(UserApp userApp) async {
     List<Post> posts = [];
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;

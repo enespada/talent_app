@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:talent_app/models/models.dart';
 
 class Chat {
