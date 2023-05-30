@@ -153,7 +153,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                                       MaterialPageRoute(
                                         builder: (context) => ProfileScreen(
                                             userApp: widget.post.userApp!,
-                                            isLoguedUser: false),
+                                            isloggedUser: false),
                                       ),
                                     );
                                   },

@@ -85,7 +85,7 @@ class _UploadPostDescriptionScreenState
               MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   userApp: userService.userApp!,
-                  isLoguedUser: true,
+                  isloggedUser: true,
                 ),
               ),
             );

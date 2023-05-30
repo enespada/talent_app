@@ -160,13 +160,13 @@ class ChatsService extends ChangeNotifier {
     }
   }
 
-  Future<void> readMessages(Chat chat, UserApp userApp) async {
+  Future<void> readMessages(Chat chat, UserApp loggedUserApp) async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final data = await fbFirestore
         .collection('chats')
         .doc(chat.id!.id)
         .collection('messages')
-        .where('userId', isNotEqualTo: userApp.id)
+        .where('userId', isNotEqualTo: loggedUserApp.id)
         // .where('messageStatus', isNotEqualTo: 'Read')
         .get();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
@@ -185,14 +185,14 @@ class ChatsService extends ChangeNotifier {
 
   Future<String> getChatImageURL({
     required Chat chat,
-    required UserApp loguedUserApp,
+    required UserApp loggedUserApp,
   }) async {
     if (chat.urlImage != null) return chat.urlImage!;
     try {
       if (chat.name == null) {
         String destinationUserId = '';
         for (DocumentReference<Object?> userId in chat.users!) {
-          if (userId != loguedUserApp.id) {
+          if (userId != loggedUserApp.id) {
             destinationUserId = userId.id;
             break;
           }

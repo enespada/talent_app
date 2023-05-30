@@ -40,7 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     userAppToUpdate.userName = editProfileProvider.tecUserName.text;
     userAppToUpdate.bio = editProfileProvider.tecBio.text;
     userAppToUpdate.phone = editProfileProvider.tecPhone.text;
-    userAppToUpdate.birthday = editProfileProvider.birthday;
+    userAppToUpdate.birthdate = editProfileProvider.birthdate;
     userAppToUpdate.country = editProfileProvider.tecCountry.text;
     userAppToUpdate.sport = editProfileProvider.sport!.id;
     userAppToUpdate.modality = editProfileProvider.modality!.id;
@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       MaterialPageRoute(
         builder: (context) => ProfileScreen(
           userApp: userService.userApp!,
-          isLoguedUser: true,
+          isloggedUser: true,
         ),
       ),
     );
@@ -104,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   MaterialPageRoute(
                     builder: (context) => ProfileScreen(
                       userApp: userService.userApp!,
-                      isLoguedUser: true,
+                      isloggedUser: true,
                     ),
                   ),
                 ),
@@ -202,9 +202,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(height: spaceBetweenFacts),
                       EditProfileFact(
                         text: Localization.of(context)
-                            .string('wall_profile_birthday'),
-                        textEditingController: editProfileProvider.tecBirthday,
-                        isBirthday: true,
+                            .string('wall_profile_birthdate'),
+                        textEditingController: editProfileProvider.tecbirthdate,
+                        isbirthdate: true,
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       EditProfileFact(

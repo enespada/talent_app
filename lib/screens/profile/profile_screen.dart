@@ -19,12 +19,12 @@ class ProfileScreen extends StatefulWidget {
   static const String routeName = 'profile_screen';
 
   final UserApp userApp;
-  final bool isLoguedUser;
+  final bool isloggedUser;
 
   const ProfileScreen({
     Key? key,
     required this.userApp,
-    required this.isLoguedUser,
+    required this.isloggedUser,
   }) : super(key: key);
 
   @override
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double publicationsValue = userService.userPosts.length.toDouble();
     String publicationsString = Util.adaptNumFollow(publicationsValue);
 
-    if (!widget.isLoguedUser) {
+    if (!widget.isloggedUser) {
       isFollowing = false;
       for (DocumentReference? idFollowing in userService.userApp!.following!) {
         // stringToCompare = idFollowing
@@ -190,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         //----------------Editar y ajustes-------------------
                         Visibility(
-                          visible: widget.isLoguedUser,
+                          visible: widget.isloggedUser,
                           child: Row(
                             children: [
                               //----------------Editar-----------------------
@@ -259,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                         Visibility(
-                          visible: !widget.isLoguedUser,
+                          visible: !widget.isloggedUser,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -292,7 +292,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           //Opcion Siguiendo
                                           await userService.unfollow(
                                             widget.userApp,
-                                            postsService,
+                                          );
+                                          await postsService.getFollowingPosts(
+                                            userService.userApp!,
                                           );
                                           setState(() {});
                                         }
@@ -300,7 +302,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           //Opcion Seguir
                                           await userService.follow(
                                             widget.userApp,
-                                            postsService,
+                                          );
+                                          await postsService.getFollowingPosts(
+                                            userService.userApp!,
                                           );
                                           setState(() {});
                                         },
@@ -551,7 +555,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       //-------------------------CustomBottomNavigationBar------------------------
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: (!widget.isLoguedUser) ? 1 : 4,
+        selectedIndex: (!widget.isloggedUser) ? 1 : 4,
       ),
     );
   }

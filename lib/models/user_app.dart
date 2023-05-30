@@ -11,7 +11,7 @@ class UserApp {
   DocumentReference? sport;
   DocumentReference? modality;
   String? userName;
-  DateTime? birthday;
+  DateTime? birthdate;
   String? bio;
   List<DocumentReference?>? followers;
   List<DocumentReference?>? following;
@@ -27,7 +27,7 @@ class UserApp {
     this.sport,
     this.modality,
     this.userName,
-    this.birthday,
+    this.birthdate,
     this.bio,
     this.followers,
     this.following,
@@ -44,7 +44,7 @@ class UserApp {
   //       modality: json["modality"],
   //       imgSrc: json["imgSrc"],
   //       userName: json["userName"],
-  //       birthday: json["birthday"].toString(),
+  //       birthdate: json["birthdate"].toString(),
   //       bio: json["bio"],
   //       isProfileCompleted: json["isProfileCompleted"],
   //       challengesNumber: json["challengesNumber"] ?? 0,
@@ -61,11 +61,11 @@ class UserApp {
     sport = json["sport"];
     modality = json["modality"];
     userName = json["userName"];
-    if (json["birthday"] == null) {
-      birthday == null;
+    if (json["birthdate"] == null) {
+      birthdate == null;
     } else {
-      birthday = DateTime.fromMillisecondsSinceEpoch(
-        (json["birthday"] as Timestamp).millisecondsSinceEpoch,
+      birthdate = DateTime.fromMillisecondsSinceEpoch(
+        (json["birthdate"] as Timestamp).millisecondsSinceEpoch,
       );
     }
     bio = json["bio"];
@@ -90,7 +90,7 @@ class UserApp {
         "sport": sport,
         "modality": modality,
         "userName": userName,
-        "birthday": birthday,
+        "birthdate": birthdate,
         "bio": bio,
         "followers": followers,
         "following": following,

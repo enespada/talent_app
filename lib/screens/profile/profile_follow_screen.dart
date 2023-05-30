@@ -16,7 +16,7 @@ import 'package:talent_app/widgets/widgets.dart';
 
 enum TypeFollow { seguidores, seguidos }
 
-enum TypeUser { todos, scouters, deportistas }
+enum TypeUser { todos, deportistas, scouters, managers }
 
 //WallFollowersPage
 class ProfileFollowScreen extends StatefulWidget {
@@ -41,8 +41,9 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
   TypeUser _typeUser = TypeUser.todos;
   String followersString = '';
   String followingString = '';
-  int scoutersValue = 0;
   int athletesValue = 0;
+  int scoutersValue = 0;
+  int managersValue = 0;
   // Lista de usuarios a mostrar en la pantalla
   List<UserApp> usersToShow = [];
 
@@ -77,22 +78,28 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
       case TypeFollow.seguidores:
         usersToShow.clear();
         usersToShow.addAll(userService.followers);
-        scoutersValue = 0;
         athletesValue = 0;
+        scoutersValue = 0;
+        managersValue = 0;
         for (UserApp userToShow in usersToShow) {
-          if (userToShow.type == 'scouter') scoutersValue++;
           if (userToShow.type == 'athlete') athletesValue++;
+          if (userToShow.type == 'scouter') scoutersValue++;
+          if (userToShow.type == 'manager') managersValue++;
         }
         switch (_typeUser) {
           case TypeUser.todos:
+            break;
+          case TypeUser.deportistas:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'athlete');
             break;
           case TypeUser.scouters:
             usersToShow
                 .removeWhere((UserApp element) => element.type != 'scouter');
             break;
-          case TypeUser.deportistas:
+          case TypeUser.managers:
             usersToShow
-                .removeWhere((UserApp element) => element.type != 'athlete');
+                .removeWhere((UserApp element) => element.type != 'manager');
             break;
           default:
         }
@@ -109,13 +116,17 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
         switch (_typeUser) {
           case TypeUser.todos:
             break;
+          case TypeUser.deportistas:
+            usersToShow
+                .removeWhere((UserApp element) => element.type != 'athlete');
+            break;
           case TypeUser.scouters:
             usersToShow
                 .removeWhere((UserApp element) => element.type != 'scouter');
             break;
-          case TypeUser.deportistas:
+          case TypeUser.managers:
             usersToShow
-                .removeWhere((UserApp element) => element.type != 'athlete');
+                .removeWhere((UserApp element) => element.type != 'manager');
             break;
           default:
         }
@@ -159,6 +170,18 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
           setState(() {});
         },
       ),
+
+      //--------------------managers-----------------------
+      _TypeUserContainer(
+        title: '$managersValue managers',
+        typeUser: _typeUser,
+        typeUserCompare: TypeUser.managers,
+        onTap: () {
+          _typeUser = TypeUser.managers;
+          //TODO: mostrar seguidores/seguidos que son deportistas
+          setState(() {});
+        },
+      ),
     ];
 
     return Scaffold(
@@ -175,7 +198,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             MaterialPageRoute(
               builder: (context) => ProfileScreen(
                 userApp: userApp!,
-                isLoguedUser: userApp!.id == userService.userApp!.id,
+                isloggedUser: userApp!.id == userService.userApp!.id,
               ),
             ),
           ),
@@ -376,23 +399,21 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                           //Opcion Siguiendo
                                           await userService.unfollow(
                                             usersToShow[index],
-                                            postsService,
+                                          );
+                                          await postsService.getFollowingPosts(
+                                            userService.userApp!,
                                           );
                                           changeFollow();
                                           setState(() {});
                                         }
                                       : () async {
                                           //Opcion Seguir
-                                          // await _viewModel
-                                          //     .follow(usersToShow[index]);
                                           await userService.follow(
                                             usersToShow[index],
-                                            postsService,
                                           );
-                                          // await Future.delayed(
-                                          //     const Duration(seconds: 2));
-                                          // await _viewModel.getUser();
-                                          // await userService.getFollowing();
+                                          await postsService.getFollowingPosts(
+                                            userService.userApp!,
+                                          );
                                           changeFollow();
                                           setState(() {});
                                         },

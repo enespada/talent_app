@@ -619,7 +619,7 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                 FutureBuilder(
                   future: chatsService.getChatImageURL(
                     chat: chat,
-                    loguedUserApp: userService.userApp!,
+                    loggedUserApp: userService.userApp!,
                   ),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {

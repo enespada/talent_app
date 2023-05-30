@@ -233,7 +233,7 @@ class _ChatWidgetState extends State<_ChatWidget> {
             FutureBuilder(
               future: chatsService.getChatImageURL(
                 chat: widget.chat,
-                loguedUserApp: userService.userApp!,
+                loggedUserApp: userService.userApp!,
               ),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 return Container(

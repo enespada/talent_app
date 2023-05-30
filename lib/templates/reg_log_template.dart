@@ -264,7 +264,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 followers: [],
                                 following: [],
                                 phone: '',
-                                birthday: null,
+                                birthdate: null,
                                 userName: '',
                                 fullName: '',
                                 bio: '',

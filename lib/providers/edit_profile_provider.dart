@@ -7,8 +7,8 @@ class EditProfileProvider extends ChangeNotifier {
   TextEditingController tecUserName = new TextEditingController();
   TextEditingController tecBio = new TextEditingController();
   TextEditingController tecPhone = new TextEditingController();
-  TextEditingController tecBirthday = new TextEditingController();
-  DateTime? birthday;
+  TextEditingController tecbirthdate = new TextEditingController();
+  DateTime? birthdate;
   TextEditingController tecCountry = new TextEditingController();
   Sport? sport;
   Modality? modality;
@@ -21,13 +21,13 @@ class EditProfileProvider extends ChangeNotifier {
     tecUserName.text = userApp.userName!;
     tecBio.text = userApp.bio!;
     tecPhone.text = userApp.phone!;
-    // String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(userApp.birthday));
-    if (userApp.birthday != null) {
-      birthday = userApp.birthday!;
-      tecBirthday.text =
-          '${userApp.birthday!.day}/${userApp.birthday!.month}/${userApp.birthday!.year}';
+    // String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(userApp.birthdate));
+    if (userApp.birthdate != null) {
+      birthdate = userApp.birthdate!;
+      tecbirthdate.text =
+          '${userApp.birthdate!.day}/${userApp.birthdate!.month}/${userApp.birthdate!.year}';
     } else {
-      tecBirthday.text = 'dd/mm/yyyy';
+      tecbirthdate.text = 'dd/mm/yyyy';
     }
     tecCountry.text = userApp.country!;
 
@@ -54,7 +54,7 @@ class EditProfileProvider extends ChangeNotifier {
       return false;
     }
     // if (tecPhone.text.substring(0, 1) != '+') return false;
-    if (tecBirthday.text.isEmpty) return false;
+    if (tecbirthdate.text.isEmpty) return false;
     if (tecCountry.text.isEmpty) return false;
     if (sport == null) return false;
     if (modality == null) return false;

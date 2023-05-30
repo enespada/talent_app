@@ -18,7 +18,7 @@ class PostsService extends ChangeNotifier {
   PostsService() {}
 
   //Metodo para obtener los posts de todos los usuarios
-  Future<void> getUsersPosts(UserApp loguedUserApp) async {
+  Future<void> getUsersPosts(UserApp loggedUserApp) async {
     if (isLoadingAll) return;
     isLoadingAll = true;
     notifyListeners();
@@ -31,7 +31,7 @@ class PostsService extends ChangeNotifier {
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final data = await fbFirestore
         .collection('posts')
-        .where('user', isNotEqualTo: loguedUserApp.id)
+        .where('user', isNotEqualTo: loggedUserApp.id)
         // .orderBy("datetime", descending: true)
         // .limit(30)
         .get();
@@ -49,7 +49,7 @@ class PostsService extends ChangeNotifier {
   }
 
   //Metodo para obtener los posts de la gente que sigue el usuario
-  Future<void> getFollowingPosts(UserApp loguedUserApp) async {
+  Future<void> getFollowingPosts(UserApp loggedUserApp) async {
     if (isLoadingFollowing) return;
     isLoadingFollowing = true;
     notifyListeners();
@@ -60,10 +60,10 @@ class PostsService extends ChangeNotifier {
       followingUsersPosts = [];
     }
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    if (loguedUserApp.following!.isNotEmpty) {
+    if (loggedUserApp.following!.isNotEmpty) {
       final data = await fbFirestore
           .collection('posts')
-          .where('user', whereIn: loguedUserApp.following)
+          .where('user', whereIn: loggedUserApp.following)
           // .orderBy("datetime", descending: true)
           .limit(30)
           .get();

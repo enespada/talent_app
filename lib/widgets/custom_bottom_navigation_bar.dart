@@ -181,7 +181,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   userApp: userService.userApp!,
-                  isLoguedUser: true,
+                  isloggedUser: true,
                 ),
               ),
             );

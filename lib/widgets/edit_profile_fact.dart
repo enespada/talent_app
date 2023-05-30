@@ -7,15 +7,15 @@ import 'package:talent_app/utils/utils.dart';
 class EditProfileFact extends StatefulWidget {
   final String text;
   final TextEditingController? textEditingController;
-  bool? isBirthday;
+  bool? isbirthdate;
 
   EditProfileFact({
     Key? key,
     this.text = '',
     this.textEditingController,
-    this.isBirthday,
+    this.isbirthdate,
   }) : super(key: key) {
-    isBirthday ??= false;
+    isbirthdate ??= false;
   }
 
   @override
@@ -40,7 +40,7 @@ class _EditProfileFactState extends State<EditProfileFact> {
           ),
         ),
         SizedBox(width: responsive.widthPercent(8)),
-        if (!widget.isBirthday!)
+        if (!widget.isbirthdate!)
           Expanded(
             child: TextField(
               controller: widget.textEditingController,
@@ -55,12 +55,12 @@ class _EditProfileFactState extends State<EditProfileFact> {
               },
             ),
           ),
-        if (widget.isBirthday!)
+        if (widget.isbirthdate!)
           InkWell(
             onTap: () async {
               final DateTime? pickedDate = await showDatePicker(
                 context: context,
-                initialDate: editProfileProvider.birthday ?? DateTime.now(),
+                initialDate: editProfileProvider.birthdate ?? DateTime.now(),
                 firstDate: DateTime.now().subtract(
                   const Duration(seconds: 60 * 60 * 24 * 365 * 100),
                 ),
@@ -81,14 +81,14 @@ class _EditProfileFactState extends State<EditProfileFact> {
                 },
               );
               if (pickedDate != null) {
-                editProfileProvider.birthday = pickedDate;
-                editProfileProvider.tecBirthday.text =
+                editProfileProvider.birthdate = pickedDate;
+                editProfileProvider.tecbirthdate.text =
                     '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
                 setState(() {});
               }
             },
             child: Text(
-              editProfileProvider.tecBirthday.text,
+              editProfileProvider.tecbirthdate.text,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontSize: responsive.diagonalPercent(2.1),
                   ),

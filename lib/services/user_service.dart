@@ -54,9 +54,9 @@ class UserService extends ChangeNotifier {
       data.addAll({"phone": userAppToUpdate.phone});
       userApp!.phone = userAppToUpdate.phone;
     }
-    if (userApp!.birthday != userAppToUpdate.birthday) {
-      data.addAll({"birthday": userAppToUpdate.birthday});
-      userApp!.birthday = userAppToUpdate.birthday;
+    if (userApp!.birthdate != userAppToUpdate.birthdate) {
+      data.addAll({"birthdate": userAppToUpdate.birthdate});
+      userApp!.birthdate = userAppToUpdate.birthdate;
     }
     if (userApp!.country != userAppToUpdate.country) {
       data.addAll({"country": userAppToUpdate.country});
@@ -180,7 +180,7 @@ class UserService extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<void> follow(UserApp userToFollow, PostsService postsService) async {
+  Future<void> follow(UserApp userToFollow) async {
     if (userApp == null) return;
     //Actualizamos la lista de seguidores del usuario seguido
     await userToFollow.id!.update({
@@ -194,13 +194,10 @@ class UserService extends ChangeNotifier {
     userApp!.following!.add(userToFollow.id);
     userToFollow.followers!.add(userApp!.id);
     following.add(userToFollow);
-    await postsService.getFollowingPosts(userApp!);
+    // await postsService.getFollowingPosts(userApp!);
   }
 
-  Future<void> unfollow(
-    UserApp userToUnfollow,
-    PostsService postsService,
-  ) async {
+  Future<void> unfollow(UserApp userToUnfollow) async {
     if (userApp == null) return;
     //Actualizamos la lista de seguidores del usuario seguido
     await userToUnfollow.id!.update({
@@ -214,7 +211,7 @@ class UserService extends ChangeNotifier {
     userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
     userToUnfollow.followers!.remove(userApp!.id);
     following.remove(userToUnfollow);
-    await postsService.getFollowingPosts(userApp!);
+    // await postsService.getFollowingPosts(userApp!);
   }
 
   Future<String> getProfileImageURL(String id) async {
