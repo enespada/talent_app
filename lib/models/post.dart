@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:talent_app/models/models.dart';
 
 class Post {
-  String? id;
+  DocumentReference? id;
   DocumentReference? userId;
   String? description;
   // List<String>? locations;
@@ -25,20 +25,6 @@ class Post {
     this.modality,
   });
 
-  @override
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user'] = userId;
-    data['description'] = description;
-    // data['locations'] = locations;
-    data['files'] = files;
-    data['timestamp'] = timestamp;
-    data['sportType'] = sportType;
-    data['modality'] = modality;
-
-    return data;
-  }
-
   Post.fromJson(Map<String, dynamic> json) {
     userId = json['user'];
     description = json['description'];
@@ -53,5 +39,18 @@ class Post {
     timestamp = json['timestamp'];
     sportType = json['sportType'];
     modality = json['modality'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user'] = userId;
+    data['description'] = description;
+    // data['locations'] = locations;
+    data['files'] = files;
+    data['timestamp'] = timestamp;
+    data['sportType'] = sportType;
+    data['modality'] = modality;
+
+    return data;
   }
 }

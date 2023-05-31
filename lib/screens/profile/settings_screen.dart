@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:talent_app/models/user_app.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
@@ -17,21 +18,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // final _viewModel = inject<AuthViewModel>();
-
   @override
   void initState() {
     super.initState();
-
-    // _viewModel.signOutState.stream.listen((state) {
-    //   switch (state) {
-    //     case true:
-    //       context.navigatePopReplacing(const SplashPage());
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // });
   }
 
   @override
@@ -49,6 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context,
       listen: false,
     );
+
     final Responsive responsive = Responsive.of(context);
     final double spaceBetweenOptions = responsive.heightPercent(2.5);
 
@@ -113,20 +103,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           title: Localization.of(context)
                               .string('wall_settings_logOut'),
                           onTap: () async {
-                            //TODO: cerrar sesion
-                            // _viewModel.signOut();
                             await authService.logOut();
                             postsService.reset();
-                            // userService.userApp = null;
-                            // userService.followers.clear();
-                            // userService.following.clear();
-                            // userService.profileUrlImage == null;
-                            // userService.userPosts.clear();
                             userService.reset();
-                            // chatsService.chats?.clear();
-                            // chatsService.chats = null;
                             chatsService.reset();
-
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               SplashScreen.routeName,
@@ -134,7 +114,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             );
                           },
                           iconData: Icons.logout,
-                          logOut: true,
+                        ),
+                        SizedBox(height: spaceBetweenOptions),
+                        _SettingOption(
+                          title: Localization.of(context).string(
+                            'delete_account',
+                          ),
+                          onTap: () {
+                            Util.showCustomDialog(
+                              context: context,
+                              child: Text(
+                                Localization.of(context).string(
+                                  'delete_account_message',
+                                ),
+                                style:
+                                    AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                                  fontSize: responsive.diagonalPercent(2),
+                                ),
+                              ),
+                              actions: [
+                                MaterialButton(
+                                  onPressed: () {
+                                    authService.deleteUser(
+                                      userService.userApp!,
+                                    );
+                                    postsService.reset();
+                                    userService.reset();
+                                    chatsService.reset();
+                                  },
+                                  elevation: 0.0,
+                                  textColor: AppColors.whiteColor,
+                                  child: Text(
+                                    Localization.of(context)
+                                        .string("common_yes"),
+                                  ),
+                                ),
+                                MaterialButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  elevation: 0.0,
+                                  textColor: AppColors.whiteColor,
+                                  child: Text(
+                                    Localization.of(context)
+                                        .string("common_no"),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          iconData: Icons.delete_rounded,
                         ),
                       ],
                     ),
@@ -158,14 +185,12 @@ class _SettingOption extends StatelessWidget {
   final String title;
   final IconData iconData;
   final void Function()? onTap;
-  final bool? logOut;
 
   const _SettingOption({
     Key? key,
     required this.title,
     required this.iconData,
     required this.onTap,
-    this.logOut,
   }) : super(key: key);
 
   @override
@@ -190,15 +215,10 @@ class _SettingOption extends StatelessWidget {
                 color: AppColors.greyscale5,
               ),
         ),
-        trailing: (logOut != null && logOut == true)
-            ? const SizedBox(
-                height: 0,
-                width: 0,
-              )
-            : const Icon(
-                Icons.arrow_forward_ios,
-                color: AppColors.greyscale1,
-              ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          color: AppColors.greyscale1,
+        ),
       ),
     );
   }

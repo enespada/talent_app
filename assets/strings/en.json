@@ -176,5 +176,8 @@
   "leave_register_message": "Are your sure about leaving the register process?",
   "no_posts_to_show": "Still there are no posts to show!",
   "edit_profile_empty_fields": "Fill the fields before continuing",
-  "explorer": "Explorer"
+  "explorer": "Explorer",
+  "delete_account": "Delete account",
+  "delete_account_message": "Are you sure you want to delete your account? This action is irreversible." 
+
 }

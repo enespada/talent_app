@@ -38,9 +38,12 @@ class PostsService extends ChangeNotifier {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       Post postaux = Post.fromJson(doc.data());
+      postaux.id = doc.reference;
       DocumentSnapshot<Object?>? docUser = await postaux.userId?.get();
-      postaux.userApp =
+      UserApp auxUserApp =
           UserApp.fromJson(docUser!.data() as Map<String, dynamic>);
+      auxUserApp.id = docUser.reference;
+      postaux.userApp = auxUserApp;
       allUsersPosts!.add(postaux);
     }
 
@@ -70,9 +73,12 @@ class PostsService extends ChangeNotifier {
 
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
         Post postaux = Post.fromJson(doc.data());
+        postaux.id = doc.reference;
         DocumentSnapshot<Object?>? docUser = await postaux.userId?.get();
-        postaux.userApp =
+        UserApp auxUserApp =
             UserApp.fromJson(docUser!.data() as Map<String, dynamic>);
+        auxUserApp.id = docUser.reference;
+        postaux.userApp = auxUserApp;
         followingUsersPosts!.add(postaux);
       }
     }
@@ -135,7 +141,7 @@ class PostsService extends ChangeNotifier {
     //P1: Creamos el post en Firestore para obtener un id
     final DocumentReference reference =
         await fbFirestore.collection('posts').add(post.toJson());
-    post.id = reference.id;
+    post.id = reference;
 
     //P2: Guardamos en el Storage los files del post
     final FirebaseStorage fbStorage = FirebaseStorage.instance;
@@ -153,7 +159,7 @@ class PostsService extends ChangeNotifier {
     }
 
     //P3: Guardamos las urls de los files en el post en Firestore
-    await fbFirestore.collection('posts').doc(post.id).update({
+    await fbFirestore.collection('posts').doc(post.id!.id).update({
       "files": filesList,
     });
     post.files!.addAll(filesList);
@@ -173,6 +179,7 @@ class PostsService extends ChangeNotifier {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       Post postaux = Post.fromJson(doc.data());
+      postaux.id = doc.reference;
       postaux.userApp = userApp;
       posts.add(postaux);
     }

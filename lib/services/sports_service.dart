@@ -13,7 +13,9 @@ class SportsService extends ChangeNotifier {
     final data = await fbFirestore.collection('sports').get();
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
-      sports.add(Sport.fromJson(doc.data()));
+      Sport auxSport = Sport.fromJson(doc.data());
+      auxSport.id = doc.reference;
+      sports.add(auxSport);
     }
   }
 }

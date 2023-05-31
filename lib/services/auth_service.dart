@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:talent_app/models/models.dart';
 
 class AuthService extends ChangeNotifier {
-  UserApp? userApp;
+  // UserApp? userApp;
   bool isLoading = false;
 
   static const refreshTokenKey = 'refresh_token';
@@ -44,7 +45,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<String?> signUp(String user, String password) async {
+  Future<String?> signUp(String email, String password, String type) async {
     // if (isLoading) return '';
     isLoading = true;
     notifyListeners();
@@ -52,7 +53,7 @@ class AuthService extends ChangeNotifier {
       final FirebaseAuth fbAuth = FirebaseAuth.instance;
       final UserCredential userCredential =
           await fbAuth.createUserWithEmailAndPassword(
-        email: user,
+        email: email,
         password: password,
       );
       //token
@@ -60,13 +61,24 @@ class AuthService extends ChangeNotifier {
       const storage = FlutterSecureStorage();
       await storage.write(key: accessTokenKey, value: token);
       final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-      userApp!.id = _newUserReference(userCredential.user?.uid ?? '');
-      await _newUserReffcmToken(userApp!);
+      UserApp? auxUserApp = UserApp(
+        email: email,
+        followers: [],
+        following: [],
+        phone: '',
+        birthdate: null,
+        userName: '',
+        fullName: '',
+        bio: '',
+        country: '',
+        type: type,
+      );
+      auxUserApp.id = _newUserReference(userCredential.user?.uid ?? '');
+      // await _newUserReffcmToken(userApp!);
       await fbFirestore
           .collection('users')
-          .doc(userApp!.id!.id)
-          .set(userApp!.toJson());
-
+          .doc(auxUserApp.id!.id)
+          .set(auxUserApp.toJson());
       isLoading = false;
       notifyListeners();
       return null;
@@ -86,16 +98,16 @@ class AuthService extends ChangeNotifier {
     return fbFirestore.collection("users").doc(uid);
   }
 
-  Future<void> _newUserReffcmToken(UserApp userApp) async {
-    FirebaseMessaging fbMessaging = FirebaseMessaging.instance;
-    userApp.fcmToken = await fbMessaging.getToken();
-  }
-
   Future<bool> isAuthenticated() async {
     const storage = FlutterSecureStorage();
     String accessToken = await storage.read(key: accessTokenKey) ?? '';
     return accessToken.isNotEmpty;
   }
+
+  // Future<void> _newUserReffcmToken(UserApp userApp) async {
+  //   FirebaseMessaging fbMessaging = FirebaseMessaging.instance;
+  //   userApp.fcmToken = await fbMessaging.getToken();
+  // }
 
   // Future<void> refreshToken() async {
   //   const storage = FlutterSecureStorage();
@@ -111,19 +123,39 @@ class AuthService extends ChangeNotifier {
     //Borramos el token
     const storage = FlutterSecureStorage();
     await storage.delete(key: accessTokenKey);
-    userApp = null;
+    // userApp = null;
   }
 
-  Future<void> deleteUser() async {
+  Future<void> deleteUser(UserApp userApp) async {
     final FirebaseAuth fbAuth = FirebaseAuth.instance;
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final FirebaseStorage fbStorage = FirebaseStorage.instance;
+    //Borramos los archivos del usuario (foto de perfil y posts) del Storage
+    final Reference deleteRef = fbStorage.ref(userApp.id!.id);
+    await deleteRef.delete();
+    //Borramos las posts del usuario de Firestore
+    final data = await fbFirestore
+        .collection('posts')
+        .where('user', isEqualTo: userApp.id)
+        .get();
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      await fbFirestore.collection('posts').doc(doc.reference.id).delete();
+    }
+    //Borramos los chats del usuario de Firestore
+    final data2 = await fbFirestore
+        .collection('chats')
+        .where('users', arrayContains: userApp.id)
+        .get();
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+      await fbFirestore.collection('chats').doc(doc.reference.id).delete();
+    }
     //Borramos el usuario de Firestore
-    await fbFirestore.collection('users').doc(userApp!.id!.id).delete();
+    await fbFirestore.collection('users').doc(userApp.id!.id).delete();
     //TODO: Borrar el usuario de Auth
     // await fbAuth.currentUser!.reauthenticateWithCredential(
     //   _authCredential!,
     // );
-    await FirebaseAuth.instance.currentUser?.delete();
+    await fbAuth.currentUser?.delete();
     //Borramos el token
     const storage = FlutterSecureStorage();
     await storage.delete(key: accessTokenKey);

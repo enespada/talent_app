@@ -152,7 +152,7 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
                 onTap: () {
                   _selectedIndex = index;
                   // widget.user?.type = type[index];
-                  authService.userApp?.type = type[index];
+                  // authService.userApp?.type = type[index];
                   setState(() {});
                 },
                 child: CustomCheck(

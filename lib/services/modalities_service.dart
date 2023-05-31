@@ -16,7 +16,9 @@ class ModalitiesService extends ChangeNotifier {
         .get();
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
-      modalities.add(Modality.fromJson(doc.data()));
+      Modality auxModality = Modality.fromJson(doc.data());
+      auxModality.id = doc.reference;
+      modalities.add(auxModality);
     }
   }
 }

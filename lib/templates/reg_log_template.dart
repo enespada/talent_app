@@ -259,22 +259,10 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                             }
                             //---------------------Register----------------------
                             else {
-                              userApp = UserApp(
-                                email: _tecEmail.text,
-                                followers: [],
-                                following: [],
-                                phone: '',
-                                birthdate: null,
-                                userName: '',
-                                fullName: '',
-                                bio: '',
-                                country: '',
-                                type: widget.userType,
-                              );
-                              authService.userApp = userApp;
                               String? signUpResult = await authService.signUp(
                                 _tecEmail.text,
                                 _tecPassword.text,
+                                widget.userType!,
                               );
                               //Si el sign up es correcto
                               if (signUpResult == null) {

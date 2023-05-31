@@ -139,6 +139,7 @@ class Util {
   }) {
     return showCupertinoDialog(
       context: context,
+      barrierDismissible: true,
       builder: (context) {
         final Responsive responsive = Responsive.of(context);
 

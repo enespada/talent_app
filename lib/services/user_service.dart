@@ -19,12 +19,13 @@ class UserService extends ChangeNotifier {
   bool isLoadingImage = false;
 
   Future<UserApp?> getUser() async {
-    final fbFirestore = FirebaseFirestore.instance;
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser;
 
-    final snapshot = await fbFirestore.collection("users").doc(user?.uid).get();
-
-    userApp = UserApp.fromJson(snapshot.data()!);
+    final DocumentSnapshot<Map<String, dynamic>> doc =
+        await fbFirestore.collection("users").doc(user?.uid).get();
+    userApp = UserApp.fromJson(doc.data()!);
+    userApp!.id = doc.reference;
     return userApp;
   }
 
@@ -107,6 +108,7 @@ class UserService extends ChangeNotifier {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       Post postaux = Post.fromJson(doc.data());
+      postaux.id = doc.reference;
       postaux.userApp = userApp;
       userPosts.add(postaux);
     }
@@ -136,7 +138,9 @@ class UserService extends ChangeNotifier {
         stringToCompare =
             idFollower.toString().split('(')[1].split(')')[0].split('/')[1];
         if (stringToCompare == element.id) {
-          provFollowers.add(UserApp.fromJson(element.data()));
+          UserApp auxUserApp = UserApp.fromJson(element.data());
+          auxUserApp.id = element.reference;
+          provFollowers.add(auxUserApp);
           break;
         }
       }
@@ -169,7 +173,9 @@ class UserService extends ChangeNotifier {
         stringToCompare =
             idFollowing.toString().split('(')[1].split(')')[0].split('/')[1];
         if (stringToCompare == element.id) {
-          provFollowing.add(UserApp.fromJson(element.data()));
+          UserApp auxUserApp = UserApp.fromJson(element.data());
+          auxUserApp.id = element.reference;
+          provFollowing.add(auxUserApp);
           break;
         }
       }

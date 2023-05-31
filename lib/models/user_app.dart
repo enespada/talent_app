@@ -7,7 +7,7 @@ class UserApp {
   String? email;
   String? phone;
   String? country;
-  String? fcmToken;
+  // String? fcmToken;
   DocumentReference? sport;
   DocumentReference? modality;
   String? userName;
@@ -23,7 +23,7 @@ class UserApp {
     this.email,
     this.phone,
     this.country,
-    this.fcmToken,
+    // this.fcmToken,
     this.sport,
     this.modality,
     this.userName,
@@ -57,7 +57,7 @@ class UserApp {
     email = json["email"];
     phone = json["phone"];
     country = json["country"];
-    fcmToken = json["fcmToken"];
+    // fcmToken = json["fcmToken"];
     sport = json["sport"];
     modality = json["modality"];
     userName = json["userName"];
@@ -86,7 +86,7 @@ class UserApp {
         "email": email,
         "phone": phone,
         "country": country,
-        "fcmToken": fcmToken,
+        // "fcmToken": fcmToken,
         "sport": sport,
         "modality": modality,
         "userName": userName,
@@ -96,22 +96,3 @@ class UserApp {
         "following": following,
       };
 }
-
-// class SportType {
-//   String? name;
-//   List<String>? modalities;
-//
-//   SportType({this.name, this.modalities});
-//
-//   SportType.fromJson(Map<String, dynamic> json) {
-//     name = json['name'];
-//     modalities = json['modalities'].cast<String>();
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = <String, dynamic>{};
-//     data['name'] = name;
-//     data['modalities'] = modalities;
-//     return data;
-//   }
-// }
