@@ -18,6 +18,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _tecPassword = TextEditingController();
+  bool _passwordHidden = true;
+
   @override
   void initState() {
     super.initState();
@@ -67,106 +70,175 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(height: responsive.heightPercent(6)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Column(
+                  children: [
+                    //-----------------------Ayuda---------------------------
+                    _SettingOption(
+                      title:
+                          Localization.of(context).string('wall_settings_help'),
+                      onTap: () {},
+                      iconData: Icons.info_outline_rounded,
+                    ),
+                    SizedBox(height: spaceBetweenOptions),
 
-                  //-----------------------Opciones ajustes-------------------------
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Column(
-                      children: [
-                        _SettingOption(
-                          title: Localization.of(context)
-                              .string('wall_settings_configuration'),
-                          onTap: () {
-                            // context.navigateTo(const WallConfigurationPage());
-                          },
-                          iconData: Icons.settings_outlined,
-                        ),
-                        SizedBox(height: spaceBetweenOptions),
-                        _SettingOption(
-                          title: Localization.of(context)
-                              .string('wall_settings_help'),
-                          onTap: () {},
-                          iconData: Icons.info_outline_rounded,
-                        ),
-                        SizedBox(height: spaceBetweenOptions),
-                        _SettingOption(
-                          title: Localization.of(context)
-                              .string('wall_settings_policy'),
-                          onTap: () {},
-                          iconData: Icons.policy_outlined,
-                        ),
-                        SizedBox(height: spaceBetweenOptions),
-                        _SettingOption(
-                          title: Localization.of(context)
-                              .string('wall_settings_logOut'),
-                          onTap: () async {
-                            await authService.logOut();
-                            postsService.reset();
-                            userService.reset();
-                            chatsService.reset();
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              SplashScreen.routeName,
-                              (route) => false,
-                            );
-                          },
-                          iconData: Icons.logout,
-                        ),
-                        SizedBox(height: spaceBetweenOptions),
-                        _SettingOption(
-                          title: Localization.of(context).string(
-                            'delete_account',
-                          ),
-                          onTap: () {
-                            Util.showCustomDialog(
-                              context: context,
-                              child: Text(
-                                Localization.of(context).string(
-                                  'delete_account_message',
-                                ),
-                                style:
-                                    AppThemes.darkTextTheme.bodyLarge!.copyWith(
-                                  fontSize: responsive.diagonalPercent(2),
-                                ),
+                    //----------------Politica de privacidad-----------------
+                    _SettingOption(
+                      title: Localization.of(context)
+                          .string('wall_settings_policy'),
+                      onTap: () {},
+                      iconData: Icons.policy_outlined,
+                    ),
+                    SizedBox(height: spaceBetweenOptions),
+
+                    //-------------------Cerrar sesion----------------------
+                    _SettingOption(
+                      title: Localization.of(context)
+                          .string('wall_settings_logOut'),
+                      onTap: () async {
+                        await authService.logOut();
+                        postsService.reset();
+                        userService.reset();
+                        chatsService.reset();
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          SplashScreen.routeName,
+                          (route) => false,
+                        );
+                      },
+                      iconData: Icons.logout,
+                    ),
+                    SizedBox(height: spaceBetweenOptions),
+
+                    //------------------Eliminar cuenta-----------------------
+                    _SettingOption(
+                      title: Localization.of(context).string(
+                        'delete_account',
+                      ),
+                      onTap: () {
+                        Util.showCustomDialog(
+                          context: context,
+                          child: WillPopScope(
+                            onWillPop: () async {
+                              _tecPassword.clear();
+                              return true;
+                            },
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    Localization.of(context).string(
+                                      'delete_account_message',
+                                    ),
+                                    style: AppThemes.darkTextTheme.bodyLarge!
+                                        .copyWith(
+                                      fontSize: responsive.diagonalPercent(2),
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.heightPercent(2)),
+                                  StatefulBuilder(
+                                    builder: (BuildContext context, setState) {
+                                      return TextField(
+                                        controller: _tecPassword,
+                                        keyboardType:
+                                            TextInputType.visiblePassword,
+                                        obscureText: _passwordHidden,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              fontSize: responsive
+                                                  .diagonalPercent(2.1),
+                                            ),
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            vertical: 14.0,
+                                            horizontal: 25.0,
+                                          ),
+                                          filled: true,
+                                          fillColor: AppColors.lightGrey,
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                          hintText:
+                                              Localization.of(context).string(
+                                            'sign_in_password',
+                                          ),
+                                          suffixIcon: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            onTap: () {
+                                              _passwordHidden =
+                                                  !_passwordHidden;
+                                              setState(() {});
+                                            },
+                                            child: Icon(
+                                              _passwordHidden
+                                                  ? Icons
+                                                      .visibility_off_outlined
+                                                  : Icons.visibility_outlined,
+                                              color: AppColors.blackColor,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
-                              actions: [
-                                MaterialButton(
-                                  onPressed: () {
-                                    authService.deleteUser(
-                                      userService.userApp!,
-                                    );
+                            ),
+                          ),
+                          actions: [
+                            MaterialButton(
+                              onPressed: () async {
+                                if (_tecPassword.text.isNotEmpty) {
+                                  if (await authService.deleteUser(
+                                    userService.userApp!,
+                                    _tecPassword.text,
+                                  )) {
                                     postsService.reset();
                                     userService.reset();
                                     chatsService.reset();
-                                  },
-                                  elevation: 0.0,
-                                  textColor: AppColors.whiteColor,
-                                  child: Text(
-                                    Localization.of(context)
-                                        .string("common_yes"),
-                                  ),
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      SplashScreen.routeName,
+                                      (route) => false,
+                                    );
+                                  }
+                                }
+                              },
+                              elevation: 0.0,
+                              textColor: AppColors.whiteColor,
+                              child: Text(
+                                Localization.of(context).string(
+                                  "common_yes",
                                 ),
-                                MaterialButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  elevation: 0.0,
-                                  textColor: AppColors.whiteColor,
-                                  child: Text(
-                                    Localization.of(context)
-                                        .string("common_no"),
-                                  ),
+                              ),
+                            ),
+                            MaterialButton(
+                              onPressed: () => Navigator.pop(context),
+                              elevation: 0.0,
+                              textColor: AppColors.whiteColor,
+                              child: Text(
+                                Localization.of(context).string(
+                                  "common_no",
                                 ),
-                              ],
-                            );
-                          },
-                          iconData: Icons.delete_rounded,
-                        ),
-                      ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      iconData: Icons.delete_rounded,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

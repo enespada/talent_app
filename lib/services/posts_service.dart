@@ -145,15 +145,14 @@ class PostsService extends ChangeNotifier {
 
     //P2: Guardamos en el Storage los files del post
     final FirebaseStorage fbStorage = FirebaseStorage.instance;
-    final Reference storageRef = fbStorage.ref();
 
     List<String> filesList = [];
     for (AssetEntity selectedImage in selectedImages) {
       File file = (await selectedImage.file)!;
       String extension = p.extension(file.path);
 
-      final Reference ref = storageRef.child(
-          '${post.userId!.id}/posts/${post.id}/file${selectedImages.indexOf(selectedImage)}$extension');
+      final Reference ref = fbStorage.ref().child(
+          '${post.userId!.id}/posts/${post.id!.id}/file${selectedImages.indexOf(selectedImage)}$extension');
       await ref.putFile(file);
       filesList.add(ref.fullPath);
     }
@@ -183,7 +182,6 @@ class PostsService extends ChangeNotifier {
       postaux.userApp = userApp;
       posts.add(postaux);
     }
-
     posts.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
 
     return posts;

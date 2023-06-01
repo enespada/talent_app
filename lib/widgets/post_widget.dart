@@ -82,16 +82,17 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                 },
               ),
               Visibility(
-                visible: (userService.userApp!.type == 'scouter' ||
-                        userService.userApp!.type == 'manager') ||
+                visible: (userService.userApp!.id != widget.post.userApp!.id &&
+                        (userService.userApp!.type == 'scouter' ||
+                            userService.userApp!.type == 'manager') ||
                     (userService.userApp!.type == 'athlete' ||
-                        widget.post.userApp!.type == 'athlete'),
+                        widget.post.userApp!.type == 'athlete')),
                 child: Positioned(
                   bottom: 6,
                   left: responsive.widthPercent(5),
                   child: GestureDetector(
                     onTap: () async {
-                      //TODO: crear chat con el usuario
+                      //TODO: comprobar si el chat ya existe
                       Chat chat = Chat(
                         messages: [],
                         name: null,
@@ -110,17 +111,14 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              Visibility(
-                visible: widget.post.userId == userService.userApp!.id,
-                child: Positioned(
-                  bottom: 6,
-                  right: responsive.widthPercent(5),
-                  child: const Icon(
-                    Icons.bookmark_border_rounded,
-                    color: AppColors.greyscale5,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   bottom: 6,
+              //   right: responsive.widthPercent(5),
+              //   child: const Icon(
+              //     Icons.bookmark_border_rounded,
+              //     color: AppColors.greyscale5,
+              //   ),
+              // ),
             ],
           ),
         ),

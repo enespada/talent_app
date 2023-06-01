@@ -126,17 +126,25 @@ class AuthService extends ChangeNotifier {
     // userApp = null;
   }
 
-  Future<void> deleteUser(UserApp userApp) async {
+  Future<bool> deleteUser(UserApp loggedUserApp, String password) async {
     final FirebaseAuth fbAuth = FirebaseAuth.instance;
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    final FirebaseStorage fbStorage = FirebaseStorage.instance;
+    //Si la contrasegna es valida reautenticamos y seguimos
+    AuthCredential authCredential = EmailAuthProvider.credential(
+      email: loggedUserApp.email!,
+      password: password,
+    );
+    try {
+      await fbAuth.currentUser!.reauthenticateWithCredential(authCredential);
+    } catch (e) {
+      return false;
+    }
     //Borramos los archivos del usuario (foto de perfil y posts) del Storage
-    final Reference deleteRef = fbStorage.ref(userApp.id!.id);
-    await deleteRef.delete();
+    _deleteFolderInFirebaseStorage(loggedUserApp.id!.id);
     //Borramos las posts del usuario de Firestore
     final data = await fbFirestore
         .collection('posts')
-        .where('user', isEqualTo: userApp.id)
+        .where('user', isEqualTo: loggedUserApp.id)
         .get();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       await fbFirestore.collection('posts').doc(doc.reference.id).delete();
@@ -144,20 +152,41 @@ class AuthService extends ChangeNotifier {
     //Borramos los chats del usuario de Firestore
     final data2 = await fbFirestore
         .collection('chats')
-        .where('users', arrayContains: userApp.id)
+        .where('users', arrayContains: loggedUserApp.id)
         .get();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
       await fbFirestore.collection('chats').doc(doc.reference.id).delete();
     }
     //Borramos el usuario de Firestore
-    await fbFirestore.collection('users').doc(userApp.id!.id).delete();
-    //TODO: Borrar el usuario de Auth
-    // await fbAuth.currentUser!.reauthenticateWithCredential(
-    //   _authCredential!,
-    // );
+    await fbFirestore.collection('users').doc(loggedUserApp.id!.id).delete();
+    //Borramos el usuario de Auth
     await fbAuth.currentUser?.delete();
     //Borramos el token
     const storage = FlutterSecureStorage();
     await storage.delete(key: accessTokenKey);
+    return true;
+  }
+
+  // Eliminar una carpeta y su contenido en Firebase Storage
+  Future<void> _deleteFolderInFirebaseStorage(String nombreCarpeta) async {
+    final FirebaseStorage fbStorage = FirebaseStorage.instance;
+    final Reference deleteRef = fbStorage.ref().child(nombreCarpeta);
+
+    try {
+      await deleteRef.listAll().then((result) async {
+        for (final element in result.items) {
+          await element.delete();
+        }
+        for (final prefix in result.prefixes) {
+          await _deleteFolderInFirebaseStorage(prefix.fullPath);
+        }
+      });
+
+      // Eliminar la carpeta vacía
+      await deleteRef.delete();
+      print('Carpeta eliminada correctamente');
+    } catch (e) {
+      print('Error al eliminar la carpeta: $e');
+    }
   }
 }

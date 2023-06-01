@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             children: [
                               TextSpan(
                                 text: Localization.of(context)
-                                    .string('onboarding_privacy_Policy'),
+                                    .string('onboarding_privacy_policy'),
                                 style: const TextStyle(
                                   color: AppColors.brandColor,
                                 ),
