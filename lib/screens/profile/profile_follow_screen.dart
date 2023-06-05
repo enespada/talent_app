@@ -371,11 +371,18 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                 GestureDetector(
                                   onTap: () {
                                     if (Platform.isAndroid) {
-                                      showDialogX(context, usersToShow[index]);
+                                      showDialogX(
+                                        context,
+                                        usersToShow[index],
+                                        userService,
+                                      );
                                     }
                                     if (Platform.isIOS) {
                                       showCupertinoDialogX(
-                                          context, usersToShow[index]);
+                                        context,
+                                        usersToShow[index],
+                                        userService,
+                                      );
                                     }
                                   },
                                   child: const Icon(
@@ -471,14 +478,28 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
   }
 
   Future<void> onPressedDialogX(
-      BuildContext context, UserApp followerToRemove) async {
+    BuildContext context,
+    UserApp followerToRemove,
+    UserService userService,
+  ) async {
     // await _viewModel.removeFollower(followerToRemove);
     // Navigator.pop(context);
     // await Future.delayed(const Duration(seconds: 2));
     // await _viewModel.getUser();
+    await userService.removeFollower(followerToRemove);
+    Navigator.pop(context);
+    changeFollow();
+    setState(() {});
+    // await Future.delayed(const Duration(seconds: 2));
   }
 
-  Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {
+  Future<dynamic> showDialogX(
+    BuildContext context,
+    UserApp followerToRemove,
+    UserService userService,
+  ) {
+    final Responsive responsive = Responsive.of(context);
+
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -488,32 +509,42 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
           child: AlertDialog(
             title: Center(
               child: Text(
-                Localization.of(context).string("wall_followers_delete"),
-                style: AppThemes.darkTextTheme.displayMedium,
+                Localization.of(context).string("delete_follower"),
+                style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                  fontSize: responsive.diagonalPercent(3),
+                ),
               ),
             ),
             actionsAlignment: MainAxisAlignment.end,
             backgroundColor: AppColors.greyscale5,
             content: Text(
-              Localization.of(context).string("wall_followers_message",
-                  params: [followerToRemove.fullName!]),
-              style: AppThemes.darkTextTheme.bodyLarge,
+              Localization.of(context).string(
+                "delete_follower_message",
+                params: [followerToRemove.fullName!],
+              ),
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(1.8),
+              ),
             ),
             actions: [
               MaterialButton(
-                onPressed: () => onPressedDialogX(context, followerToRemove),
+                onPressed: () => onPressedDialogX(
+                  context,
+                  followerToRemove,
+                  userService,
+                ),
                 elevation: 0.0,
-                textColor: AppColors.greyscale2,
+                textColor: AppColors.brandColor,
                 child: Text(
-                  Localization.of(context).string("wall_followers_yes"),
+                  Localization.of(context).string("common_yes"),
                 ),
               ),
               MaterialButton(
                 onPressed: () => Navigator.pop(context),
                 elevation: 5,
-                textColor: AppColors.brandColor,
+                textColor: AppColors.greyscale2,
                 child: Text(
-                  Localization.of(context).string("wall_followers_no"),
+                  Localization.of(context).string("common_no"),
                 ),
               ),
             ],
@@ -524,7 +555,12 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
   }
 
   Future<dynamic> showCupertinoDialogX(
-      BuildContext context, UserApp followerToRemove) {
+    BuildContext context,
+    UserApp followerToRemove,
+    UserService userService,
+  ) {
+    final Responsive responsive = Responsive.of(context);
+
     return showCupertinoDialog(
       context: context,
       builder: (context) {
@@ -533,30 +569,38 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
           child: CupertinoAlertDialog(
             title: Center(
               child: Text(
-                Localization.of(context).string("wall_followers_delete"),
-                style: Theme.of(context).textTheme.displayMedium,
+                Localization.of(context).string("delete_follower"),
+                style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                  fontSize: responsive.diagonalPercent(3),
+                ),
               ),
             ),
             content: Text(
-              Localization.of(context).string("wall_followers_message",
+              Localization.of(context).string("delete_follower_message",
                   params: [followerToRemove.fullName!]),
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                fontSize: responsive.diagonalPercent(1.8),
+              ),
             ),
             actions: [
               MaterialButton(
-                onPressed: () => onPressedDialogX(context, followerToRemove),
+                onPressed: () => onPressedDialogX(
+                  context,
+                  followerToRemove,
+                  userService,
+                ),
                 elevation: 0.0,
-                textColor: AppColors.greyscale2,
+                textColor: AppColors.brandColor,
                 child: Text(
-                  Localization.of(context).string("wall_followers_yes"),
+                  Localization.of(context).string("common_yes"),
                 ),
               ),
               MaterialButton(
                 onPressed: () => Navigator.pop(context),
                 elevation: 5,
-                textColor: AppColors.brandColor,
+                textColor: AppColors.greyscale2,
                 child: Text(
-                  Localization.of(context).string("wall_followers_no"),
+                  Localization.of(context).string("common_no"),
                 ),
               ),
             ],

@@ -35,6 +35,7 @@ class Chat {
     data['name'] = name;
     data['urlImage'] = urlImage;
     data['users'] = users;
+    // data['users'] = users!.map((user) => user).toList();
     return data;
   }
 }

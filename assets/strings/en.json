@@ -84,5 +84,7 @@
   "register_profile_type_subtitle": "To offer you a personalized experience we need to know you better.",
   "register_profile_type_title": "Welcome",
   "onboarding_announcement": "By registering with Talentapp, you agree to the ",
-  "onboarding_cookies": "Use of Cookies"
-  }
+  "onboarding_cookies": "Use of Cookies",
+  "delete_follower": "Remove follower",
+  "delete_follower_message": "Are you sure you want %0s to unfollow you?"
+}

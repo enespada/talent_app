@@ -218,6 +218,25 @@ class UserService extends ChangeNotifier {
     // await postsService.getFollowingPosts(userApp!);
   }
 
+  Future<void> removeFollower(UserApp followerToRemove) async {
+    final fbFirestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser;
+    final fbUser = fbFirestore.collection("users").doc(user?.uid);
+    final fbFollowerToRemove =
+        fbFirestore.collection("users").doc(followerToRemove.id!.id);
+    //Actualizamos la lista de seguidores del usuario
+    await fbUser.update({
+      "followers": FieldValue.arrayRemove([fbFollowerToRemove]),
+    });
+    //Actualizamos la lista de seguidos del usuario seguidor
+    await fbFollowerToRemove.update({
+      "following": FieldValue.arrayRemove([fbUser]),
+    });
+    userApp!.followers!
+        .removeWhere((element) => element == followerToRemove.id);
+    followers.removeWhere((element) => element.id == followerToRemove.id);
+  }
+
   Future<String> getProfileImageURL(String id) async {
     try {
       if (id == '') return '';

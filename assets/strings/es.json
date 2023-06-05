@@ -80,9 +80,11 @@
   "edit_profile_empty_fields": "Rellena los campos antes de continuar",
   "explorer": "Explorador",
   "delete_account": "Borrar cuenta",
-  "delete_account_message": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible." ,
+  "delete_account_message": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.",
   "register_profile_type_subtitle": "Para ofrecerte una experiencia personalizada necesitamos conocerte mejor.",
   "register_profile_type_title": "Te damos la\nbienvenida",
   "onboarding_announcement": "Al registrarte en Talentapp, aceptas los ",
-  "onboarding_cookies": "Uso de Cookies"
+  "onboarding_cookies": "Uso de Cookies",
+  "delete_follower": "Quitar seguidor",
+  "delete_follower_message": "¿Estás segur@ de que quieres que %0s deje de seguirte?"
 }

@@ -1,6 +1,4 @@
 // ignore_for_file: unnecessary_new
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:talent_app/models/models.dart';

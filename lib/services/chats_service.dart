@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+import 'dart:convert';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -130,8 +131,12 @@ class ChatsService extends ChangeNotifier {
                 chataux.messages!.insert(index, messageaux);
               }
             }
-            chats!.sort((a, b) => b.messages!.last.timestamp!
-                .compareTo(a.messages!.last.timestamp!));
+            chats!.sort((a, b) {
+              if (a.messages!.isEmpty) return 1;
+              if (b.messages!.isEmpty) return -1;
+              return b.messages!.last.timestamp!
+                  .compareTo(a.messages!.last.timestamp!);
+            });
             notifyListeners();
           }));
         }
@@ -225,34 +230,29 @@ class ChatsService extends ChangeNotifier {
   Future<void> newChat(Chat chat, UserApp loggedUserApp) async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
 
+    Message firstMessage = Message(
+      content: '¡Hola! Encantad@ de conocerte.',
+      timestamp: Timestamp.now(),
+      userId: loggedUserApp.id,
+      messageStatus: MessageStatus.Sending,
+    );
     //O1
     //Creamos el chat en Firestore para obtener un id
-    // final DocumentReference reference =
-    //     await fbFirestore.collection('chats').add(chat.toJson());
-    // Message firstMessage = Message(
-    //   content: '¡Hola! Encantad@ de conocerte.',
-    //   timestamp: Timestamp.now(),
-    //   userId: loggedUserApp.id,
-    //   messageStatus: MessageStatus.Sending,
-    // );
-    // await fbFirestore
-    //     .collection('chats')
-    //     .doc(reference.id)
-    //     .collection('messages')
-    //     .add(firstMessage.toJson());
+    final DocumentReference reference =
+        await fbFirestore.collection('chats').add(chat.toJson());
+    await fbFirestore
+        .collection('chats')
+        .doc(reference.id)
+        .collection('messages')
+        .add(firstMessage.toJson());
     //02:
-    // Datos para el documento y la colección
-    Map<String, dynamic> data = {
-      'campo1': 'valor1',
-      'campo2': 'valor2',
-      'nombre_de_la_coleccion_interna': [
-        {
-          'campo3': 'valor3',
-          'campo4': 'valor4',
-        }
-      ]
-    };
-    await fbFirestore.collection('chats').add({});
+    //Metemos el mensaje en el chat y lo subimos de una vez
+    // String chatIdString = Util.generateRandomString(15);
+    // final DocumentReference reference =
+    //     fbFirestore.collection('chats').doc(chatIdString);
+    // final Map<String, dynamic> newChatData = chat.toJson();
+    // newChatData.putIfAbsent('messages', () => [firstMessage.toJson()]);
+    // await reference.set(newChatData, SetOptions(merge: true));
   }
 
   void reset() {
@@ -261,6 +261,7 @@ class ChatsService extends ChangeNotifier {
       chatsListener.cancel();
     }
     chatsListeners?.clear();
+    activeChat = null;
     chats?.clear();
     chats = null;
   }
