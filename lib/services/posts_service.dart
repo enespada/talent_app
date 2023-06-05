@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path/path.dart' as p;
+import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'package:talent_app/models/models.dart';
@@ -14,6 +15,7 @@ class PostsService extends ChangeNotifier {
   List<Post>? allUsersPosts;
   bool isLoadingFollowing = false;
   bool isLoadingAll = false;
+  bool isLoadingPosts = false;
 
   PostsService() {}
 
@@ -150,6 +152,21 @@ class PostsService extends ChangeNotifier {
     for (AssetEntity selectedImage in selectedImages) {
       File file = (await selectedImage.file)!;
       String extension = p.extension(file.path);
+
+      if (['.jpg', 'jpeg', '.PNG', '.JPG'].contains(extension)) {
+        extension = '.png';
+      }
+      if (['.MP4', '.mp4'].contains(extension)) {
+        extension = '.mp4';
+        await VideoCompress.setLogLevel(0);
+        final MediaInfo? info = await VideoCompress.compressVideo(
+          file.path,
+          quality: VideoQuality.DefaultQuality,
+          deleteOrigin: false,
+          includeAudio: true,
+        );
+        if (info != null) file = File(info.path!);
+      }
 
       final Reference ref = fbStorage.ref().child(
           '${post.userId!.id}/posts/${post.id!.id}/file${selectedImages.indexOf(selectedImage)}$extension');

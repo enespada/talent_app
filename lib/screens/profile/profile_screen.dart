@@ -33,6 +33,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isFollowing = false;
+  List<Post>? userPosts;
 
   @override
   void initState() {
@@ -68,45 +69,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String followersString = Util.adaptNumFollow(followersValue);
     double followingValue = widget.userApp.following?.length.toDouble() ?? -1;
     String followingString = Util.adaptNumFollow(followingValue);
-    double publicationsValue = userService.userPosts.length.toDouble();
+    double publicationsValue =
+        (widget.isloggedUser) ? userService.userPosts.length.toDouble() : 0;
     String publicationsString = Util.adaptNumFollow(publicationsValue);
-
     if (!widget.isloggedUser) {
       isFollowing = false;
       for (DocumentReference? idFollowing in userService.userApp!.following!) {
-        // stringToCompare = idFollowing
-        //     .toString()
-        //     .split('(')[1]
-        //     .split(')')[0]
-        //     .split('/')[1];
         if (idFollowing == widget.userApp.id) {
           isFollowing = true;
           break;
         }
       }
     }
-
-    // final List<Widget> _pages = [
-    //   _PublicationsGrid(
-    //     onTap: () {
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => const PostsScreen(),
-    //         ),
-    //       );
-    //     },
-    //     posts: userService.userPosts,
-    //   ),
-    //   _PublicationsGrid(
-    //     onTap: () {},
-    //     posts: [],
-    //   ),
-    //   _PublicationsGrid(
-    //     onTap: () {},
-    //     posts: [],
-    //   ),
-    // ];
 
     return Scaffold(
       //----------------------------------appBar----------------------------------
@@ -456,104 +430,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Divider(),
               SizedBox(height: responsive.heightPercent(1.5)),
 
-              // //---------------Publicaciones, retos y guardados--------------
-              // Column(
-              //   children: [
-              //     const Divider(),
-              //     Container(
-              //       padding: EdgeInsets.symmetric(
-              //         vertical: responsive.heightPercent(1),
-              //       ),
-              //       width: responsive.widthPercent(75),
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           //----------------------Posts------------------------
-              //           GestureDetector(
-              //             onTap: () {
-              //               _selectedPage = 0;
-              //               setState(() {});
-              //             },
-              //             child: Icon(
-              //               Icons.apps_sharp,
-              //               color: (_selectedPage == 0)
-              //                   ? AppColors.blueColor
-              //                   : AppColors.greyscale1,
-              //               size: responsive.widthPercent(8),
-              //             ),
-              //           ),
-
-              //           //--------------------Challenges---------------------
-              //           GestureDetector(
-              //             onTap: () {
-              //               _selectedPage = 1;
-              //               setState(() {});
-              //             },
-              //             child: Icon(
-              //               Icons.play_circle_outline,
-              //               color: (_selectedPage == 1)
-              //                   ? AppColors.blueColor
-              //                   : AppColors.greyscale1,
-              //               size: responsive.widthPercent(8),
-              //             ),
-              //           ),
-
-              //           //-----------------------Saved-----------------------
-              //           GestureDetector(
-              //             onTap: () {
-              //               _selectedPage = 2;
-              //               setState(() {});
-              //             },
-              //             child: Icon(
-              //               Icons.bookmark_border_rounded,
-              //               color: (_selectedPage == 2)
-              //                   ? AppColors.blueColor
-              //                   : AppColors.greyscale1,
-              //               size: responsive.widthPercent(8),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     const Divider(),
-              //   ],
-              // ),
-
-              // Expanded(child: _pages[_selectedPage]),
-              (userService.userPosts.isEmpty)
-                  ? Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                      ),
-                      child: Center(
-                        child: Text(
-                          Localization.of(context).string("no_posts_to_show"),
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+              //---------------Publicaciones, retos y guardados------------------
+              (widget.isloggedUser)
+                  ? (userService.userPosts.isEmpty)
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            top: 20,
+                            left: 20,
+                            right: 20,
+                          ),
+                          child: Center(
+                            child: Text(
+                              Localization.of(context)
+                                  .string("no_posts_to_show"),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
                                     color: AppColors.greyscale2,
                                     fontSize: responsive.diagonalPercent(2.5),
                                   ),
-                        ),
-                      ),
-                    )
-                  : Expanded(
-                      child: PublicationsGrid(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PostsListScreen(
-                                title: Localization.of(context)
-                                    .string('posts_screen_my_posts'),
-                                posts: userService.userPosts,
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: PublicationsGrid(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostsListScreen(
+                                    title: Localization.of(context)
+                                        .string('posts_screen_my_posts'),
+                                    posts: userService.userPosts,
+                                  ),
+                                ),
+                              );
+                            },
+                            posts: userService.userPosts,
+                          ),
+                        )
+                  : FutureBuilder(
+                      future: postsService.getUserPosts(widget.userApp),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<Post> futurePosts = snapshot.data as List<Post>;
+                          publicationsValue = futurePosts.length.toDouble();
+                          publicationsString =
+                              Util.adaptNumFollow(publicationsValue);
+                          if (futurePosts.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 20,
+                                left: 20,
+                                right: 20,
                               ),
+                              child: Center(
+                                child: Text(
+                                  Localization.of(context)
+                                      .string("no_posts_to_show"),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        color: AppColors.greyscale2,
+                                        fontSize:
+                                            responsive.diagonalPercent(2.5),
+                                      ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Expanded(
+                              child: PublicationsGrid(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PostsListScreen(
+                                        title: Localization.of(context)
+                                            .string('posts_screen_my_posts'),
+                                        posts: futurePosts,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                posts: futurePosts,
+                              ),
+                            );
+                          }
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.blueColor,
                             ),
                           );
-                        },
-                        posts: userService.userPosts,
-                      ),
+                        }
+                      },
                     ),
             ],
           ),
