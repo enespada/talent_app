@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_this
+// ignore_for_file: unnecessary_this, use_build_context_synchronously
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
     );
     final ChatsService chatsService = Provider.of<ChatsService>(
       context,
-      listen: false,
+      listen: true,
     );
 
     final Responsive responsive = Responsive.of(context);
@@ -53,10 +53,6 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // HeaderPublication(
-        //   responsive: responsive,
-        //   onPopupSelected: (item) {},
-        // ),
         Container(
           margin: const EdgeInsets.only(bottom: 2),
           height: responsive.heightPercent(40),
@@ -92,17 +88,36 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                   left: responsive.widthPercent(5),
                   child: GestureDetector(
                     onTap: () async {
-                      //TODO: comprobar si el chat ya existe
-                      Chat chat = Chat(
-                        messages: [],
-                        name: null,
-                        users: [userService.userApp!.id!, widget.post.userId!],
-                      );
-                      await chatsService.newChat(chat);
-                      Navigator.pushReplacementNamed(
-                        context,
-                        ChatsScreen.routeName,
-                      );
+                      //Comprobamos si el chat ya existe
+                      Chat? chatIfExists;
+                      for (Chat chat in chatsService.chats ?? []) {
+                        if (chat.users!.contains(widget.post.userId)) {
+                          chatIfExists = chat;
+                          break;
+                        }
+                      }
+                      if (chatIfExists == null) {
+                        Chat chat = Chat(
+                          messages: [],
+                          name: null,
+                          users: [
+                            userService.userApp!.id!,
+                            widget.post.userId!
+                          ],
+                        );
+                        await chatsService.newChat(chat, userService.userApp!);
+                        Navigator.pushReplacementNamed(
+                          context,
+                          ChatsScreen.routeName,
+                        );
+                      } else {
+                        await Util.operationsBeforeChatScreen(
+                          context,
+                          chatsService,
+                          chatIfExists,
+                          userService.userApp!,
+                        );
+                      }
                     },
                     child: const Icon(
                       Icons.send,
@@ -150,8 +165,9 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProfileScreen(
-                                            userApp: widget.post.userApp!,
-                                            isloggedUser: false),
+                                          userApp: widget.post.userApp!,
+                                          isloggedUser: false,
+                                        ),
                                       ),
                                     );
                                   },

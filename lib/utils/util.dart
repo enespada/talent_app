@@ -4,6 +4,10 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:talent_app/models/chat.dart';
+import 'package:talent_app/models/user_app.dart';
+import 'package:talent_app/screens/screens.dart';
+import 'package:talent_app/services/chats_service.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 
@@ -168,8 +172,28 @@ class Util {
   static String generateRandomString(int length) {
     final random = Random.secure();
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    return String.fromCharCodes(Iterable.generate(
-        length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+    return String.fromCharCodes(
+      Iterable.generate(
+        length,
+        (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+      ),
+    );
+  }
+
+  static Future<void> operationsBeforeChatScreen(
+    BuildContext context,
+    ChatsService chatsService,
+    Chat chat,
+    UserApp loggedUserApp,
+  ) async {
+    chatsService.activeChat = chat;
+    await chatsService.readMessages(chat, loggedUserApp);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(chat: chat),
+      ),
+    );
   }
 
   //   Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {

@@ -21,9 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String homeAppBarTitle = '';
-  HomeMenuOption _selectedHomeMenuOption = HomeMenuOption.publications;
   final pageController = PageController();
-  bool _isAthlete = false;
 
   @override
   void initState() {
@@ -32,8 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
     final PostsService postsService = Provider.of<PostsService>(context);
+
+    final Responsive responsive = Responsive.of(context);
 
     return Scaffold(
       //--------------------------------appBar------------------------------------
@@ -47,20 +46,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: (postsService.followingUsersPosts!.isEmpty)
-            ? Padding(
-                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                child: Center(
-                  child: Text(
-                    Localization.of(context).string("no_posts_to_show"),
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: AppColors.greyscale2,
-                          fontSize: responsive.diagonalPercent(2.8),
-                        ),
-                  ),
+        child: (postsService.isLoadingFollowing)
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.blueColor,
                 ),
               )
-            : PostsListWidget(posts: postsService.followingUsersPosts!),
+            : (postsService.followingUsersPosts!.isEmpty)
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Center(
+                      child: Text(
+                        Localization.of(context).string("no_posts_to_show"),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: AppColors.greyscale2,
+                              fontSize: responsive.diagonalPercent(2.8),
+                            ),
+                      ),
+                    ),
+                  )
+                : PostsListWidget(posts: postsService.followingUsersPosts!),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------

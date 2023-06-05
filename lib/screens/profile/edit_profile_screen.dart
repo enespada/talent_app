@@ -201,23 +201,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       EditProfileFact(
-                        text: Localization.of(context)
-                            .string('wall_profile_birthdate'),
+                        text: Localization.of(context).string(
+                          'wall_profile_birthdate',
+                        ),
                         textEditingController: editProfileProvider.tecbirthdate,
                         isbirthdate: true,
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       EditProfileFact(
-                        text: Localization.of(context)
-                            .string('wall_profile_country'),
+                        text: Localization.of(context).string(
+                          'wall_profile_country',
+                        ),
                         textEditingController: editProfileProvider.tecCountry,
                       ),
                       SizedBox(height: spaceBetweenFacts + 30),
 
                       //-------------------Categoría deportiva--------------------
                       Text(
-                        Localization.of(context)
-                            .string('wall_profile_sport_category'),
+                        Localization.of(context).string(
+                          'wall_profile_sport_category',
+                        ),
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               fontSize: responsive.diagonalPercent(3),
                               fontWeight: FontWeight.bold,
@@ -225,8 +228,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       _WallProfileDropdownFactSports(
-                        text: Localization.of(context)
-                            .string('wall_profile_sport'),
+                        text: Localization.of(context).string(
+                          'wall_profile_sport',
+                        ),
                         dropdownOptions: sportsService.sports,
                         dropdownValue: editProfileProvider.sport,
                         onChanged: (Sport? newValue) async {
@@ -240,8 +244,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       SizedBox(height: spaceBetweenFacts),
                       _WallProfileDropdownFactModalities(
-                        text: Localization.of(context)
-                            .string('wall_profile_modality'),
+                        text: Localization.of(context).string(
+                          'wall_profile_modality',
+                        ),
                         dropdownOptions: modalitiesService.modalities,
                         dropdownValue: editProfileProvider.modality,
                         onChanged: (Modality? newValue) {
@@ -257,8 +262,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: YellowTextButton(
-                            title: Localization.of(context)
-                                .string('wall_profile_save_changes'),
+                            title: Localization.of(context).string(
+                              'wall_profile_save_changes',
+                            ),
                             onPressed: (userService.isLoading)
                                 ? null
                                 : () async {

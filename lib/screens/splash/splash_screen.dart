@@ -36,6 +36,10 @@ class SplashScreen extends StatelessWidget {
       context,
       listen: false,
     );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: false,
+    );
     final SportsService sportsService = Provider.of<SportsService>(
       context,
       listen: false,
@@ -76,6 +80,7 @@ class SplashScreen extends StatelessWidget {
         );
         return;
       } else {
+        await chatsService.getUserChats(userService.userApp!);
         postsService.getFollowingPosts(userService.userApp!);
         Navigator.pushReplacementNamed(context, HomeScreen.routeName);
         return;

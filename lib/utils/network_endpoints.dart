@@ -1,5 +1,5 @@
 class NetworkEndpoints {
-  static const String FirebaseStorageBaseUrl =
+  static const String firebaseStorageBaseUrl =
       'gs://talent-app-f191f.appspot.com';
   static const String _baseUrl =
       "https://us-central1-talentapp-dev-c0fad.cloudfunctions.n";

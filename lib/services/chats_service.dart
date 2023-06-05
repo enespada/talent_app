@@ -23,18 +23,17 @@ class ChatsService extends ChangeNotifier {
 
     if (chats != null) chats!.clear();
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
-    chats = [];
     final chatsSnapshots = fbFirestore
         .collection('chats')
         .where('users', arrayContains: loggedUserApp.id)
         .snapshots();
-    QuerySnapshot<Map<String, dynamic>> chatsData = await chatsSnapshots.first;
-    for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
-        in chatsData.docs) {
-      Chat chataux = Chat.fromJson(chatDoc.data());
-      chataux.id = chatDoc.reference;
-      await bringUser(chataux, loggedUserApp);
-    }
+    // QuerySnapshot<Map<String, dynamic>> chatsData = await chatsSnapshots.first;
+    // for (QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
+    //     in chatsData.docs) {
+    //   Chat chataux = Chat.fromJson(chatDoc.data());
+    //   chataux.id = chatDoc.reference;
+    //   await bringUser(chataux, loggedUserApp);
+    // }
     chatsListeners ??= [];
     chatsListeners!.add(chatsSnapshots
         .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
@@ -43,11 +42,15 @@ class ChatsService extends ChangeNotifier {
           in snapshot.docs) {
         bool isNewChat = true;
         //Recorremos los viejos chats
-        for (Chat chat in chats!) {
-          if (chat.id == chatDoc.reference) {
-            isNewChat = false;
-            break;
+        if (chats != null) {
+          for (Chat chat in chats!) {
+            if (chat.id == chatDoc.reference) {
+              isNewChat = false;
+              break;
+            }
           }
+        } else {
+          chats = [];
         }
         //Si hay un nuevo chat
         if (isNewChat) {
@@ -148,10 +151,9 @@ class ChatsService extends ChangeNotifier {
     } else {
       for (DocumentReference userId in chat.users!) {
         if (userId != loggedUserApp.id) {
-          // userApp = await userId.get();
-          DocumentSnapshot<Object?> value = await userId.get();
+          DocumentSnapshot<Object?> doc = await userId.get();
           UserApp chatUser =
-              UserApp.fromJson(value.data() as Map<String, dynamic>);
+              UserApp.fromJson(doc.data() as Map<String, dynamic>);
           chatUser.id = userId;
           chat.userApp = chatUser;
           return;
@@ -199,7 +201,7 @@ class ChatsService extends ChangeNotifier {
         }
         final storageRef = await FirebaseStorage.instance
             .refFromURL(
-                "${NetworkEndpoints.FirebaseStorageBaseUrl}/$destinationUserId/profile.png")
+                "${NetworkEndpoints.firebaseStorageBaseUrl}/$destinationUserId/profile.png")
             .getDownloadURL();
         chat.urlImage = storageRef.toString();
         return storageRef.toString();
@@ -210,7 +212,7 @@ class ChatsService extends ChangeNotifier {
     } catch (e) {
       final storageRef = await FirebaseStorage.instance
           .refFromURL(
-              "${NetworkEndpoints.FirebaseStorageBaseUrl}/default_images/profile.png")
+              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/profile.png")
           .getDownloadURL();
       return storageRef.toString();
     }
@@ -220,17 +222,37 @@ class ChatsService extends ChangeNotifier {
     await chat.id!.collection('messages').add(message.toJson());
   }
 
-  Future<Chat> newChat(Chat chat) async {
+  Future<void> newChat(Chat chat, UserApp loggedUserApp) async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+
+    //O1
     //Creamos el chat en Firestore para obtener un id
-    final DocumentReference reference =
-        await fbFirestore.collection('chats').add(chat.toJson());
-    //Ponemos la referencia para poder ir a la chatScreen
-    chat.id = reference;
-    // if (chats != null) {
-    //   chats!.add(chat);
-    // }
-    return chat;
+    // final DocumentReference reference =
+    //     await fbFirestore.collection('chats').add(chat.toJson());
+    // Message firstMessage = Message(
+    //   content: '¡Hola! Encantad@ de conocerte.',
+    //   timestamp: Timestamp.now(),
+    //   userId: loggedUserApp.id,
+    //   messageStatus: MessageStatus.Sending,
+    // );
+    // await fbFirestore
+    //     .collection('chats')
+    //     .doc(reference.id)
+    //     .collection('messages')
+    //     .add(firstMessage.toJson());
+    //02:
+    // Datos para el documento y la colección
+    Map<String, dynamic> data = {
+      'campo1': 'valor1',
+      'campo2': 'valor2',
+      'nombre_de_la_coleccion_interna': [
+        {
+          'campo3': 'valor3',
+          'campo4': 'valor4',
+        }
+      ]
+    };
+    await fbFirestore.collection('chats').add({});
   }
 
   void reset() {

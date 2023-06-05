@@ -161,20 +161,18 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushNamed(context, UploadPostHomeScreen.routeName);
             break;
           case 3:
-            // context.navigatePopReplacing(MessagesHomePage());
-            if (chatsService.chats == null) {
-              await chatsService.getUserChats(userService.userApp!);
-            } else {
-              for (StreamSubscription<
-                      QuerySnapshot<Map<String, dynamic>>> element
-                  in chatsService.chatsListeners ?? []) {
-                element.resume();
-              }
-            }
+            // if (chatsService.chats == null) {
+            //   await chatsService.getUserChats(userService.userApp!);
+            // } else {
+            //   for (StreamSubscription<
+            //           QuerySnapshot<Map<String, dynamic>>> element
+            //       in chatsService.chatsListeners ?? []) {
+            //     element.resume();
+            //   }
+            // }
             Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
             break;
           case 4:
-            // context.navigatePopReplacing(const WallHomePage());
             if (userService.userPosts.isEmpty) await userService.getPosts();
             Navigator.pushReplacement(
               context,

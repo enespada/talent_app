@@ -330,14 +330,29 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                               );
                             },
                           ),
-                          title: Text(
-                            usersToShow[index].fullName!,
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      fontSize: responsive.widthPercent(4),
-                                      fontWeight: FontWeight.w700,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                          title: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(
+                                    userApp: usersToShow[index],
+                                    isloggedUser: false,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              usersToShow[index].fullName!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontSize: responsive.widthPercent(4),
+                                    fontWeight: FontWeight.w700,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                            ),
                           ),
                           subtitle: Text(
                             typeString(context, usersToShow[index].type ?? ''),

@@ -111,11 +111,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       //----------------------------------appBar----------------------------------
       appBar: CustomAppBar(
-        title: Localization.of(context).string('wall_home_title'),
+        title: (widget.isloggedUser)
+            ? Localization.of(context).string('wall_home_title')
+            : Localization.of(context).string('profile'),
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontSize: responsive.diagonalPercent(3),
               fontWeight: FontWeight.bold,
             ),
+        leading: (!widget.isloggedUser)
+            ? GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.blueColor,
+                  size: responsive.heightPercent(3),
+                ),
+              )
+            : null,
       ),
 
       //----------------------------------body----------------------------------
@@ -173,6 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     fontSize: responsive.diagonalPercent(2.5),
                                     fontWeight: FontWeight.bold,
                                   ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: responsive.heightPercent(0.8)),
 
@@ -260,57 +273,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         Visibility(
                           visible: !widget.isloggedUser,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              //----------------Seguir/Siguiendo-----------------------
-                              SizedBox(
-                                width: responsive.widthPercent(25),
-                                child: MaterialButton(
-                                  child: Text(
-                                    (isFollowing)
-                                        ? Localization.of(context)
-                                            .string("wall_followers_following")
-                                        : Localization.of(context)
-                                            .string("wall_followers_follow"),
-                                    style: TextStyle(
-                                      fontSize: responsive.diagonalPercent(1.7),
-                                    ),
-                                  ),
-                                  textColor: (isFollowing)
-                                      ? AppColors.brandColor
-                                      : AppColors.whiteColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 0.0,
-                                  color: (isFollowing)
-                                      ? AppColors.whiteColor
-                                      : AppColors.brandColor,
-                                  onPressed: (isFollowing)
-                                      ? () async {
-                                          //Opcion Siguiendo
-                                          await userService.unfollow(
-                                            widget.userApp,
-                                          );
-                                          await postsService.getFollowingPosts(
-                                            userService.userApp!,
-                                          );
-                                          setState(() {});
-                                        }
-                                      : () async {
-                                          //Opcion Seguir
-                                          await userService.follow(
-                                            widget.userApp,
-                                          );
-                                          await postsService.getFollowingPosts(
-                                            userService.userApp!,
-                                          );
-                                          setState(() {});
-                                        },
+                          child: SizedBox(
+                            width: responsive.width,
+                            child: MaterialButton(
+                              textColor: (isFollowing)
+                                  ? AppColors.brandColor
+                                  : AppColors.whiteColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0.0,
+                              color: (isFollowing)
+                                  ? AppColors.whiteColor
+                                  : AppColors.brandColor,
+                              onPressed: (isFollowing)
+                                  ? () async {
+                                      //Opcion Siguiendo
+                                      await userService.unfollow(
+                                        widget.userApp,
+                                      );
+                                      await postsService.getFollowingPosts(
+                                        userService.userApp!,
+                                      );
+                                      setState(() {});
+                                    }
+                                  : () async {
+                                      //Opcion Seguir
+                                      await userService.follow(
+                                        widget.userApp,
+                                      );
+                                      await postsService.getFollowingPosts(
+                                        userService.userApp!,
+                                      );
+                                      setState(() {});
+                                    },
+                              child: Text(
+                                (isFollowing)
+                                    ? Localization.of(context)
+                                        .string("wall_followers_following")
+                                    : Localization.of(context)
+                                        .string("wall_followers_follow"),
+                                style: TextStyle(
+                                  fontSize: responsive.diagonalPercent(1.7),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ],
@@ -554,9 +561,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
 
       //-------------------------CustomBottomNavigationBar------------------------
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: (!widget.isloggedUser) ? 1 : 4,
-      ),
+      bottomNavigationBar: (!widget.isloggedUser)
+          ? null
+          : const CustomBottomNavigationBar(
+              selectedIndex: 4,
+            ),
     );
   }
 }

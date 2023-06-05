@@ -21,15 +21,11 @@ class RegisterUserTypeScreen extends StatefulWidget {
 }
 
 class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
-  // static const String routeName = 'profile_other_page';
-
   int _selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
-    // final Size size = MediaQuery.of(context).size;
     final Responsive responsive = Responsive.of(context);
-    final AuthService authService = Provider.of<AuthService>(context);
 
     List<String> type = ["athlete", "scouter", "manager"];
 
@@ -64,8 +60,9 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
 
                   //---------------------------Titulo----------------------------
                   Text(
-                    Localization.of(context)
-                        .string('register_profile_type_title'),
+                    Localization.of(context).string(
+                      'register_profile_type_title',
+                    ),
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(5),
                         ),
@@ -74,8 +71,9 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
 
                   //------------------------Subtitulo----------------------------
                   Text(
-                    Localization.of(context)
-                        .string('register_profile_type_subtitle'),
+                    Localization.of(context).string(
+                      'register_profile_type_subtitle',
+                    ),
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontSize: responsive.diagonalPercent(2.3),
                         ),
@@ -92,8 +90,6 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                       return GestureDetector(
                         onTap: () {
                           _selectedIndex = index;
-                          // widget.user?.type = type[index];
-                          // authService.userApp?.type = type[index];
                           setState(() {});
                         },
                         child: CustomCheck(
@@ -120,27 +116,25 @@ class _RegisterUserTypeScreenState extends State<RegisterUserTypeScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: responsive.heightPercent(14)),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: YellowTextButton(
-                      title: Localization.of(context).string('btn_next'),
-                      backgroundDisabled: AppColors.greyscale1,
-                      foregroundDisabled: AppColors.greyscale4,
-                      onPressed: (_selectedIndex != -1)
-                          ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterScreen(
-                                    userType: type[_selectedIndex],
-                                  ),
+                  SizedBox(height: responsive.heightPercent(5)),
+
+                  //---------------------Boton continuar--------------------------
+                  YellowTextButton(
+                    title: Localization.of(context).string('btn_next'),
+                    backgroundDisabled: AppColors.greyscale1,
+                    foregroundDisabled: AppColors.greyscale4,
+                    onPressed: (_selectedIndex != -1)
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterScreen(
+                                  userType: type[_selectedIndex],
                                 ),
-                              );
-                            }
-                          : null,
-                    ),
+                              ),
+                            );
+                          }
+                        : null,
                   ),
                 ],
               ),

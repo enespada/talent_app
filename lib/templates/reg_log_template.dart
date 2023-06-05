@@ -48,6 +48,10 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
       context,
       listen: false,
     );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: false,
+    );
     final SportsService sportsService = Provider.of<SportsService>(
       context,
       listen: false,
@@ -92,7 +96,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   ),
                   SizedBox(height: responsive.heightPercent(3)),
 
-                  //---------------------------Subtitulo-------------------------
+                  //-----------------------Subtitulo-----------------------------
                   Text(
                     widget.subtitle,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -101,110 +105,105 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                   ),
                   SizedBox(height: responsive.heightPercent(5)),
 
-                  //----------------------Registro/Login---------------------------
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //-----------------------Email------------------------------
-                      Text(
-                        Localization.of(context).string('sign_in_username'),
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
-                            ),
+                  //-----------------------Email------------------------------
+                  Text(
+                    Localization.of(context).string('sign_in_username'),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                  ),
+                  SizedBox(height: responsive.heightPercent(2)),
+                  TextFormField(
+                    controller: _tecEmail,
+                    keyboardType: TextInputType.emailAddress,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                    onChanged: (String value) {
+                      _isValidEmail = value.contains(RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"));
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 25,
+                        vertical: 14,
                       ),
-                      SizedBox(height: responsive.heightPercent(2)),
-                      TextFormField(
-                        controller: _tecEmail,
-                        keyboardType: TextInputType.emailAddress,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
-                            ),
-                        onChanged: (String value) {
-                          _isValidEmail = value.contains(RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"));
+                      filled: true,
+                      fillColor: AppColors.lightGrey,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      hintText: Localization.of(context)
+                          .string('sign_in_username_hint'),
+                      suffixIcon: InkWell(
+                        borderRadius: BorderRadius.circular(50),
+                        onTap: () {
+                          _tecEmail.clear();
                           setState(() {});
                         },
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 14,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.lightGrey,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          hintText: Localization.of(context)
-                              .string('sign_in_username_hint'),
-                          suffixIcon: InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () {
-                              _tecEmail.clear();
-                              setState(() {});
-                            },
-                            child: const Icon(
-                              Icons.cancel_outlined,
-                              color: AppColors.blackColor,
-                              size: 18,
-                            ),
-                          ),
+                        child: const Icon(
+                          Icons.cancel_outlined,
+                          color: AppColors.blackColor,
+                          size: 18,
                         ),
                       ),
-                      SizedBox(height: responsive.heightPercent(3)),
+                    ),
+                  ),
+                  SizedBox(height: responsive.heightPercent(3)),
 
-                      //-----------------------Password------------------------------
-                      Text(
-                        Localization.of(context).string('sign_in_password'),
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
-                            ),
+                  //-----------------------Password------------------------------
+                  Text(
+                    Localization.of(context).string('sign_in_password'),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                  ),
+                  SizedBox(height: responsive.heightPercent(2)),
+                  TextFormField(
+                    controller: _tecPassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: _passwordHidden,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: responsive.diagonalPercent(2.1),
+                        ),
+                    onChanged: (String value) {
+                      _isValidPwd = value.length >= 6;
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                        horizontal: 25.0,
                       ),
-                      SizedBox(height: responsive.heightPercent(2)),
-                      TextFormField(
-                        controller: _tecPassword,
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: _passwordHidden,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: responsive.diagonalPercent(2.1),
-                            ),
-                        onChanged: (String value) {
-                          _isValidPwd = value.length >= 6;
+                      filled: true,
+                      fillColor: AppColors.lightGrey,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      hintText: Localization.of(context)
+                          .string('sign_in_password_hint'),
+                      suffixIcon: InkWell(
+                        borderRadius: BorderRadius.circular(50),
+                        onTap: () {
+                          _passwordHidden = !_passwordHidden;
                           setState(() {});
                         },
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14.0,
-                            horizontal: 25.0,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.lightGrey,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          hintText: Localization.of(context)
-                              .string('sign_in_password_hint'),
-                          suffixIcon: InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () {
-                              _passwordHidden = !_passwordHidden;
-                              setState(() {});
-                            },
-                            child: Icon(
-                              _passwordHidden
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: AppColors.blackColor,
-                              size: 18,
-                            ),
-                          ),
+                        child: Icon(
+                          _passwordHidden
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.blackColor,
+                          size: 18,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: responsive.heightPercent(5)),
 
+                  //-------------------------Boton-------------------------------
                   YellowTextButton(
                     title: widget.buttonText,
                     backgroundDisabled: AppColors.greyscale1,
@@ -220,10 +219,13 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 _tecPassword.text,
                               );
                               if (loginResult == null) {
-                                print('Login correcto');
                                 await userService.getUser();
-                                postsService
-                                    .getFollowingPosts(userService.userApp!);
+                                await chatsService.getUserChats(
+                                  userService.userApp!,
+                                );
+                                postsService.getFollowingPosts(
+                                  userService.userApp!,
+                                );
                                 //Si el usuario no completo sus datos en el registro
                                 //le obligamos a completarlos
                                 if (userService.userApp!.userName!.isEmpty) {
@@ -298,8 +300,12 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                     ),
                                   );
                                 } else {
-                                  postsService
-                                      .getFollowingPosts(userService.userApp!);
+                                  await chatsService.getUserChats(
+                                    userService.userApp!,
+                                  );
+                                  postsService.getFollowingPosts(
+                                    userService.userApp!,
+                                  );
                                   Navigator.pushReplacementNamed(
                                     context,
                                     HomeScreen.routeName,

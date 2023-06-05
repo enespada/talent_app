@@ -129,40 +129,11 @@ class _ChatWidget extends StatefulWidget {
 }
 
 class _ChatWidgetState extends State<_ChatWidget> {
-  //TODO: Change these variables for chat entity
   final int newMessagesNumber = 0;
-  final bool isOnline = false;
-  // UserApp? userApp;
-
-  // Future<void> bringUser(UserService userService) async {
-  //   //Si es un grupo (widget.chat.users!.length > 2)
-  //   if (widget.chat.name != null) {
-  //     //TODO GRUPOS: Traer imagen del grupo del Storage y el nombre del grupo
-  //   } else {
-  //     for (DocumentReference userId in widget.chat.users!) {
-  //       if (userId != userService.userApp!.id) {
-  //         // userApp = await userId.get();
-  //         userId.get().then((DocumentSnapshot<Object?> value) {
-  //           userApp = UserApp.fromJson(value.data() as Map<String, dynamic>);
-  //           setState(() {});
-  //           return;
-  //         });
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
 
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   final UserService userService = Provider.of<UserService>(
-    //     context,
-    //     listen: false,
-    //   );
-    //   bringUser(userService);
-    // });
   }
 
   @override
@@ -216,13 +187,11 @@ class _ChatWidgetState extends State<_ChatWidget> {
         //   widget.chat,
         //   userService.userApp!,
         // );
-        chatsService.activeChat = widget.chat;
-        await chatsService.readMessages(widget.chat, userService.userApp!);
-        Navigator.push(
+        await Util.operationsBeforeChatScreen(
           context,
-          MaterialPageRoute(
-            builder: (context) => ChatScreen(chat: widget.chat),
-          ),
+          chatsService,
+          widget.chat,
+          userService.userApp!,
         );
       },
       child: Container(

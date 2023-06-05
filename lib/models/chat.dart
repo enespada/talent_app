@@ -5,10 +5,11 @@ import 'package:talent_app/models/models.dart';
 class Chat {
   DocumentReference? id;
   String? name;
-  List<DocumentReference>? users;
   String? urlImage;
+  List<DocumentReference>? users;
   List<Message>? messages;
   //Parametros que no estan en firebase
+  //Usuario contrario al logueado
   UserApp? userApp;
 
   Chat({
@@ -21,24 +22,19 @@ class Chat {
 
   Chat.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    urlImage = json['urlImage'];
     users = [];
     for (dynamic aux in json['users']) {
       if (aux != null) users?.add(aux as DocumentReference);
     }
-    messages = json['messages'];
-    // messages = [];
-    // for (dynamic messageData in json['messages']) {
-    //   messages!.add(Message.fromJson(messageData));
-    // }
+    messages = [];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
+    data['urlImage'] = urlImage;
     data['users'] = users;
-    data['messages'] = messages;
-    // data['messages'] = messages;
-
     return data;
   }
 }
