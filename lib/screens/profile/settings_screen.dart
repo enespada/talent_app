@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:talent_app/models/user_app.dart';
 
 import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';

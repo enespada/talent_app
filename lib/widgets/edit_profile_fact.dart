@@ -7,16 +7,14 @@ import 'package:talent_app/utils/utils.dart';
 class EditProfileFact extends StatefulWidget {
   final String text;
   final TextEditingController? textEditingController;
-  bool? isbirthdate;
+  final bool? isbirthdate;
 
-  EditProfileFact({
+  const EditProfileFact({
     Key? key,
     this.text = '',
     this.textEditingController,
-    this.isbirthdate,
-  }) : super(key: key) {
-    isbirthdate ??= false;
-  }
+    this.isbirthdate = false,
+  }) : super(key: key);
 
   @override
   State<EditProfileFact> createState() => _EditProfileFactState();

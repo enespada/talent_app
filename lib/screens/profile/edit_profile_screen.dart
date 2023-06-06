@@ -14,10 +14,8 @@ import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-//WallProfilePage
 class EditProfileScreen extends StatefulWidget {
   static const String routeName = 'edit_profile_screen';
-
   bool? isProfileCompleted;
 
   EditProfileScreen({
@@ -55,6 +53,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       MaterialPageRoute(
         builder: (context) => ProfileScreen(
           userApp: userService.userApp!,
+          userPosts: userService.userPosts,
           isloggedUser: true,
         ),
       ),
@@ -104,6 +103,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   MaterialPageRoute(
                     builder: (context) => ProfileScreen(
                       userApp: userService.userApp!,
+                      userPosts: userService.userPosts,
                       isloggedUser: true,
                     ),
                   ),

@@ -19,11 +19,13 @@ class ProfileScreen extends StatefulWidget {
   static const String routeName = 'profile_screen';
 
   final UserApp userApp;
+  final List<Post> userPosts;
   final bool isloggedUser;
 
   const ProfileScreen({
     Key? key,
     required this.userApp,
+    required this.userPosts,
     required this.isloggedUser,
   }) : super(key: key);
 
@@ -33,7 +35,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isFollowing = false;
-  List<Post>? userPosts;
 
   @override
   void initState() {
@@ -69,8 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String followersString = Util.adaptNumFollow(followersValue);
     double followingValue = widget.userApp.following?.length.toDouble() ?? -1;
     String followingString = Util.adaptNumFollow(followingValue);
-    double publicationsValue =
-        (widget.isloggedUser) ? userService.userPosts.length.toDouble() : 0;
+    double publicationsValue = widget.userPosts.length.toDouble();
     String publicationsString = Util.adaptNumFollow(publicationsValue);
     if (!widget.isloggedUser) {
       isFollowing = false;
@@ -431,103 +431,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: responsive.heightPercent(1.5)),
 
               //---------------Publicaciones, retos y guardados------------------
-              (widget.isloggedUser)
-                  ? (userService.userPosts.isEmpty)
-                      ? Padding(
-                          padding: const EdgeInsets.only(
-                            top: 20,
-                            left: 20,
-                            right: 20,
-                          ),
-                          child: Center(
-                            child: Text(
-                              Localization.of(context)
-                                  .string("no_posts_to_show"),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(
+              (widget.userPosts.isEmpty)
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          Localization.of(context).string("no_posts_to_show"),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: AppColors.greyscale2,
                                     fontSize: responsive.diagonalPercent(2.5),
                                   ),
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: PublicationsGrid(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PostsListScreen(
-                                    title: Localization.of(context)
-                                        .string('posts_screen_my_posts'),
-                                    posts: userService.userPosts,
-                                  ),
-                                ),
-                              );
-                            },
-                            posts: userService.userPosts,
-                          ),
-                        )
-                  : FutureBuilder(
-                      future: postsService.getUserPosts(widget.userApp),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<Post> futurePosts = snapshot.data as List<Post>;
-                          publicationsValue = futurePosts.length.toDouble();
-                          publicationsString =
-                              Util.adaptNumFollow(publicationsValue);
-                          if (futurePosts.isEmpty) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                top: 20,
-                                left: 20,
-                                right: 20,
+                        ),
+                      ),
+                    )
+                  : Expanded(
+                      child: PublicationsGrid(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PostsListScreen(
+                                title: Localization.of(context)
+                                    .string('posts_screen_my_posts'),
+                                posts: widget.userPosts,
                               ),
-                              child: Center(
-                                child: Text(
-                                  Localization.of(context)
-                                      .string("no_posts_to_show"),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: AppColors.greyscale2,
-                                        fontSize:
-                                            responsive.diagonalPercent(2.5),
-                                      ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Expanded(
-                              child: PublicationsGrid(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PostsListScreen(
-                                        title: Localization.of(context)
-                                            .string('posts_screen_my_posts'),
-                                        posts: futurePosts,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                posts: futurePosts,
-                              ),
-                            );
-                          }
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.blueColor,
                             ),
                           );
-                        }
-                      },
-                    ),
+                        },
+                        posts: widget.userPosts,
+                      ),
+                    )
             ],
           ),
         ),

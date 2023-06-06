@@ -6,11 +6,11 @@ import 'package:talent_app/utils/utils.dart';
 class CustomCheck extends StatelessWidget {
   final String? title;
   final int currentIndex;
-  Color? color;
+  final Color? color;
   final Widget check;
   final TextStyle? textStyle;
 
-  CustomCheck({
+  const CustomCheck({
     Key? key,
     required this.currentIndex,
     required this.color,

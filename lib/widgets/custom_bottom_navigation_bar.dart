@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,7 +28,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserService userService = Provider.of<UserService>(context);
     final PostsService postsService = Provider.of<PostsService>(context);
-    final ChatsService chatsService = Provider.of<ChatsService>(context);
 
     final Responsive responsive = Responsive.of(context);
 
@@ -179,6 +175,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   userApp: userService.userApp!,
+                  userPosts: userService.userPosts,
                   isloggedUser: true,
                 ),
               ),

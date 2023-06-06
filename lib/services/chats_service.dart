@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/utils/utils.dart';

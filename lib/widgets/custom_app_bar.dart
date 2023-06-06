@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:talent_app/style/styles.dart';
-import 'package:talent_app/utils/responsive.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -24,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Responsive responsive = Responsive.of(context);
+    // final Responsive responsive = Responsive.of(context);
 
     return AppBar(
       elevation: 0,

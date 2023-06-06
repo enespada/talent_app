@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:talent_app/screens/profile/posts_list_screen.dart';
 import 'package:talent_app/services/posts_service.dart';
-import 'package:talent_app/services/search_service.dart';
 import 'package:talent_app/style/app_colors.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
@@ -13,20 +12,11 @@ import 'package:talent_app/widgets/widgets.dart';
 class ExplorerScreen extends StatelessWidget {
   static const String routeName = 'explorer_screen';
 
-  final pageController = new PageController();
-  final List<Widget> _pages = [
-    // const ExplorerHomeChallengesGrid(),
-    // const ExplorerHomePublicationsGrid(),
-    // const ExplorerHomePublicationsGrid(),
-    //TODO: Use publications grid but with both types
-  ];
-  final values = {'selectedPageIndex': 0};
-
-  ExplorerScreen({Key? key}) : super(key: key);
+  const ExplorerScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final SearchService searchService = Provider.of<SearchService>(context);
+    // final SearchService searchService = Provider.of<SearchService>(context);
     final PostsService postsService = Provider.of<PostsService>(context);
 
     final Responsive responsive = Responsive.of(context);
@@ -156,7 +146,6 @@ class _ExplorerHomeAppBar extends StatelessWidget {
         left: responsive.widthPercent(4),
         right: responsive.widthPercent(4),
       ),
-      // padding: const EdgeInsets.symmetric(horizontal: AppDimens.bigMargin, vertical: AppDimens.semiBigMargin),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -200,130 +189,3 @@ class _ExplorerHomeAppBar extends StatelessWidget {
     );
   }
 }
-
-// class _ExplorerHomeNavigationBar extends StatefulWidget {
-//   const _ExplorerHomeNavigationBar({
-//     Key? key,
-//     required this.pageController,
-//     required this.values,
-//     required this.responsive,
-//   }) : super(key: key);
-
-//   final PageController pageController;
-//   final Map values;
-//   final Responsive responsive;
-
-//   @override
-//   State<_ExplorerHomeNavigationBar> createState() =>
-//       _ExplorerHomeNavigationBarState();
-// }
-
-// class _ExplorerHomeNavigationBarState
-//     extends State<_ExplorerHomeNavigationBar> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final bool challengesSelected = widget.values['selectedPageIndex'] == 0;
-//     final bool publicationsSelected = widget.values['selectedPageIndex'] == 1;
-//     final bool allSelected = widget.values['selectedPageIndex'] == 2;
-
-//     return Container(
-//       padding: EdgeInsets.only(
-//         top: widget.responsive.heightPercent(2),
-//         left: widget.responsive.widthPercent(4),
-//         right: widget.responsive.widthPercent(4),
-//       ),
-//       child: Row(
-//         children: [
-//           TalentCustomButton(
-//             backgroundColor:
-//                 challengesSelected ? AppColors.darkGrey : AppColors.shadowGrey,
-//             padding: const EdgeInsets.symmetric(
-//               vertical: AppDimens.smallMargin,
-//               horizontal: AppDimens.mediumMargin,
-//             ),
-//             borderRadius: const BorderRadius.all(
-//               Radius.circular(AppDimens.extraSmallMargin),
-//             ),
-//             borderSide: (challengesSelected)
-//                 ? const BorderSide(color: AppColors.brandColor)
-//                 : null,
-//             child: Text(
-//               'Retos',
-//               style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
-//                   color: AppColors.whiteColor,
-//                   fontSize: 13,
-//                   fontWeight: FontWeight.normal),
-//             ),
-//             onPressed: () {
-//               setState(() {
-//                 widget.values['selectedPageIndex'] = 0;
-//                 widget.pageController.jumpToPage(0);
-//               });
-//             },
-//           ),
-//           const SizedBox(
-//             width: AppDimens.mediumMargin,
-//           ),
-//           TalentCustomButton(
-//             backgroundColor: publicationsSelected
-//                 ? AppColors.darkGrey
-//                 : AppColors.shadowGrey,
-//             padding: const EdgeInsets.symmetric(
-//               vertical: AppDimens.smallMargin,
-//               horizontal: AppDimens.mediumMargin,
-//             ),
-//             borderRadius: const BorderRadius.all(
-//               Radius.circular(AppDimens.extraSmallMargin),
-//             ),
-//             borderSide: (publicationsSelected)
-//                 ? const BorderSide(color: AppColors.brandColor)
-//                 : null,
-//             child: Text(
-//               'Publicaciones',
-//               style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
-//                   color: AppColors.whiteColor,
-//                   fontSize: 13,
-//                   fontWeight: FontWeight.normal),
-//             ),
-//             onPressed: () {
-//               setState(() {
-//                 widget.values['selectedPageIndex'] = 1;
-//                 widget.pageController.jumpToPage(1);
-//               });
-//             },
-//           ),
-//           const SizedBox(
-//             width: AppDimens.mediumMargin,
-//           ),
-//           TalentCustomButton(
-//             backgroundColor:
-//                 allSelected ? AppColors.darkGrey : AppColors.shadowGrey,
-//             padding: const EdgeInsets.symmetric(
-//               vertical: AppDimens.smallMargin,
-//               horizontal: AppDimens.mediumMargin,
-//             ),
-//             borderRadius: const BorderRadius.all(
-//               Radius.circular(AppDimens.extraSmallMargin),
-//             ),
-//             borderSide: (allSelected)
-//                 ? const BorderSide(color: AppColors.brandColor)
-//                 : null,
-//             child: Text(
-//               'Todos',
-//               style: AppStyles.darkTextTheme.bodyLarge!.copyWith(
-//                   color: AppColors.whiteColor,
-//                   fontSize: 13,
-//                   fontWeight: FontWeight.normal),
-//             ),
-//             onPressed: () {
-//               setState(() {
-//                 widget.values['selectedPageIndex'] = 2;
-//                 widget.pageController.jumpToPage(2);
-//               });
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

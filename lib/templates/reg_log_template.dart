@@ -36,10 +36,14 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
   bool _passwordHidden = true;
   bool _isValidEmail = false;
   bool _isValidPwd = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    final AuthService authService = Provider.of<AuthService>(context);
+    final AuthService authService = Provider.of<AuthService>(
+      context,
+      listen: true,
+    );
     final UserService userService = Provider.of<UserService>(
       context,
       listen: false,
@@ -208,10 +212,12 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                     title: widget.buttonText,
                     backgroundDisabled: AppColors.greyscale1,
                     foregroundDisabled: AppColors.greyscale4,
-                    onPressed: (_isValidEmail &&
-                            _isValidPwd &&
-                            !authService.isLoading)
+                    onPressed: (_isValidEmail && _isValidPwd && !isLoading)
                         ? () async {
+                            if (isLoading) return;
+                            isLoading = true;
+                            setState(() {});
+
                             //----------------------Login------------------------
                             if (widget.userType == null) {
                               String? loginResult = await authService.login(
@@ -326,6 +332,8 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 );
                               }
                             }
+                            isLoading = false;
+                            setState(() {});
                           }
                         : null,
                   ),

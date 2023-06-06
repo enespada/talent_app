@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:talent_app/screens/screens.dart';
 
-import 'package:talent_app/services/services.dart';
+import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
 class RegisterUserTypeScreen extends StatefulWidget {
   static const String routeName = 'register_user_type_screen';
-  // final PageController pageController;
 
-  const RegisterUserTypeScreen({
-    Key? key,
-    // required this.pageController,
-  }) : super(key: key);
+  const RegisterUserTypeScreen({Key? key}) : super(key: key);
 
   @override
   State<RegisterUserTypeScreen> createState() => _RegisterUserTypeScreenState();

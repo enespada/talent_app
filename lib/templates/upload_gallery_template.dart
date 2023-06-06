@@ -1,7 +1,4 @@
 // ignore_for_file: unnecessary_this
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -16,11 +13,11 @@ enum UploadGalleryTemplateMenu { recent, report }
 class UploadGalleryTemplate extends StatefulWidget {
   //--------------------------------Atributos----------------------------------
   final String title;
-  Widget? action;
+  final Widget? action;
   final List<AssetEntity> selectedImages;
 
   //--------------------------------Constructor--------------------------------
-  UploadGalleryTemplate({
+  const UploadGalleryTemplate({
     Key? key,
     required this.title,
     this.action,
@@ -106,18 +103,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
   //de la pagina page
   Future<void> bringAlbumPageFiles() async {
     if (this.albums.isNotEmpty) {
-      print('--------------------------');
-      print(this.albums[this.indexAlbum]);
-      this.images += await this
-          .albums[this.indexAlbum]
-          .getAssetListPaged(
+      this.images += await this.albums[this.indexAlbum].getAssetListPaged(
             page: page,
             size: 20,
             // size: ,
-          )
-          .catchError((error, stackTrace) {
-        print(error);
-      });
+          );
+
       // this.titleAlbum = this.albums[this.indexAlbum].name;
     }
     // else {
@@ -486,12 +477,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 }
 
 class _AllImagesVideosSelector extends StatefulWidget {
-  RequestType requestType;
+  final RequestType requestType;
   final void Function()? onTapAll;
   final void Function()? onTapImages;
   final void Function()? onTapVideos;
 
-  _AllImagesVideosSelector({
+  const _AllImagesVideosSelector({
     Key? key,
     this.requestType = RequestType.common,
     required this.onTapAll,

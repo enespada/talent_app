@@ -1,24 +1,21 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:talent_app/models/models.dart';
 
 class AuthService extends ChangeNotifier {
-  // UserApp? userApp;
-  bool isLoading = false;
+  // bool isLoading = false;
 
   static const refreshTokenKey = 'refresh_token';
   static const accessTokenKey = 'access_token';
   static const expiresInKey = 'expires_in';
 
   Future<String?> login(String user, String password) async {
-    // if (isLoading) return '';
-    isLoading = true;
-    notifyListeners();
+    // isLoading = true;
+    // notifyListeners();
     try {
       final FirebaseAuth fbAuth = FirebaseAuth.instance;
       final UserCredential userCredential =
@@ -31,24 +28,23 @@ class AuthService extends ChangeNotifier {
       const storage = FlutterSecureStorage();
       await storage.write(key: accessTokenKey, value: token);
 
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return null;
     } on FirebaseAuthException catch (fae) {
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return fae.code;
     } catch (e) {
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return 'Error';
     }
   }
 
   Future<String?> signUp(String email, String password, String type) async {
-    // if (isLoading) return '';
-    isLoading = true;
-    notifyListeners();
+    // isLoading = true;
+    // notifyListeners();
     try {
       final FirebaseAuth fbAuth = FirebaseAuth.instance;
       final UserCredential userCredential =
@@ -79,16 +75,16 @@ class AuthService extends ChangeNotifier {
           .collection('users')
           .doc(auxUserApp.id!.id)
           .set(auxUserApp.toJson());
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return null;
     } on FirebaseAuthException catch (fae) {
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return fae.code;
     } catch (e) {
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       return 'Error';
     }
   }
@@ -123,7 +119,6 @@ class AuthService extends ChangeNotifier {
     //Borramos el token
     const storage = FlutterSecureStorage();
     await storage.delete(key: accessTokenKey);
-    // userApp = null;
   }
 
   Future<bool> deleteUser(UserApp loggedUserApp, String password) async {
@@ -154,7 +149,7 @@ class AuthService extends ChangeNotifier {
         .collection('chats')
         .where('users', arrayContains: loggedUserApp.id)
         .get();
-    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data2.docs) {
       await fbFirestore.collection('chats').doc(doc.reference.id).delete();
     }
     //Borramos el usuario de Firestore

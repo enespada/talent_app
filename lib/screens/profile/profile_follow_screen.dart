@@ -198,6 +198,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
             MaterialPageRoute(
               builder: (context) => ProfileScreen(
                 userApp: userApp!,
+                userPosts: userService.userPosts,
                 isloggedUser: userApp!.id == userService.userApp!.id,
               ),
             ),
@@ -331,13 +332,18 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                             },
                           ),
                           title: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              List<Post> userPosts =
+                                  await postsService.getUserPosts(
+                                usersToShow[index],
+                              );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProfileScreen(
                                     userApp: usersToShow[index],
                                     isloggedUser: false,
+                                    userPosts: userPosts,
                                   ),
                                 ),
                               );
@@ -482,15 +488,10 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     UserApp followerToRemove,
     UserService userService,
   ) async {
-    // await _viewModel.removeFollower(followerToRemove);
-    // Navigator.pop(context);
-    // await Future.delayed(const Duration(seconds: 2));
-    // await _viewModel.getUser();
     await userService.removeFollower(followerToRemove);
     Navigator.pop(context);
     changeFollow();
     setState(() {});
-    // await Future.delayed(const Duration(seconds: 2));
   }
 
   Future<dynamic> showDialogX(

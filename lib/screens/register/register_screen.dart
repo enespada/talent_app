@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/templates/templates.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -109,9 +107,6 @@ class _TypeUserWidgetState extends State<TypeUserWidget> {
   @override
   Widget build(BuildContext context) {
     final Responsive responsive = Responsive.of(context);
-    final AuthService authService = Provider.of<AuthService>(context);
-
-    List<String> type = ["athlete", "scouter", "manager"];
 
     final List<String> respuestasPosibles = [
       Localization.of(context).string('register_type_athlete'),

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
-import 'package:talent_app/services/services.dart';
-import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
 class PostsListWidget extends StatelessWidget {
@@ -13,8 +10,9 @@ class PostsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Responsive responsive = Responsive.of(context);
     // final PostsService postsService = Provider.of<PostsService>(context);
+
+    // final Responsive responsive = Responsive.of(context);
 
     return ListView.builder(
       physics: const BouncingScrollPhysics(),

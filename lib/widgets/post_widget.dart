@@ -160,13 +160,18 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
                         ..onTap =
                             (userService.userApp!.id == widget.post.userId)
                                 ? null
-                                : () {
+                                : () async {
+                                    List<Post> userPosts =
+                                        await postsService.getUserPosts(
+                                      widget.post.userApp!,
+                                    );
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProfileScreen(
                                           userApp: widget.post.userApp!,
                                           isloggedUser: false,
+                                          userPosts: userPosts,
                                         ),
                                       ),
                                     );
