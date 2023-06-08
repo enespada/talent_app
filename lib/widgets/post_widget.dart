@@ -79,10 +79,10 @@ class _PostWidgetState extends State<PostWidget> with TickerProviderStateMixin {
               ),
               Visibility(
                 visible: (userService.userApp!.id != widget.post.userApp!.id &&
-                        (userService.userApp!.type == 'scouter' ||
+                    ((userService.userApp!.type == 'scouter' ||
                             userService.userApp!.type == 'manager') ||
-                    (userService.userApp!.type == 'athlete' ||
-                        widget.post.userApp!.type == 'athlete')),
+                        (userService.userApp!.type == 'athlete' &&
+                            widget.post.userApp!.type == 'athlete'))),
                 child: Positioned(
                   bottom: 6,
                   left: responsive.widthPercent(5),

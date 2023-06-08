@@ -287,9 +287,12 @@ class UserService extends ChangeNotifier {
     final fbStorage = FirebaseStorage.instance.ref();
     final File file = File(imgPath);
     final metadaData = SettableMetadata(contentType: "image/png");
-    fbStorage
+    await fbStorage
         .child("${userApp!.id!.path.split('/')[1]}/profile.png")
         .putFile(file, metadaData);
+    await Future.delayed(const Duration(seconds: 2));
+    await getProfileImageURL(userApp!.id!.id);
+    notifyListeners();
   }
 
   void reset() {

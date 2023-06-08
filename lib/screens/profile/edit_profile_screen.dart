@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new
+// ignore_for_file: unnecessary_new, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/providers/edit_profile_provider.dart';
-import 'package:talent_app/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -46,18 +45,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     await userService.updateUser(userAppToUpdate);
     if (file != null) {
       await userService.uploadImageProfile(file.path);
-      Future.delayed(const Duration(seconds: 2));
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileScreen(
-          userApp: userService.userApp!,
-          userPosts: userService.userPosts,
-          isloggedUser: true,
-        ),
-      ),
-    );
+    Navigator.pop(context);
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => ProfileScreen(
+    //       userApp: userService.userApp!,
+    //       userPosts: userService.userPosts,
+    //       isloggedUser: true,
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -98,16 +97,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
         leading: (widget.isProfileCompleted!)
             ? GestureDetector(
-                onTap: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
-                      userApp: userService.userApp!,
-                      userPosts: userService.userPosts,
-                      isloggedUser: true,
-                    ),
-                  ),
-                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => ProfileScreen(
+                  //       userApp: userService.userApp!,
+                  //       userPosts: userService.userPosts,
+                  //       isloggedUser: true,
+                  //     ),
+                  //   ),
+                  // );
+                },
                 child: Icon(
                   Icons.arrow_back,
                   color: AppColors.blueColor,
@@ -314,9 +316,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         GestureDetector(
                           onTap: (userService.isLoading)
                               ? null
-                              : () async {
-                                  Navigator.pop(context);
-                                },
+                              : () => Navigator.pop(context),
                           child: SizedBox(
                             width: responsive.width,
                             child: Text(

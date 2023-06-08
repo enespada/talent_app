@@ -66,12 +66,13 @@ class _EditProfileFactState extends State<EditProfileFact> {
                 builder: (context, child) {
                   return Theme(
                     data: AppThemes.darkTheme.copyWith(
-                      colorScheme: ColorScheme.fromSeed(
-                        seedColor: AppColors.brandColor,
-                        primary: AppColors.brandColor,
-                        onSurface: AppColors.whiteColor,
-                      ),
+                      // colorScheme: ColorScheme.fromSeed(
+                      //   seedColor: AppColors.brandColor,
+                      //   primary: AppColors.brandColor,
+                      //   onSurface: AppColors.whiteColor,
+                      // ),
                       highlightColor: AppColors.brandColor,
+                      canvasColor: AppColors.blueColor,
                       dialogBackgroundColor: AppColors.greyscale5,
                     ),
                     child: child!,

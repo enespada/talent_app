@@ -156,7 +156,7 @@ class PostsService extends ChangeNotifier {
       if (['.jpg', 'jpeg', '.PNG', '.JPG'].contains(extension)) {
         extension = '.png';
       }
-      if (['.MP4', '.mp4'].contains(extension)) {
+      if (['.MP4', '.mp4', '.gif'].contains(extension)) {
         extension = '.mp4';
         await VideoCompress.setLogLevel(0);
         final MediaInfo? info = await VideoCompress.compressVideo(

@@ -204,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   }
                                   editProfileProvider
                                       .initializeData(userService.userApp!);
-                                  Navigator.pushReplacement(
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => EditProfileScreen(),
