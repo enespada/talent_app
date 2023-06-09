@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>106218873843-gmkpp4qv1t1a1nc0ne69vln7teem7nl6.apps.googleusercontent.com</string>
+	<string>106218873843-nm0ofl92dphauba0501plvpcc0bfn18r.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.106218873843-gmkpp4qv1t1a1nc0ne69vln7teem7nl6</string>
+	<string>com.googleusercontent.apps.106218873843-nm0ofl92dphauba0501plvpcc0bfn18r</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>106218873843-3sgr97r8p06962nsagv18v80h2i2g4fh.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.talentApp</string>
+	<string>com.enriqueespada.talentapp</string>
 	<key>PROJECT_ID</key>
 	<string>talent-app-f191f</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:106218873843:ios:5629ce1c348f41ffe66886</string>
+	<string>1:106218873843:ios:37d646b739b25350e66886</string>
 </dict>
 </plist>
