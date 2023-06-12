@@ -1,4 +1,4 @@
-package com.enriqueespada.talent_app
+package com.enriqueespada.talentapp
 
 import io.flutter.embedding.android.FlutterActivity
 

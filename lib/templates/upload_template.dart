@@ -51,18 +51,21 @@ class _UploadTemplateState extends State<UploadTemplate> {
       ),
 
       //--------------------------------body----------------------------------
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(color: AppColors.blackColor),
-            widget.body,
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: widget.bottomNavigatorBar ?? Container(),
-            ),
-          ],
-        ),
+      // body: Stack(
+      //   children: [
+      //     Container(color: AppColors.blackColor),
+      //     widget.body,
+      //     // Align(
+      //     //   alignment: Alignment.bottomCenter,
+      //     //   child: widget.bottomNavigatorBar ?? Container(),
+      //     // ),
+      //   ],
+      // ),
+      body: Container(
+        color: AppColors.blackColor,
+        child: widget.body,
       ),
+      bottomNavigationBar: widget.bottomNavigatorBar ?? Container(),
     );
   }
 }

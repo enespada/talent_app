@@ -20,6 +20,7 @@ class TalentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: (borderRadius != null)
@@ -29,7 +30,7 @@ class TalentCard extends StatelessWidget {
       elevation: 0,
       color: color,
       child: Padding(
-        padding: (padding != null) ? padding! : const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: content,
       ),
     );

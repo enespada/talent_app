@@ -15,14 +15,12 @@ import 'package:talent_app/widgets/widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   static const String routeName = 'edit_profile_screen';
-  bool? isProfileCompleted;
+  bool isProfileCompleted;
 
   EditProfileScreen({
     Key? key,
-    this.isProfileCompleted,
-  }) : super(key: key) {
-    isProfileCompleted ??= true;
-  }
+    this.isProfileCompleted = true,
+  }) : super(key: key);
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -69,10 +67,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final UserService userService = Provider.of<UserService>(context);
     final SportsService sportsService = Provider.of<SportsService>(context);
-    final ModalitiesService modalitiesService =
-        Provider.of<ModalitiesService>(context);
+    final PostsService postsService = Provider.of<PostsService>(
+      context,
+      listen: false,
+    );
+    final ChatsService chatsService = Provider.of<ChatsService>(
+      context,
+      listen: false,
+    );
+    final ModalitiesService modalitiesService = Provider.of<ModalitiesService>(
+      context,
+    );
     final EditProfileProvider editProfileProvider =
-        Provider.of<EditProfileProvider>(context);
+        Provider.of<EditProfileProvider>(
+      context,
+    );
 
     final Responsive responsive = Responsive.of(context);
 
@@ -95,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               fontSize: responsive.diagonalPercent(3),
               fontWeight: FontWeight.bold,
             ),
-        leading: (widget.isProfileCompleted!)
+        leading: (widget.isProfileCompleted)
             ? GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
@@ -135,8 +144,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       //-------------------------Foto-----------------------------
                       FutureBuilder(
-                        future: userService.getProfileImageURL(
-                            userService.userApp!.id!.path.split('/')[1]),
+                        future: userService
+                            .getProfileImageURL(userService.userApp!.id!.id),
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
                           if (snapshot.hasData && snapshot.data != '') {
@@ -271,6 +280,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ? null
                                 : () async {
                                     if (editProfileProvider.isValid()) {
+                                      if (!widget.isProfileCompleted) {
+                                        chatsService.getUserChats(
+                                          userService.userApp!,
+                                        );
+                                        postsService.getFollowingPosts(
+                                          userService.userApp!,
+                                        );
+                                      }
                                       await _saveChanges(
                                         userService,
                                         circleEditableAvatar.file,
@@ -312,7 +329,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(height: spaceBetweenFacts),
 
                       //--------------------Descartar cambios--------------------
-                      if (widget.isProfileCompleted!)
+                      if (widget.isProfileCompleted)
                         GestureDetector(
                           onTap: (userService.isLoading)
                               ? null

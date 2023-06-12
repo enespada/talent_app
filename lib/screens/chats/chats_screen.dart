@@ -8,10 +8,6 @@ import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-// enum MessagesHomeMenu { example1, example2 }
-
-// enum MessagesHomeChatMenu { markRead, delete }
-
 class ChatsScreen extends StatelessWidget {
   static const String routeName = 'chats_screen';
 
@@ -55,25 +51,22 @@ class ChatsScreen extends StatelessWidget {
       ),
 
       //----------------------------------body-----------------------------------
-      body: SafeArea(
-        child: (chatsService.isLoadingChats)
-            ? const Center(
-                child: CircularProgressIndicator(color: AppColors.blueColor),
-              )
-            : ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: chatsService.chats!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 10,
-                    ),
-                    child: _ChatWidget(chat: chatsService.chats![index]),
-                  );
-                },
-              ),
-      ),
+      body: (chatsService.isLoadingChats)
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.blueColor),
+            )
+          : ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: chatsService.chats!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  margin: (index == chatsService.chats!.length - 1)
+                      ? null
+                      : const EdgeInsets.only(bottom: 7),
+                  child: _ChatWidget(chat: chatsService.chats![index]),
+                );
+              },
+            ),
 
       //----------------------CustomBottomNavigationBar--------------------------
       bottomNavigationBar: const CustomBottomNavigationBar(
@@ -83,50 +76,16 @@ class ChatsScreen extends StatelessWidget {
   }
 }
 
-// class ChatsListWidget extends StatelessWidget {
-//   const ChatsListWidget({
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final Responsive responsive = Responsive.of(context);
-//     final ChatsService chatsService = Provider.of<ChatsService>(context);
-
-//     if (chatsService.isLoading) {
-//       return const Center(
-//         child: CircularProgressIndicator(color: AppColors.blueColor),
-//       );
-//     } else {
-//       return ListView.builder(
-//         physics: const BouncingScrollPhysics(),
-//         itemCount: chatsService.chats!.length,
-//         itemBuilder: (BuildContext context, int index) {
-//           return Container(
-//             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-//             child: ChatWidget(chat: chatsService.chats![index]),
-//           );
-//         },
-//       );
-//     }
-//   }
-// }
-
 class _ChatWidget extends StatefulWidget {
   final Chat chat;
 
-  const _ChatWidget({
-    Key? key,
-    required this.chat,
-  }) : super(key: key);
+  const _ChatWidget({Key? key, required this.chat}) : super(key: key);
 
   @override
   State<_ChatWidget> createState() => _ChatWidgetState();
 }
 
 class _ChatWidgetState extends State<_ChatWidget> {
-  final int newMessagesNumber = 0;
-
   @override
   void initState() {
     super.initState();
@@ -146,30 +105,51 @@ class _ChatWidgetState extends State<_ChatWidget> {
     final Responsive responsive = Responsive.of(context);
 
     Widget? stateIcon;
-    if (widget.chat.messages!.isNotEmpty &&
-        widget.chat.messages!.last.userId == userService.userApp!.id) {
-      switch (widget.chat.messages!.last.messageStatus!) {
-        case MessageStatus.Sending:
-          stateIcon = const Icon(
-            Icons.done,
-            color: AppColors.greyscale2,
-            size: 15,
-          );
-          break;
-        case MessageStatus.Sent:
-          stateIcon = const Icon(
-            Icons.done_all,
-            color: AppColors.greyscale2,
-            size: 15,
-          );
-          break;
-        case MessageStatus.Read:
-          stateIcon = const Icon(
-            Icons.done_all,
-            color: AppColors.blueColor,
-            size: 15,
-          );
-          break;
+    int? pendingMessages;
+    if (widget.chat.messages!.isNotEmpty) {
+      if (widget.chat.messages!.last.userId == userService.userApp!.id) {
+        switch (widget.chat.messages!.last.messageStatus!) {
+          case MessageStatus.Sending:
+            stateIcon = const Icon(
+              Icons.done,
+              color: AppColors.greyscale2,
+              size: 15,
+            );
+            break;
+          case MessageStatus.Sent:
+            stateIcon = const Icon(
+              Icons.done_all,
+              color: AppColors.greyscale2,
+              size: 15,
+            );
+            break;
+          case MessageStatus.Read:
+            stateIcon = const Icon(
+              Icons.done_all,
+              color: AppColors.blueColor,
+              size: 15,
+            );
+            break;
+        }
+      } else {
+        int n = widget.chat.messages!.length;
+        int i = n - 1;
+        bool end = false;
+        while (i >= 0 && !end) {
+          switch (widget.chat.messages![i].messageStatus!) {
+            case MessageStatus.Sending:
+              end = true;
+              break;
+            case MessageStatus.Sent:
+              pendingMessages ??= 0;
+              pendingMessages = pendingMessages + 1;
+              break;
+            case MessageStatus.Read:
+              end = false;
+              break;
+          }
+          i--;
+        }
       }
     }
 
@@ -191,8 +171,8 @@ class _ChatWidgetState extends State<_ChatWidget> {
         );
       },
       child: Container(
-        height: responsive.heightPercent(11),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        // height: responsive.heightPercent(11),
         child: Row(
           children: [
             FutureBuilder(
@@ -216,64 +196,18 @@ class _ChatWidgetState extends State<_ChatWidget> {
                 );
               },
             ),
-            // SizedBox(
-            //   height: 52,
-            //   width: 52,
-            //   child: Stack(
-            //     children: [
-            //       Padding(
-            //         padding: const EdgeInsets.all(5),
-            //         child: ClipRRect(
-            //           borderRadius: BorderRadius.circular(12.0),
-            //           child: (widget.user?.id ?? '').isNotEmpty
-            //               ? FutureBuilder(
-            //                   future: userService
-            //                       .getProfileImageURL(userApp!.id!.id),
-            //                   builder: (_, AsyncSnapshot<String> snapshot) {
-            //                     if (snapshot.hasData) {
-            //                       return Image(
-            //                         image: CachedNetworkImageProvider(
-            //                             snapshot.data!),
-            //                         fit: BoxFit.cover,
-            //                         width: double.infinity,
-            //                         height: double.infinity,
-            //                       );
-            //                     } else {
-            //                       return const Image(
-            //                         image:
-            //                             AssetImage('assets/images/profile.png'),
-            //                         fit: BoxFit.cover,
-            //                         width: double.infinity,
-            //                         height: double.infinity,
-            //                       );
-            //                     }
-            //                   },
-            //                 )
-            //               : Image.asset(
-            //                   'assets/images/profile_pic_',
-            //                   fit: BoxFit.cover,
-            //                   width: double.infinity,
-            //                   height: double.infinity,
-            //                 ),
-            //         ),
-            //       ),
-            //       if (isOnline)
-            //         Align(
-            //           alignment: Alignment.bottomRight,
-            //           child: SvgPicture.asset('assets/images/icon_online.svg'),
-            //         ),
-            //     ],
-            //   ),
-            // ),
-            const SizedBox(width: 15),
+            SizedBox(width: responsive.widthPercent(5.5)),
             Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  //-------------------Nombre y TalentCard-------------------------
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
+                      SizedBox(
+                        width: responsive.widthPercent(34),
                         child: Text(
                           widget.chat.name ??
                               widget.chat.userApp?.fullName ??
@@ -284,79 +218,73 @@ class _ChatWidgetState extends State<_ChatWidget> {
                                     fontSize: responsive.diagonalPercent(1.8),
                                     fontWeight: FontWeight.bold,
                                   ),
-                          overflow: TextOverflow.fade,
-                          softWrap: false,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (widget.chat.userApp != null)
-                        SizedBox(width: responsive.widthPercent(3.8)),
-                      if (widget.chat.userApp != null)
                         TalentCard(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
                           color: AppColors.blueColor.withOpacity(0.15),
                           content: Text(
                             widget.chat.userApp?.type ?? '',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      color: AppColors.blueColor,
-                                      fontSize: responsive.diagonalPercent(1.8),
-                                    ),
+                            style: AppThemes.lightTextTheme.bodyLarge!.copyWith(
+                              color: AppColors.blueColor,
+                              fontSize: responsive.diagonalPercent(1.8),
+                            ),
                           ),
                         ),
                     ],
                   ),
+                  SizedBox(height: responsive.heightPercent(1.3)),
+
+                  //----------------(Tick) Mensaje y numero-----------------------
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (stateIcon != null) stateIcon,
-                      if (stateIcon != null) const SizedBox(width: 5),
-                      Expanded(
-                        child: Text(
-                          widget.chat.messages!.isEmpty
-                              ? ''
-                              : widget.chat.messages!.last.content ?? '',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      Row(
+                        children: [
+                          if (stateIcon != null) stateIcon,
+                          if (stateIcon != null) const SizedBox(width: 5),
+                          SizedBox(
+                            width: responsive.widthPercent(55),
+                            child: Text(
+                              widget.chat.messages!.isEmpty
+                                  ? ''
+                                  : widget.chat.messages!.last.content ?? '',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
                                     color: AppColors.greyscale5,
                                     fontSize: responsive.diagonalPercent(1.8),
                                   ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          // if (pendingMessages != null)
+                          //   SizedBox(width: responsive.widthPercent(25)),
+                        ],
                       ),
+                      if (pendingMessages != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 4,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: AppColors.blueColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '$pendingMessages',
+                            style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
+                              fontSize: responsive.diagonalPercent(1.4),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ],
               ),
-            ),
-            const SizedBox(width: 15),
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Text(
-                //   widget.chatObject?['messages'].isEmpty
-                //       ? ''
-                //       : AdvancedDateFormatter(Localization.of(context))
-                //           .getVerboseDateTimeRepresentation(
-                //               DateTime.fromMillisecondsSinceEpoch((widget
-                //                       .chatObject?['messages']
-                //                       .last['date'] as Timestamp)
-                //                   .millisecondsSinceEpoch)),
-                //   style: AppStyles.ligthTextTheme.bodyMedium?.copyWith(
-                //     color: AppColors.darkGrey,
-                //     fontSize: AppDimens.textSemiMedium,
-                //   ),
-                // ),
-                // if (newMessagesNumber > 0)
-                //   TalentCard(
-                //     color: AppColors.blueColor,
-                //     padding: const EdgeInsets.symmetric(horizontal: 10),
-                //     content: Text(
-                //       newMessagesNumber.toString(),
-                //       style: AppStyles.darkTextTheme.bodyLarge,
-                //     ),
-                //   )
-              ],
             ),
           ],
         ),
@@ -432,63 +360,3 @@ class _ChatWidgetState extends State<_ChatWidget> {
     return RelativeRect.fromLTRB(left, top, left + 20, top + 20);
   }
 }
-
-// class _MessagesSearchInput extends StatelessWidget {
-//   const _MessagesSearchInput({
-//     required this.formKey,
-//     required this.searchFieldController,
-//     required this.responsive,
-//     Key? key,
-//   }) : super(key: key);
-
-//   final GlobalKey<FormState> formKey;
-//   final TextEditingController searchFieldController;
-//   final Responsive responsive;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.only(
-//         top: responsive.heightPercent(2),
-//         left: responsive.widthPercent(4),
-//         right: responsive.widthPercent(4),
-//       ),
-//       child: Form(
-//         key: formKey,
-//         child: Column(
-//           children: [
-//             Theme(
-//               data: Theme.of(context).copyWith(
-//                   colorScheme: ColorScheme.fromSwatch()
-//                       .copyWith(primary: AppColors.brandColor),
-//                   textTheme: const TextTheme(
-//                       subtitle1: TextStyle(
-//                     color: Colors.black,
-//                   ))),
-//               child: TextFormField(
-//                 controller: searchFieldController,
-//                 keyboardType: TextInputType.text,
-//                 style: AppStyles.ligthTextTheme.labelSmall,
-//                 decoration: InputDecoration(
-//                   contentPadding: const EdgeInsets.symmetric(
-//                       vertical: 14.0, horizontal: 25.0),
-//                   filled: true,
-//                   fillColor: AppColors.whiteColor,
-//                   enabledBorder: OutlineInputBorder(
-//                       borderSide: const BorderSide(color: AppColors.lightGrey),
-//                       borderRadius: BorderRadius.circular(10)),
-//                   focusedBorder: OutlineInputBorder(
-//                       borderSide: const BorderSide(color: AppColors.brandColor),
-//                       borderRadius: BorderRadius.circular(10)),
-//                   hintText: Localization.of(context)
-//                       .string('messages_home_search_hint'),
-//                   suffixIcon: const Icon(Icons.search),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

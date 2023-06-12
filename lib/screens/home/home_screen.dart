@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:talent_app/services/posts_service.dart';
+import 'package:talent_app/services/user_service.dart';
 import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
@@ -20,6 +23,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String homeAppBarTitle = '';
   final pageController = PageController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  bool isRefresh = true;
 
   @override
   void initState() {
@@ -29,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final PostsService postsService = Provider.of<PostsService>(context);
+    final UserService userService =
+        Provider.of<UserService>(context, listen: false);
 
     final Responsive responsive = Responsive.of(context);
 
@@ -44,27 +52,59 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: (postsService.isLoadingFollowing)
+        child: (postsService.isLoadingFollowing && isRefresh)
             ? const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.blueColor,
                 ),
               )
-            : (postsService.followingUsersPosts!.isEmpty)
-                ? Padding(
-                    padding:
-                        const EdgeInsets.only(top: 20, left: 20, right: 20),
-                    child: Center(
-                      child: Text(
-                        Localization.of(context).string("no_posts_to_show"),
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: AppColors.greyscale2,
-                              fontSize: responsive.diagonalPercent(2.8),
-                            ),
-                      ),
-                    ),
-                  )
-                : PostsListWidget(posts: postsService.followingUsersPosts!),
+            : SmartRefresher(
+                physics: const BouncingScrollPhysics(),
+                header: const WaterDropHeader(
+                  waterDropColor: AppColors.whiteColor,
+                  idleIcon: Icon(
+                    Icons.arrow_downward,
+                    color: AppColors.greyscale3,
+                  ),
+                  refresh: CupertinoActivityIndicator(),
+                  complete: Icon(
+                    Icons.done,
+                    color: Colors.green,
+                  ),
+                  failed: Icon(
+                    Icons.close,
+                    color: Colors.red,
+                  ),
+                ),
+                enablePullDown: true,
+                onLoading: () {
+                  _refreshController.loadComplete();
+                },
+                onRefresh: () async {
+                  if (isRefresh) isRefresh = false;
+                  await postsService.getFollowingPosts(userService.userApp!);
+                  // await Future.delayed(const Duration(seconds: 2));
+                  _refreshController.refreshCompleted();
+                  setState(() {});
+                },
+                controller: _refreshController,
+                child: (postsService.followingUsersPosts!.isEmpty)
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.only(top: 20, left: 20, right: 20),
+                        child: Center(
+                          child: Text(
+                            Localization.of(context).string("no_posts_to_show"),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: AppColors.greyscale2,
+                                      fontSize: responsive.diagonalPercent(2.8),
+                                    ),
+                          ),
+                        ),
+                      )
+                    : PostsListWidget(posts: postsService.followingUsersPosts!),
+              ),
       ),
 
       //----------------------CustomBottomNavigationBar--------------------------

@@ -226,7 +226,10 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                               );
                               if (loginResult == null) {
                                 await userService.getUser();
-                                await chatsService.getUserChats(
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
+                                chatsService.getUserChats(
                                   userService.userApp!,
                                 );
                                 postsService.getFollowingPosts(
@@ -306,12 +309,6 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                     ),
                                   );
                                 } else {
-                                  await chatsService.getUserChats(
-                                    userService.userApp!,
-                                  );
-                                  postsService.getFollowingPosts(
-                                    userService.userApp!,
-                                  );
                                   Navigator.pushReplacementNamed(
                                     context,
                                     HomeScreen.routeName,

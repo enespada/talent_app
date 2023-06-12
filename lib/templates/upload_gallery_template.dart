@@ -52,29 +52,6 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
 
   //----------------------------------Metodos-----------------------------------
 
-  // Future<void> getAlbums(RequestType type) async {
-  //   //Obtenemos los albumes del dispositivo
-  //   this.albums = await PhotoManager.getAssetPathList(
-  //     type: type,
-  //     filterOption: FilterOptionGroup(
-  //       imageOption: const FilterOption(
-  //         sizeConstraint: SizeConstraint(ignoreSize: true),
-  //       ),
-  //     ),
-  //   );
-
-  //   if (this.albums.isNotEmpty) {
-  //     this.images = await this.albums[indexAlbum].getAssetListPaged(
-  //           page: page,
-  //           size: 20,
-  //         );
-  //     this.titleAlbum = this.albums[indexAlbum].name;
-  //   } else {
-  //     this.images = [];
-  //   }
-  //   setState(() {});
-  // }
-
   //Metodo que recupera los albumes del dispositivo
   Future<void> bringAlbums() async {
     this.albums.clear();
@@ -99,25 +76,20 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     }
   }
 
-  //Metodo que guarda en images los archivos del album actual (this.albums[this.indexAlbum])
-  //de la pagina page
+  //Metodo que guarda en images los archivos de la pagina page
+  //del album actual (this.albums[this.indexAlbum])
   Future<void> bringAlbumPageFiles() async {
     if (this.albums.isNotEmpty) {
       this.images += await this.albums[this.indexAlbum].getAssetListPaged(
             page: page,
             size: 20,
-            // size: ,
           );
-
-      // this.titleAlbum = this.albums[this.indexAlbum].name;
     }
-    // else {
-    //   this.images = [];
-    // }
   }
 
   @override
   void initState() {
+    super.initState();
     this.selectedImages = widget.selectedImages;
     bringAlbums();
     scrollController.addListener(() {
@@ -126,7 +98,6 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
         fetchPhotos();
       }
     });
-    super.initState();
   }
 
   void fetchPhotos() async {
@@ -134,21 +105,12 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
     this.isLoading = true;
     setState(() {});
 
-    print(scrollController.position);
     this.page++;
     await bringAlbumPageFiles();
     await Future.delayed(const Duration(seconds: 3));
 
     this.isLoading = false;
     setState(() {});
-
-    // if (scrollController.position.pixels + 100 <=
-    //     scrollController.position.maxScrollExtent) return;
-    // scrollController.animateTo(
-    //   scrollController.position.pixels + 120,
-    //   duration: const Duration(milliseconds: 300),
-    //   curve: Curves.fastOutSlowIn,
-    // );
   }
 
   @override
@@ -191,6 +153,9 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                       ),
                       child: PopupMenuButton<UploadGalleryTemplateMenu>(
                         position: PopupMenuPosition.under,
+                        constraints: BoxConstraints(
+                          maxHeight: responsive.heightPercent(50),
+                        ),
                         color: AppColors.greyscale3,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -200,29 +165,6 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
                             (AssetPathEntity album) =>
                                 PopupMenuItem<UploadGalleryTemplateMenu>(
                               onTap: () async {
-                                // final PermissionState ps =
-                                //     await PhotoManager.requestPermissionExtend();
-                                // if (ps.isAuth) {
-                                //   albums = await PhotoManager.getAssetPathList(
-                                //     type: requestType,
-                                //     filterOption: FilterOptionGroup(
-                                //       imageOption: const FilterOption(
-                                //         sizeConstraint: SizeConstraint(
-                                //           ignoreSize: true,
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   );
-                                //   this.indexAlbum = this.albums.indexOf(album);
-                                //   images = await albums[albums.indexOf(album)]
-                                //       .getAssetListPaged(
-                                //     page: page,
-                                //     size: 20,
-                                //   );
-                                //   titleAlbum = album.name;
-
-                                //   setState(() {});
-                                // }
                                 this.indexAlbum = this.albums.indexOf(album);
                                 this.titleAlbum =
                                     this.albums[this.indexAlbum].name;
@@ -432,31 +374,14 @@ class _UploadGalleryTemplateState extends State<UploadGalleryTemplate> {
       bottomNavigatorBar: _AllImagesVideosSelector(
         onTapAll: () async {
           this.requestType = RequestType.common;
-          // final PermissionState ps =
-          //     await PhotoManager.requestPermissionExtend();
-          // if (ps.isAuth) {
-          //   await getAlbums(RequestType.common);
-          // }
           await bringAlbums();
         },
         onTapImages: () async {
           this.requestType = RequestType.image;
-          // final PermissionState ps =
-          //     await PhotoManager.requestPermissionExtend();
-          // if (ps.isAuth) {
-          //   await getAlbums(RequestType.image);
-          //   setState(() {});
-          // }
           await bringAlbums();
         },
         onTapVideos: () async {
           this.requestType = RequestType.video;
-          // final PermissionState ps =
-          //     await PhotoManager.requestPermissionExtend();
-          // if (ps.isAuth) {
-          //   await getAlbums(RequestType.video);
-          //   setState(() {});
-          // }
           await bringAlbums();
         },
         requestType: this.requestType,
@@ -513,6 +438,9 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
+        boxShadow: [
+          BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -520,7 +448,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
           GestureDetector(
             onTap: widget.onTapAll,
             child: Text(
-              'todos',
+              Localization.of(context).string('all'),
               style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.common)
@@ -535,7 +463,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
           GestureDetector(
             onTap: widget.onTapImages,
             child: Text(
-              'imágenes',
+              Localization.of(context).string('images'),
               style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.image)
@@ -550,7 +478,7 @@ class _AllImagesVideosSelectorState extends State<_AllImagesVideosSelector> {
           GestureDetector(
             onTap: widget.onTapVideos,
             child: Text(
-              'vídeos',
+              Localization.of(context).string('videos'),
               style: AppThemes.darkTextTheme.bodyLarge!.copyWith(
                 fontSize: responsive.diagonalPercent(2),
                 fontWeight: (widget.requestType == RequestType.video)

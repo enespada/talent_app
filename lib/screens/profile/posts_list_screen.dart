@@ -42,10 +42,7 @@ class PostsListScreen extends StatelessWidget {
       ),
 
       //--------------------------------body-------------------------------------
-      body: SafeArea(
-        // child: PostsListWidget(posts: userService.userPosts),
-        child: PostsListWidget(posts: posts),
-      ),
+      body: PostsListWidget(posts: posts),
     );
   }
 }

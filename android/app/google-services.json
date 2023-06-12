@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:106218873843:android:fba78aa986d58ac6e66886",
+        "mobilesdk_app_id": "1:106218873843:android:4a26aedf3017fe3ee66886",
         "android_client_info": {
-          "package_name": "com.enriqueespada.talent_app"
+          "package_name": "com.enriqueespada.talentapp"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "106218873843-3sgr97r8p06962nsagv18v80h2i2g4fh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.enriqueespada.talent_app",
-            "certificate_hash": "3b94b8d5a42513c42ecc7934ccd896280e5d7204"
-          }
-        },
         {
           "client_id": "106218873843-72302503u5vi85bihud081mpkranh8n0.apps.googleusercontent.com",
           "client_type": 3
@@ -37,6 +29,13 @@
             {
               "client_id": "106218873843-72302503u5vi85bihud081mpkranh8n0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "106218873843-gmkpp4qv1t1a1nc0ne69vln7teem7nl6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.talentApp"
+              }
             }
           ]
         }

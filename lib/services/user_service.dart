@@ -240,17 +240,20 @@ class UserService extends ChangeNotifier {
   Future<String> getProfileImageURL(String id) async {
     try {
       if (id == '') return '';
+      if (profileUrlImage != null) return profileUrlImage!;
 
       final storageRef = await FirebaseStorage.instance
           .refFromURL(
               "${NetworkEndpoints.firebaseStorageBaseUrl}/$id/profile.png")
           .getDownloadURL();
+      profileUrlImage = storageRef.toString();
       return storageRef.toString();
     } catch (e) {
       final storageRef = await FirebaseStorage.instance
           .refFromURL(
               "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/profile.png")
           .getDownloadURL();
+      profileUrlImage = storageRef.toString();
       return storageRef.toString();
     }
   }
@@ -291,15 +294,16 @@ class UserService extends ChangeNotifier {
         .child("${userApp!.id!.path.split('/')[1]}/profile.png")
         .putFile(file, metadaData);
     await Future.delayed(const Duration(seconds: 2));
+    profileUrlImage = null;
     await getProfileImageURL(userApp!.id!.id);
     notifyListeners();
   }
 
   void reset() {
     userApp = null;
+    userPosts.clear();
     followers.clear();
     following.clear();
-    profileUrlImage == null;
-    userPosts.clear();
+    profileUrlImage = null;
   }
 }

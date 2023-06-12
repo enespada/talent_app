@@ -300,9 +300,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               SizedBox(height: responsive.heightPercent(1.5)),
-              if (userService.userApp?.bio != null)
-                Text(userService.userApp!.bio!),
-              if (userService.userApp?.bio != null)
+              if (widget.userApp.bio != null) Text(widget.userApp.bio!),
+              if (widget.userApp.bio != null)
                 SizedBox(height: responsive.heightPercent(1.5)),
               const Divider(),
               SizedBox(height: responsive.heightPercent(1)),
@@ -316,18 +315,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       //------------------------Seguidores---------------------------
                       GestureDetector(
-                        onTap: () async {
-                          await userService.getFollowers();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileFollowScreen(
-                                userApp: userService.userApp!,
-                                typeFollow: TypeFollow.seguidores,
-                              ),
-                            ),
-                          );
-                        },
+                        onTap: (!widget.isloggedUser)
+                            ? null
+                            : () async {
+                                await userService.getFollowers();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileFollowScreen(
+                                      userApp: userService.userApp!,
+                                      typeFollow: TypeFollow.seguidores,
+                                    ),
+                                  ),
+                                );
+                              },
                         child: Column(
                           children: [
                             Text(
@@ -356,18 +357,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       //---------------------------Seguidos---------------------------
                       GestureDetector(
-                        onTap: () async {
-                          await userService.getFollowing();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileFollowScreen(
-                                userApp: userService.userApp!,
-                                typeFollow: TypeFollow.seguidos,
-                              ),
-                            ),
-                          );
-                        },
+                        onTap: (!widget.isloggedUser)
+                            ? null
+                            : () async {
+                                await userService.getFollowing();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileFollowScreen(
+                                      userApp: userService.userApp!,
+                                      typeFollow: TypeFollow.seguidos,
+                                    ),
+                                  ),
+                                );
+                              },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [

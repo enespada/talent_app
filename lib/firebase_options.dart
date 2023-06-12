@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,18 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDwgzjFwnWyE_sEvIhvQrrZj-utcoeGkxM',
-    appId: '1:106218873843:web:68322521fdd1ca12e66886',
-    messagingSenderId: '106218873843',
-    projectId: 'talent-app-f191f',
-    authDomain: 'talent-app-f191f.firebaseapp.com',
-    storageBucket: 'talent-app-f191f.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBIynxNZXENTRWhqF6fW4GBA2YjZ0-rMqA',
-    appId: '1:106218873843:android:fba78aa986d58ac6e66886',
+    appId: '1:106218873843:android:4a26aedf3017fe3ee66886',
     messagingSenderId: '106218873843',
     projectId: 'talent-app-f191f',
     storageBucket: 'talent-app-f191f.appspot.com',
@@ -62,23 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDkjCfV8dFAqErKE3U3INZc3Zq5pLXKVZQ',
-    appId: '1:106218873843:ios:5629ce1c348f41ffe66886',
+    appId: '1:106218873843:ios:37d646b739b25350e66886',
     messagingSenderId: '106218873843',
     projectId: 'talent-app-f191f',
     storageBucket: 'talent-app-f191f.appspot.com',
     androidClientId: '106218873843-3sgr97r8p06962nsagv18v80h2i2g4fh.apps.googleusercontent.com',
-    iosClientId: '106218873843-gmkpp4qv1t1a1nc0ne69vln7teem7nl6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.talentApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDkjCfV8dFAqErKE3U3INZc3Zq5pLXKVZQ',
-    appId: '1:106218873843:ios:5629ce1c348f41ffe66886',
-    messagingSenderId: '106218873843',
-    projectId: 'talent-app-f191f',
-    storageBucket: 'talent-app-f191f.appspot.com',
-    androidClientId: '106218873843-3sgr97r8p06962nsagv18v80h2i2g4fh.apps.googleusercontent.com',
-    iosClientId: '106218873843-gmkpp4qv1t1a1nc0ne69vln7teem7nl6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.talentApp',
+    iosClientId: '106218873843-nm0ofl92dphauba0501plvpcc0bfn18r.apps.googleusercontent.com',
+    iosBundleId: 'com.enriqueespada.talentapp',
   );
 }

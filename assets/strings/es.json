@@ -86,5 +86,8 @@
   "onboarding_announcement": "Al registrarte en Talentapp, aceptas los ",
   "onboarding_cookies": "Uso de Cookies",
   "delete_follower": "Quitar seguidor",
-  "delete_follower_message": "¿Estás segur@ de que quieres que %0s deje de seguirte?"
+  "delete_follower_message": "¿Estás segur@ de que quieres que %0s deje de seguirte?",
+  "all": "todos",
+  "images": "imágenes",
+  "videos": "vídeos"
 }

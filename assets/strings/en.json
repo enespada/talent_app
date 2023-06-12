@@ -86,5 +86,8 @@
   "onboarding_announcement": "By registering with Talentapp, you agree to the ",
   "onboarding_cookies": "Use of Cookies",
   "delete_follower": "Remove follower",
-  "delete_follower_message": "Are you sure you want %0s to unfollow you?"
+  "delete_follower_message": "Are you sure you want %0s to unfollow you?",
+  "all": "all",
+  "images": "images",
+  "videos": "videos"
 }

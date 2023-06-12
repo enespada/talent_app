@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -12,28 +13,19 @@ import 'package:talent_app/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/widgets/widgets.dart';
 
-enum MessagesChatMenu { example1, example2 }
-
-enum MessagesChatState { sending, sent, received }
-
 class ChatScreen extends StatefulWidget {
   final Chat chat;
-  // final UserApp? userApp;
 
-  const ChatScreen({
-    Key? key,
-    required this.chat,
-    // this.userApp,
-  }) : super(key: key);
+  const ChatScreen({Key? key, required this.chat}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-  // final formKey = GlobalKey<FormState>();
   final TextEditingController tec = TextEditingController();
   Color iconColor = AppColors.greyscale2;
+  bool willPopBool = true;
 
   @override
   void initState() {
@@ -81,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     String title = widget.chat.name ?? widget.chat.userApp?.fullName ?? '';
 
-    return WillPopScope(
+    return ConditionalWillPopScope(
       onWillPop: () async {
         // for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
         //     in chatsService.chatsScreenSS ?? []) {
@@ -92,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         chatsService.activeChat = null;
         return true;
       },
+      shouldAddCallback: false,
       child: Scaffold(
         //-------------------------------appBar-----------------------------------
         appBar: _ChatAppBar(
@@ -110,9 +103,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             child: Column(
               children: [
                 //---------------------------Mensajes----------------------------------
-                Expanded(
-                  child: _MessagesList(chat: widget.chat),
-                ),
+                Expanded(child: _MessagesList(chat: widget.chat)),
 
                 //-------------------------Escribe...--------------------------------
                 Align(

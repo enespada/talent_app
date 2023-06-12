@@ -220,7 +220,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
                 //---------------------Filtros de busqueda----------------------
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
