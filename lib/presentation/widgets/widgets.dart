@@ -1,0 +1,16 @@
+export 'package:talent_app/presentation/widgets/blue_text_button.dart';
+export 'package:talent_app/presentation/widgets/carousel_images.dart';
+export 'package:talent_app/presentation/widgets/circle_editable_avatar.dart';
+export 'package:talent_app/presentation/widgets/custom_app_bar.dart';
+export 'package:talent_app/presentation/widgets/custom_back_button.dart';
+export 'package:talent_app/presentation/widgets/custom_bottom_navigation_bar.dart';
+export 'package:talent_app/presentation/widgets/custom_check.dart';
+export 'package:talent_app/presentation/widgets/edit_picture_button.dart';
+export 'package:talent_app/presentation/widgets/edit_profile_fact.dart';
+export 'package:talent_app/presentation/widgets/message_widget.dart';
+export 'package:talent_app/presentation/widgets/post_widget.dart';
+export 'package:talent_app/presentation/widgets/posts_list_widget.dart';
+export 'package:talent_app/presentation/widgets/publications_grid.dart';
+export 'package:talent_app/presentation/widgets/square_editable_avatar.dart';
+export 'package:talent_app/presentation/widgets/talent_card.dart';
+export 'package:talent_app/presentation/widgets/yellow_text_button.dart';

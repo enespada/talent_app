@@ -240,7 +240,7 @@ class UserService extends ChangeNotifier {
   Future<String> getProfileImageURL(String id) async {
     try {
       if (id == '') return '';
-      if (profileUrlImage != null) return profileUrlImage!;
+      // if (profileUrlImage != null) return profileUrlImage!;
 
       final storageRef = await FirebaseStorage.instance
           .refFromURL(

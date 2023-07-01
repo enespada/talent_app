@@ -72,7 +72,9 @@ class ChatsService extends ChangeNotifier {
           messages.sort((a, b) => a.timestamp!.compareTo(b.timestamp!));
           chataux.messages = [];
           chataux.messages!.addAll(messages);
-          chats!.add(chataux);
+          if (!chats!.any((Chat c) => c.id == chataux.id)) {
+            chats!.add(chataux);
+          }
           chatsListeners!.add(messagesSnapshots
               .listen((QuerySnapshot<Map<String, dynamic>> snapshot) async {
             //Recorremos los nuevos mensajes

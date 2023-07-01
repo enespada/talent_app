@@ -1,14 +1,14 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:talent_app/models/chat.dart';
-import 'package:talent_app/models/user_app.dart';
-import 'package:talent_app/screens/screens.dart';
-import 'package:talent_app/services/chats_service.dart';
-import 'package:talent_app/style/styles.dart';
+
+import 'package:talent_app/models/models.dart';
+import 'package:talent_app/presentation/screens/screens.dart';
+import 'package:talent_app/services/services.dart';
+import 'package:talent_app/presentation/screens/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 
 class Util {
@@ -110,26 +110,50 @@ class Util {
     Widget? child,
     List<Widget>? actions,
   }) {
-    return showCupertinoDialog(
+    if (Platform.isIOS) {
+      return showCupertinoDialog(
+          context: context,
+          builder: (context) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: CupertinoAlertDialog(
+                content: Container(
+                  height: 100,
+                  width: 100,
+                  constraints: const BoxConstraints(minWidth: 0, maxWidth: 10),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blueColor,
+                      strokeWidth: 4,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    }
+    return showDialog(
       context: context,
       builder: (context) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-          child: const AlertDialog(
-            shape: RoundedRectangleBorder(
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            content: Center(
-              child: SizedBox(
-                height: 70,
-                width: 70,
+            content: Container(
+              height: 200,
+              width: 200,
+              constraints: const BoxConstraints(minWidth: 0, maxWidth: 10),
+              child: const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.blueColor,
                   strokeWidth: 4,
                 ),
               ),
             ),
-            backgroundColor: Colors.transparent,
+            backgroundColor: AppColors.blackColor,
           ),
         );
       },
