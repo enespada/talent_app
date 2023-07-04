@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import 'package:talent_app/presentation/screens/screens.dart';
-import 'package:talent_app/presentation/screens/style/styles.dart';
+import 'package:talent_app/presentation/style/styles.dart';
 import 'package:talent_app/presentation/templates/templates.dart';
 import 'package:talent_app/utils/utils.dart';
 

@@ -5,7 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:talent_app/services/posts_service.dart';
 import 'package:talent_app/services/user_service.dart';
-import 'package:talent_app/presentation/screens/style/styles.dart';
+import 'package:talent_app/presentation/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/presentation/widgets/widgets.dart';
 

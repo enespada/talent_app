@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:talent_app/presentation/screens/style/styles.dart';
+import 'package:talent_app/presentation/style/styles.dart';
 
 class BlueTextButton extends StatelessWidget {
   final double fontSize;

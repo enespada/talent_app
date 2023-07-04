@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/services/services.dart';
-import 'package:talent_app/presentation/screens/style/styles.dart';
+import 'package:talent_app/presentation/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
 import 'package:talent_app/presentation/widgets/widgets.dart';
 
