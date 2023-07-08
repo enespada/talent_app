@@ -206,6 +206,8 @@ class PostsService extends ChangeNotifier {
 
   void reset() {
     allUsersPosts?.clear();
+    allUsersPosts = null;
     followingUsersPosts?.clear();
+    followingUsersPosts = null;
   }
 }
