@@ -61,7 +61,7 @@ class _UploadPostDescriptionScreenState
       post,
       widget.selectedImages,
     );
-    userService.userPosts.insert(0, resultPost);
+    userService.userPosts?.insert(0, resultPost);
   }
 
   @override
@@ -78,7 +78,7 @@ class _UploadPostDescriptionScreenState
         action: GestureDetector(
           onTap: () async {
             Util.showLoadingDialog(context: context);
-            if (userService.userPosts.isEmpty) await userService.getPosts();
+            if (userService.userPosts == null) await userService.getPosts();
             await uploadPost(userService, postsService);
             Navigator.pop(context);
             Navigator.pushReplacement(
@@ -86,7 +86,7 @@ class _UploadPostDescriptionScreenState
               MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   userApp: userService.userApp!,
-                  userPosts: userService.userPosts,
+                  userPosts: userService.userPosts ?? [],
                   isloggedUser: true,
                 ),
               ),

@@ -10,11 +10,22 @@ import 'package:talent_app/utils/utils.dart';
 class UserService extends ChangeNotifier {
   UserApp? userApp;
   String? profileUrlImage;
-  List<Post> userPosts = [];
-  List<UserApp> followers = [];
-  List<UserApp> following = [];
+  List<Post>? userPosts;
+  List<UserApp>? followers;
+  List<UserApp>? following;
   bool isLoading = false;
   bool isLoadingImage = false;
+
+  void reset() {
+    userApp = null;
+    userPosts?.clear();
+    userPosts = null;
+    followers?.clear();
+    followers = null;
+    following?.clear();
+    following = null;
+    profileUrlImage = null;
+  }
 
   Future<UserApp?> getUser() async {
     final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
@@ -94,8 +105,11 @@ class UserService extends ChangeNotifier {
     if (isLoading) return;
     isLoading = true;
     notifyListeners();
-
-    userPosts.clear();
+    if (userPosts == null) {
+      userPosts = [];
+    } else {
+      userPosts!.clear();
+    }
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final data = await fbFirestore
         .collection('posts')
@@ -108,80 +122,87 @@ class UserService extends ChangeNotifier {
       Post postaux = Post.fromJson(doc.data());
       postaux.id = doc.reference;
       postaux.userApp = userApp;
-      userPosts.add(postaux);
+      userPosts?.add(postaux);
     }
 
-    userPosts.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
+    userPosts?.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
 
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> getFollowers() async {
-    if (userApp == null) return;
-    List<DocumentReference?>? idFollowers = [];
+    List<DocumentReference>? idFollowers = [];
     idFollowers.addAll(userApp!.followers!);
     if (idFollowers.isEmpty) return;
-    // if (isLoading) return;
-    // isLoading = true;
-    // notifyListeners();
-
-    followers.clear();
+    if (followers != null) {
+      followers!.clear();
+    } else {
+      followers = [];
+    }
     List<UserApp> provFollowers = [];
-    final fbFirestore = FirebaseFirestore.instance;
-    final data = await fbFirestore.collection("users").get();
-    String stringToCompare = '';
-    for (QueryDocumentSnapshot<Map<String, dynamic>> element in data.docs) {
-      for (DocumentReference? idFollower in idFollowers) {
-        stringToCompare =
-            idFollower.toString().split('(')[1].split(')')[0].split('/')[1];
-        if (stringToCompare == element.id) {
-          UserApp auxUserApp = UserApp.fromJson(element.data());
-          auxUserApp.id = element.reference;
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection("users")
+        .where(FieldPath.documentId, whereIn: userApp!.followers)
+        .get();
+    for (DocumentReference idFollower in idFollowers) {
+      bool userExists = false;
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+        if (idFollower.id == doc.id) {
+          userExists = true;
+          UserApp auxUserApp = UserApp.fromJson(doc.data());
+          auxUserApp.id = doc.reference;
           provFollowers.add(auxUserApp);
-          break;
         }
       }
+      if (!userExists) {
+        userApp!.followers!.remove(idFollower);
+        await fbFirestore
+            .collection('users')
+            .doc(userApp!.id!.id)
+            .update({'followers': userApp!.followers});
+      }
     }
-    followers.addAll(provFollowers);
-
-    // isLoading = false;
-    // notifyListeners();
+    followers!.addAll(provFollowers);
+    notifyListeners();
   }
 
   Future<void> getFollowing() async {
-    List<DocumentReference?>? idFollowing = [];
-    idFollowing.addAll(userApp!.following!);
-    if (idFollowing.isEmpty) return;
-    // if (isLoading) return;
-    // isLoading = true;
-    // notifyListeners();
-
-    following.clear();
+    List<DocumentReference>? idFollowings = [];
+    idFollowings.addAll(userApp!.following!);
+    if (idFollowings.isEmpty) return;
+    if (following != null) {
+      following!.clear();
+    } else {
+      following = [];
+    }
     List<UserApp> provFollowing = [];
-    final fbFirestore = FirebaseFirestore.instance;
-    // final data = await fbFirestore
-    //     .collection("users")
-    //     .where("id", whereIn: idFollowing)
-    //     .get();
-    final data = await fbFirestore.collection("users").get();
-    String stringToCompare = '';
-    for (QueryDocumentSnapshot<Map<String, dynamic>> element in data.docs) {
-      for (DocumentReference? idFollowing in idFollowing) {
-        stringToCompare =
-            idFollowing.toString().split('(')[1].split(')')[0].split('/')[1];
-        if (stringToCompare == element.id) {
-          UserApp auxUserApp = UserApp.fromJson(element.data());
-          auxUserApp.id = element.reference;
+    final FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
+    final data = await fbFirestore
+        .collection("users")
+        .where(FieldPath.documentId, whereIn: userApp!.following)
+        .get();
+    for (DocumentReference idFollowing in idFollowings) {
+      bool userExists = false;
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data.docs) {
+        if (idFollowing.id == doc.id) {
+          userExists = true;
+          UserApp auxUserApp = UserApp.fromJson(doc.data());
+          auxUserApp.id = doc.reference;
           provFollowing.add(auxUserApp);
-          break;
         }
       }
+      if (!userExists) {
+        userApp!.following!.remove(idFollowing);
+        await fbFirestore
+            .collection('users')
+            .doc(userApp!.id!.id)
+            .update({'following': userApp!.following});
+      }
     }
-    following.addAll(provFollowing);
-
-    // isLoading = false;
-    // notifyListeners();
+    following!.addAll(provFollowing);
+    notifyListeners();
   }
 
   Future<void> follow(UserApp userToFollow) async {
@@ -195,10 +216,15 @@ class UserService extends ChangeNotifier {
     await userApp!.id!.update({
       "following": FieldValue.arrayUnion([userToFollow.id]),
     });
-    userApp!.following!.add(userToFollow.id);
-    userToFollow.followers!.add(userApp!.id);
-    following.add(userToFollow);
+    userApp!.following!.add(userToFollow.id!);
+    userToFollow.followers!.add(userApp!.id!);
+    if (following == null) {
+      await getFollowing();
+    } else {
+      following!.add(userToFollow);
+    }
     // await postsService.getFollowingPosts(userApp!);
+    notifyListeners();
   }
 
   Future<void> unfollow(UserApp userToUnfollow) async {
@@ -214,8 +240,13 @@ class UserService extends ChangeNotifier {
     });
     userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
     userToUnfollow.followers!.remove(userApp!.id);
-    following.remove(userToUnfollow);
+    if (following == null) {
+      await getFollowing();
+    } else {
+      following!.remove(userToUnfollow);
+    }
     // await postsService.getFollowingPosts(userApp!);
+    notifyListeners();
   }
 
   Future<void> removeFollower(UserApp followerToRemove) async {
@@ -234,7 +265,12 @@ class UserService extends ChangeNotifier {
     });
     userApp!.followers!
         .removeWhere((element) => element == followerToRemove.id);
-    followers.removeWhere((element) => element.id == followerToRemove.id);
+    if (followers == null) {
+      await getFollowers();
+    } else {
+      followers!.removeWhere((element) => element.id == followerToRemove.id);
+    }
+    notifyListeners();
   }
 
   Future<String> getProfileImageURL(String id) async {
@@ -251,7 +287,7 @@ class UserService extends ChangeNotifier {
     } catch (e) {
       final storageRef = await FirebaseStorage.instance
           .refFromURL(
-              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/profile.png")
+              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/no-user.png")
           .getDownloadURL();
       profileUrlImage = storageRef.toString();
       return storageRef.toString();
@@ -297,13 +333,5 @@ class UserService extends ChangeNotifier {
     profileUrlImage = null;
     await getProfileImageURL(userApp!.id!.id);
     notifyListeners();
-  }
-
-  void reset() {
-    userApp = null;
-    userPosts.clear();
-    followers.clear();
-    following.clear();
-    profileUrlImage = null;
   }
 }

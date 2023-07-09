@@ -162,19 +162,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           return Center(
                             child: circleEditableAvatar,
                           );
-                          // return Center(
-                          //   child: CircleEditableAvatar(
-                          //     size: avatarSize,
-                          //     image: const Image(
-                          //       image: AssetImage('assets/images/profile.png'),
-                          //     ),
-                          //     file: file,
-                          //     iconColor: AppColors.greyscale5,
-                          //     iconBackgroundColor: AppColors.yellowColor,
-                          //   ),
-                          // );
                         },
                       ),
+                      // FutureBuilder(
+                      //   future: userService
+                      //       .getProfileImageURL(userService.userApp!.id!.id),
+                      //   builder: (BuildContext context,
+                      //       AsyncSnapshot<String> snapshot) {
+                      //     return Container(
+                      //       height: responsive.diagonalPercent(4.5),
+                      //       width: responsive.diagonalPercent(4.5),
+                      //       decoration: BoxDecoration(
+                      //         shape: BoxShape.circle,
+                      //         image: (snapshot.hasData)
+                      //             ? DecorationImage(
+                      //                 image: CachedNetworkImageProvider(
+                      //                     snapshot.data!),
+                      //                 fit: BoxFit.cover,
+                      //               )
+                      //             : null,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: spaceBetweenFacts),
 
                       //-------------------Informacion personal----------------------

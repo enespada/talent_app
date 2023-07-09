@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final pageController = PageController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  bool isRefresh = true;
+  bool isRefresh = false;
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //--------------------------------body------------------------------------
       body: SafeArea(
-        child: (postsService.isLoadingFollowing && isRefresh)
+        child: (postsService.isLoadingFollowing && !isRefresh)
             ? const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.blueColor,
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _refreshController.loadComplete();
                 },
                 onRefresh: () async {
-                  if (isRefresh) isRefresh = false;
+                  if (!isRefresh) isRefresh = true;
                   await postsService.getFollowingPosts(userService.userApp!);
                   // await Future.delayed(const Duration(seconds: 2));
                   _refreshController.refreshCompleted();

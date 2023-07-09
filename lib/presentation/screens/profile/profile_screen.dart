@@ -48,7 +48,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final UserService userService = Provider.of<UserService>(context);
+    final UserService userService = Provider.of<UserService>(
+      context,
+      listen: true,
+    );
     final SportsService sportsService = Provider.of<SportsService>(
       context,
       listen: false,
@@ -116,8 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   //---------------------Foto perfil--------------------------
                   FutureBuilder(
-                    future: userService.getProfileImageURL(
-                        widget.userApp.id!.path.split('/')[1]),
+                    future:
+                        userService.getProfileImageURL(widget.userApp.id!.id),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       return Container(
@@ -318,7 +321,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: (!widget.isloggedUser)
                             ? null
                             : () async {
-                                await userService.getFollowers();
+                                if (userService.followers == null) {
+                                  await userService.getFollowers();
+                                }
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -360,7 +365,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: (!widget.isloggedUser)
                             ? null
                             : () async {
-                                await userService.getFollowing();
+                                if (userService.following == null) {
+                                  await userService.getFollowing();
+                                }
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

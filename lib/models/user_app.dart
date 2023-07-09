@@ -13,8 +13,8 @@ class UserApp {
   String? userName;
   DateTime? birthdate;
   String? bio;
-  List<DocumentReference?>? followers;
-  List<DocumentReference?>? following;
+  List<DocumentReference>? followers;
+  List<DocumentReference>? following;
 
   UserApp({
     this.id,

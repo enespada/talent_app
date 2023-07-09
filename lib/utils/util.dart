@@ -204,6 +204,9 @@ class Util {
     );
   }
 
+  //Este metodo solo puede llamarse desde la capa de presentacion (presentation)
+  //Podria ser mejor opcion meterlo en una clase de utilidades dentro de
+  //la carpeta presentation
   static Future<void> operationsBeforeChatScreen(
     BuildContext context,
     ChatsService chatsService,
@@ -219,49 +222,4 @@ class Util {
       ),
     );
   }
-
-  //   Future<dynamic> showDialogX(BuildContext context, UserApp followerToRemove) {
-  //   return showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return BackdropFilter(
-  //         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-  //         child: AlertDialog(
-  //           title: Center(
-  //             child: Text(
-  //               Localization.of(context).string("wall_followers_delete"),
-  //               style: AppStyles.darkTextTheme.displayMedium,
-  //             ),
-  //           ),
-  //           actionsAlignment: MainAxisAlignment.end,
-  //           backgroundColor: AppColors.greyscale5,
-  //           content: Text(
-  //             Localization.of(context).string("wall_followers_message",
-  //                 params: [followerToRemove.fullName!]),
-  //             style: AppStyles.darkTextTheme.bodyLarge,
-  //           ),
-  //           actions: [
-  //             MaterialButton(
-  //               onPressed: () => onPressedDialogX(context, followerToRemove),
-  //               elevation: 0.0,
-  //               textColor: AppColors.mediunLightGrey,
-  //               child: Text(
-  //                 Localization.of(context).string("wall_followers_yes"),
-  //               ),
-  //             ),
-  //             MaterialButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               elevation: 5,
-  //               textColor: AppColors.brandColor,
-  //               child: Text(
-  //                 Localization.of(context).string("wall_followers_no"),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

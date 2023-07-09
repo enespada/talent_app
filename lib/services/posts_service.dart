@@ -19,6 +19,13 @@ class PostsService extends ChangeNotifier {
 
   PostsService() {}
 
+  void reset() {
+    allUsersPosts?.clear();
+    allUsersPosts = null;
+    followingUsersPosts?.clear();
+    followingUsersPosts = null;
+  }
+
   //Metodo para obtener los posts de todos los usuarios
   Future<void> getUsersPosts(UserApp loggedUserApp) async {
     if (isLoadingAll) return;
@@ -202,12 +209,5 @@ class PostsService extends ChangeNotifier {
     posts.sort((a, b) => b.timestamp!.compareTo(a.timestamp!));
 
     return posts;
-  }
-
-  void reset() {
-    allUsersPosts?.clear();
-    allUsersPosts = null;
-    followingUsersPosts?.clear();
-    followingUsersPosts = null;
   }
 }

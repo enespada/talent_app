@@ -55,6 +55,17 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     changeFollow();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    super.setState(fn);
+  }
+
   void changeFollow() async {
     double followersValue = userApp!.followers!.length.toDouble();
     followersString = Util.adaptNumFollow(followersValue);
@@ -77,7 +88,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     switch (_typeFollow) {
       case TypeFollow.seguidores:
         usersToShow.clear();
-        usersToShow.addAll(userService.followers);
+        usersToShow.addAll(userService.followers ?? []);
         athletesValue = 0;
         scoutersValue = 0;
         managersValue = 0;
@@ -106,12 +117,14 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
         break;
       case TypeFollow.seguidos:
         usersToShow.clear();
-        usersToShow.addAll(userService.following);
-        scoutersValue = 0;
+        usersToShow.addAll(userService.following ?? []);
         athletesValue = 0;
+        scoutersValue = 0;
+        managersValue = 0;
         for (UserApp userToShow in usersToShow) {
           if (userToShow.type == 'scouter') scoutersValue++;
           if (userToShow.type == 'athlete') athletesValue++;
+          if (userToShow.type == 'manager') managersValue++;
         }
         switch (_typeUser) {
           case TypeUser.todos:
@@ -137,7 +150,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
     List<Widget> typeUserContainers = [
       //----------------------todos--------------------------
       _TypeUserContainer(
-        title: 'todos',
+        title: Localization.of(context).string('all'),
         typeUser: _typeUser,
         typeUserCompare: TypeUser.todos,
         onTap: () {
@@ -149,7 +162,8 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
       //----------------------scouters-------------------------
       _TypeUserContainer(
-        title: '$scoutersValue scouters',
+        title:
+            '$scoutersValue ${Localization.of(context).string('register_type_scouter')}',
         typeUser: _typeUser,
         typeUserCompare: TypeUser.scouters,
         onTap: () {
@@ -161,7 +175,8 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
       //--------------------deportistas-----------------------
       _TypeUserContainer(
-        title: '$athletesValue deportistas',
+        title:
+            '$athletesValue ${Localization.of(context).string('register_type_athlete')}',
         typeUser: _typeUser,
         typeUserCompare: TypeUser.deportistas,
         onTap: () {
@@ -173,7 +188,8 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
       //--------------------managers-----------------------
       _TypeUserContainer(
-        title: '$managersValue managers',
+        title:
+            '$managersValue ${Localization.of(context).string('register_type_manager')}',
         typeUser: _typeUser,
         typeUserCompare: TypeUser.managers,
         onTap: () {
@@ -193,16 +209,17 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
               fontWeight: FontWeight.w700,
             ),
         leading: GestureDetector(
-          onTap: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileScreen(
-                userApp: userApp!,
-                userPosts: userService.userPosts,
-                isloggedUser: userApp!.id == userService.userApp!.id,
-              ),
-            ),
-          ),
+          onTap: () => Navigator.pop(context),
+          // onTap: () => Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => ProfileScreen(
+          //       userApp: userApp!,
+          //       userPosts: userService.userPosts,
+          //       isloggedUser: userApp!.id == userService.userApp!.id,
+          //     ),
+          //   ),
+          // ),
           child: Icon(
             Icons.arrow_back,
             color: AppColors.blueColor,
@@ -235,7 +252,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                             typeFollowCompare: TypeFollow.seguidores,
                             onTap: () async {
                               _typeFollow = TypeFollow.seguidores;
-                              if (userService.followers.isEmpty) {
+                              if (userService.followers == null) {
                                 await userService.getFollowers();
                               }
                               changeFollow();
@@ -252,7 +269,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                             typeFollowCompare: TypeFollow.seguidos,
                             onTap: () async {
                               _typeFollow = TypeFollow.seguidos;
-                              if (userService.following.isEmpty) {
+                              if (userService.following == null) {
                                 await userService.getFollowing();
                               }
                               changeFollow();

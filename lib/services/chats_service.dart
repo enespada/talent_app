@@ -16,6 +16,17 @@ class ChatsService extends ChangeNotifier {
   //Los demas de cada uno de los chats (?)
   List<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>>? chatsListeners;
 
+  void reset() {
+    for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> chatsListener
+        in chatsListeners ?? []) {
+      chatsListener.cancel();
+    }
+    chatsListeners?.clear();
+    activeChat = null;
+    chats?.clear();
+    chats = null;
+  }
+
   Future<void> getUserChats(UserApp loggedUserApp) async {
     if (isLoadingChats) return;
     isLoadingChats = true;
@@ -218,7 +229,7 @@ class ChatsService extends ChangeNotifier {
     } catch (e) {
       final storageRef = await FirebaseStorage.instance
           .refFromURL(
-              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/profile.png")
+              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/no-user.png")
           .getDownloadURL();
       return storageRef.toString();
     }
@@ -254,16 +265,5 @@ class ChatsService extends ChangeNotifier {
     // final Map<String, dynamic> newChatData = chat.toJson();
     // newChatData.putIfAbsent('messages', () => [firstMessage.toJson()]);
     // await reference.set(newChatData, SetOptions(merge: true));
-  }
-
-  void reset() {
-    for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> chatsListener
-        in chatsListeners ?? []) {
-      chatsListener.cancel();
-    }
-    chatsListeners?.clear();
-    activeChat = null;
-    chats?.clear();
-    chats = null;
   }
 }

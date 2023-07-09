@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider(create: (context) => UserService()),
-        ChangeNotifierProvider(create: (context) => SearchService()),
         ChangeNotifierProvider(create: (context) => SportsService()),
         ChangeNotifierProvider(create: (context) => ModalitiesService()),
         ChangeNotifierProvider(create: (context) => ChatsService()),

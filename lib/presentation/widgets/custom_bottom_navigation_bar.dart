@@ -103,8 +103,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         //-------------------------------Perfil---------------------------------
         BottomNavigationBarItem(
           icon: FutureBuilder(
-            future: userService.getProfileImageURL(
-                userService.userApp!.id!.path.split('/')[1]),
+            future: userService.getProfileImageURL(userService.userApp!.id!.id),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               return Container(
                 height: responsive.diagonalPercent(4),
@@ -122,10 +121,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                           image: CachedNetworkImageProvider(snapshot.data!),
                           fit: BoxFit.cover,
                         )
-                      : const DecorationImage(
-                          image: AssetImage('assets/images/profile.png'),
-                          fit: BoxFit.cover,
-                        ),
+                      : null,
                 ),
               );
             },
@@ -142,7 +138,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         switch (index) {
           case 0:
             if (postsService.followingUsersPosts == null) {
-              await postsService.getFollowingPosts(userService.userApp!);
+              postsService.getFollowingPosts(userService.userApp!);
             }
             Navigator.pushReplacementNamed(context, HomeScreen.routeName);
             break;
@@ -169,13 +165,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushReplacementNamed(context, ChatsScreen.routeName);
             break;
           case 4:
-            if (userService.userPosts.isEmpty) await userService.getPosts();
+            if (userService.userPosts == null) await userService.getPosts();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   userApp: userService.userApp!,
-                  userPosts: userService.userPosts,
+                  userPosts: userService.userPosts ?? [],
                   isloggedUser: true,
                 ),
               ),
