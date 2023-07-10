@@ -140,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               : const DecorationImage(
                                   image:
-                                      AssetImage('assets/images/profile.png'),
+                                      AssetImage('assets/images/no-user.png'),
                                   fit: BoxFit.cover,
                                 ),
                         ),

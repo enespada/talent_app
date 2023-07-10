@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -205,11 +206,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     postsService.reset();
                                     userService.reset();
                                     chatsService.reset();
-                                    Navigator.pushNamedAndRemoveUntil(
+                                    Navigator.popUntil(
+                                      context,
+                                      (route) {
+                                        return route ==
+                                            ModalRoute.withName(
+                                                SettingsScreen.routeName);
+                                      },
+                                    );
+                                    Navigator.pushNamed(
                                       context,
                                       SplashScreen.routeName,
-                                      (route) => false,
                                     );
+                                    // Navigator.pushNamedAndRemoveUntil(
+                                    //   context,
+                                    //   SplashScreen.routeName,
+                                    //   (route) => false,
+                                    // );
                                   }
                                 }
                               },

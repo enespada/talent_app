@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:talent_app/models/models.dart';
+import 'package:talent_app/presentation/widgets/custom_will_pop_scope.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/presentation/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -76,8 +78,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     String title = widget.chat.name ?? widget.chat.userApp?.fullName ?? '';
 
-    return WillPopScope(
-      onWillPop: () async {
+    return CustomWillPopScope(
+      action: () async {
         // for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
         //     in chatsService.chatsScreenSS ?? []) {
         //   element.resume();
@@ -85,9 +87,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         // chatsService.chatsScreenSS?.resume();
         // await chatsService.chatScreenSS?.cancel();
         chatsService.activeChat = null;
-        return true;
+        return;
       },
-      // shouldAddCallback: true,
+      onWillPop: true,
       child: Scaffold(
         //-------------------------------appBar-----------------------------------
         appBar: _ChatAppBar(
@@ -179,6 +181,110 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+
+    // return WillPopScope(
+    //   onWillPop: () async {
+    //     // for (StreamSubscription<QuerySnapshot<Map<String, dynamic>>> element
+    //     //     in chatsService.chatsScreenSS ?? []) {
+    //     //   element.resume();
+    //     // }
+    //     // chatsService.chatsScreenSS?.resume();
+    //     // await chatsService.chatScreenSS?.cancel();
+    //     chatsService.activeChat = null;
+    //     return true;
+    //   },
+    //   // shouldAddCallback: true,
+    //   child: Scaffold(
+    //     //-------------------------------appBar-----------------------------------
+    //     appBar: _ChatAppBar(
+    //       title: title,
+    //       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+    //             fontSize: responsive.diagonalPercent(2.2),
+    //           ),
+    //       chat: widget.chat,
+    //       onTap: () => Navigator.maybePop(context),
+    //     ),
+
+    //     //--------------------------------body-------------------------------------
+    //     body: SafeArea(
+    //       child: GestureDetector(
+    //         onTap: FocusScope.of(context).unfocus,
+    //         child: Column(
+    //           children: [
+    //             //---------------------------Mensajes----------------------------------
+    //             Expanded(child: _MessagesList(chat: widget.chat)),
+
+    //             //-------------------------Escribe...--------------------------------
+    //             Align(
+    //               alignment: Alignment.bottomCenter,
+    //               child: Container(
+    //                 padding: const EdgeInsets.all(10),
+    //                 width: responsive.width,
+    //                 child: Row(
+    //                   children: [
+    //                     Expanded(
+    //                       child: TextField(
+    //                         controller: tec,
+    //                         keyboardType: TextInputType.text,
+    //                         keyboardAppearance: Brightness.light,
+    //                         style:
+    //                             Theme.of(context).textTheme.bodyLarge!.copyWith(
+    //                                   color: AppColors.greyscale5,
+    //                                 ),
+    //                         decoration: InputDecoration(
+    //                           contentPadding: const EdgeInsets.symmetric(
+    //                             vertical: 14.0,
+    //                             horizontal: 25.0,
+    //                           ),
+    //                           filled: true,
+    //                           fillColor: AppColors.lightGrey,
+    //                           border: const OutlineInputBorder(
+    //                             borderRadius:
+    //                                 BorderRadius.all(Radius.circular(10)),
+    //                             borderSide: BorderSide(
+    //                                 width: 0, style: BorderStyle.none),
+    //                           ),
+    //                           hintText: Localization.of(context)
+    //                               .string('messages_chat_type_hint'),
+    //                           hintStyle:
+    //                               AppThemes.darkTextTheme.bodyLarge!.copyWith(
+    //                             color: AppColors.greyscale2,
+    //                           ),
+    //                           suffixIcon: InkWell(
+    //                             borderRadius: BorderRadius.circular(50),
+    //                             onTap: () async {
+    //                               await sendMessage(
+    //                                 chatsService: chatsService,
+    //                                 userService: userService,
+    //                               );
+    //                             },
+    //                             child: Padding(
+    //                               padding: const EdgeInsets.all(10),
+    //                               child: SvgPicture.asset(
+    //                                 'assets/images/icon_send.svg',
+    //                                 color: iconColor,
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         ),
+    //                         onChanged: (String text) {
+    //                           iconColor = (text.isNotEmpty)
+    //                               ? AppColors.blueColor
+    //                               : AppColors.greyscale2;
+    //                           setState(() {});
+    //                         },
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 

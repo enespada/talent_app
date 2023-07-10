@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:talent_app/models/models.dart';
 import 'package:talent_app/presentation/providers/edit_profile_provider.dart';
+import 'package:talent_app/presentation/screens/screens.dart';
 import 'package:talent_app/services/services.dart';
 import 'package:talent_app/presentation/style/styles.dart';
 import 'package:talent_app/utils/utils.dart';
@@ -44,7 +45,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (file != null) {
       await userService.uploadImageProfile(file.path);
     }
-    Navigator.pop(context);
+    if (widget.isProfileCompleted) {
+      Navigator.pop(context);
+      return;
+    } else {}
+    Navigator.popUntil(
+      context,
+      (route) {
+        return route == ModalRoute.withName(EditProfileScreen.routeName);
+      },
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(
+          userApp: userService.userApp!,
+          userPosts: [],
+          isloggedUser: true,
+        ),
+      ),
+    );
     // Navigator.pushReplacement(
     //   context,
     //   MaterialPageRoute(

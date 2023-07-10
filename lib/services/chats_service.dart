@@ -32,7 +32,11 @@ class ChatsService extends ChangeNotifier {
     isLoadingChats = true;
     notifyListeners();
 
-    if (chats != null) chats!.clear();
+    if (chats != null) {
+      chats!.clear();
+    } else {
+      chats = [];
+    }
     FirebaseFirestore fbFirestore = FirebaseFirestore.instance;
     final chatsSnapshots = fbFirestore
         .collection('chats')

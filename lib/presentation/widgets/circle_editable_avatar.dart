@@ -41,7 +41,9 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     _xFile = await picker.pickImage(source: ImageSource.gallery);
-    widget.file = File(_xFile!.path);
+    if (_xFile != null) {
+      widget.file = File(_xFile!.path);
+    }
     setState(() {});
   }
 

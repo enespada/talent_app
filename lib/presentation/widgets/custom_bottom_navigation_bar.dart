@@ -103,7 +103,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
         //-------------------------------Perfil---------------------------------
         BottomNavigationBarItem(
           icon: FutureBuilder(
-            future: userService.getProfileImageURL(userService.userApp!.id!.id),
+            future: userService
+                .getProfileImageURL(userService.userApp?.id?.id ?? ''),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               return Container(
                 height: responsive.diagonalPercent(4),

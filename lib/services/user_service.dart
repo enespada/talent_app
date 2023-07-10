@@ -285,12 +285,16 @@ class UserService extends ChangeNotifier {
       profileUrlImage = storageRef.toString();
       return storageRef.toString();
     } catch (e) {
-      final storageRef = await FirebaseStorage.instance
-          .refFromURL(
-              "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/no-user.png")
-          .getDownloadURL();
-      profileUrlImage = storageRef.toString();
-      return storageRef.toString();
+      try {
+        final storageRef = await FirebaseStorage.instance
+            .refFromURL(
+                "${NetworkEndpoints.firebaseStorageBaseUrl}/default_images/no-user.png")
+            .getDownloadURL();
+        profileUrlImage = storageRef.toString();
+        return storageRef.toString();
+      } catch (e) {
+        return '';
+      }
     }
   }
 

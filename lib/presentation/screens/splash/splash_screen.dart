@@ -80,7 +80,7 @@ class SplashScreen extends StatelessWidget {
         );
         return;
       } else {
-        chatsService.getUserChats(userService.userApp!);
+        await chatsService.getUserChats(userService.userApp!);
         postsService.getFollowingPosts(userService.userApp!);
         Navigator.pushReplacementNamed(context, HomeScreen.routeName);
         return;

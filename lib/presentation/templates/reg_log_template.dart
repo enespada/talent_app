@@ -235,7 +235,7 @@ class _RegLogTemplateState extends State<RegLogTemplate> {
                                 await Future.delayed(
                                   const Duration(seconds: 2),
                                 );
-                                chatsService.getUserChats(
+                                await chatsService.getUserChats(
                                   userService.userApp!,
                                 );
                                 postsService.getFollowingPosts(
