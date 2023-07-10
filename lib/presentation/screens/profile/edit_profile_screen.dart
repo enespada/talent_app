@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             );
                           } else {
                             circleEditableAvatar.image = const Image(
-                              image: AssetImage('assets/images/profile.png'),
+                              image: AssetImage('assets/images/no-user.png'),
                               fit: BoxFit.cover,
                             );
                           }
