@@ -150,6 +150,22 @@ class AuthService extends ChangeNotifier {
         .where('users', arrayContains: loggedUserApp.id)
         .get();
     for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data2.docs) {
+      // Obtiene todos los documentos de la colección
+      QuerySnapshot querySnapshot = await fbFirestore
+          .collection('chats')
+          .doc(doc.reference.id)
+          .collection('messages')
+          .get();
+      // Elimina cada documento de la colección
+      for (QueryDocumentSnapshot<Object?> documento in querySnapshot.docs) {
+        documento.reference.delete();
+      }
+    }
+    final data3 = await fbFirestore
+        .collection('chats')
+        .where('users', arrayContains: loggedUserApp.id)
+        .get();
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in data3.docs) {
       await fbFirestore.collection('chats').doc(doc.reference.id).delete();
     }
     //Borramos el usuario de Firestore

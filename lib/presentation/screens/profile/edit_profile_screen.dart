@@ -28,6 +28,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  List<File?> files = [];
+
   Future<void> _saveChanges(UserService userService, File? file,
       EditProfileProvider editProfileProvider) async {
     UserApp userAppToUpdate = UserApp();
@@ -110,7 +112,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     CircleEditableAvatar circleEditableAvatar = CircleEditableAvatar(
       size: avatarSize,
       image: null,
-      file: null,
+      files: files,
       iconColor: AppColors.greyscale5,
       iconBackgroundColor: AppColors.yellowColor,
     );
@@ -320,7 +322,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       }
                                       await _saveChanges(
                                         userService,
-                                        circleEditableAvatar.file,
+                                        circleEditableAvatar.files.isNotEmpty
+                                            ? circleEditableAvatar.files[0]!
+                                            : null,
                                         editProfileProvider,
                                       );
                                     } else {

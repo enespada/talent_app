@@ -11,7 +11,7 @@ class CircleEditableAvatar extends StatefulWidget {
   final double size;
   // ImageProvider<Object> image;
   Image? image;
-  File? file;
+  List<File?> files;
   final Color? iconColor;
   final Color? iconBackgroundColor;
 
@@ -19,9 +19,9 @@ class CircleEditableAvatar extends StatefulWidget {
     Key? key,
     required this.size,
     required this.image,
-    required this.file,
     this.iconColor,
     this.iconBackgroundColor,
+    required this.files,
   }) : super(key: key);
 
   @override
@@ -42,7 +42,8 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
     final ImagePicker picker = ImagePicker();
     _xFile = await picker.pickImage(source: ImageSource.gallery);
     if (_xFile != null) {
-      widget.file = File(_xFile!.path);
+      widget.files.clear();
+      widget.files.add(File(_xFile!.path));
     }
     setState(() {});
   }
@@ -63,7 +64,7 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
               // color: Colors.red,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(widget.size),
-                child: (widget.file == null)
+                child: (widget.files.isEmpty)
                     // ? Image(
                     //     image: widget.image,
                     //     fit: BoxFit.cover,
@@ -76,7 +77,7 @@ class _CircleEditableAvatarState extends State<CircleEditableAvatar> {
                     //   ),
                     ? widget.image
                     : Image.file(
-                        widget.file!,
+                        widget.files[0]!,
                         height: widget.size,
                         width: widget.size,
                         fit: BoxFit.cover,

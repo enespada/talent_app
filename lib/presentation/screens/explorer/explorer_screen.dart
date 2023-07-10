@@ -85,7 +85,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                       setState(() {});
                     },
                     controller: _refreshController,
-                    child: (postsService.allUsersPosts!.isEmpty)
+                    child: (postsService.allUsersPosts?.isEmpty ?? true)
                         ? Padding(
                             padding: const EdgeInsets.only(
                               top: 20,
