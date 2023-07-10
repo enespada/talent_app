@@ -122,7 +122,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
                           image: CachedNetworkImageProvider(snapshot.data!),
                           fit: BoxFit.cover,
                         )
-                      : null,
+                      : const DecorationImage(
+                          image: AssetImage('assets/images/no-user.png'),
+                          fit: BoxFit.cover,
+                        ),
                 ),
               );
             },
