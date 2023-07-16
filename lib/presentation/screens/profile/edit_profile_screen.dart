@@ -171,19 +171,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         builder: (BuildContext context,
                             AsyncSnapshot<String> snapshot) {
                           if (snapshot.hasData && snapshot.data != '') {
-                            circleEditableAvatar.image = Image(
-                              image: CachedNetworkImageProvider(snapshot.data!),
-                              fit: BoxFit.cover,
+                            return Center(
+                              child: CircleEditableAvatar(
+                                size: avatarSize,
+                                image: Image(
+                                  image: CachedNetworkImageProvider(
+                                    snapshot.data!,
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                                files: files,
+                                iconColor: AppColors.greyscale5,
+                                iconBackgroundColor: AppColors.yellowColor,
+                              ),
                             );
+                            // circleEditableAvatar.image = Image(
+                            //   image: CachedNetworkImageProvider(snapshot.data!),
+                            //   fit: BoxFit.cover,
+                            // );
                           } else {
-                            circleEditableAvatar.image = const Image(
-                              image: AssetImage('assets/images/no-user.png'),
-                              fit: BoxFit.cover,
+                            return Center(
+                              child: CircleEditableAvatar(
+                                size: avatarSize,
+                                image: const Image(
+                                  image:
+                                      AssetImage('assets/images/no-user.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                                files: files,
+                                iconColor: AppColors.greyscale5,
+                                iconBackgroundColor: AppColors.yellowColor,
+                              ),
                             );
+                            // circleEditableAvatar.image = const Image(
+                            //   image: AssetImage('assets/images/no-user.png'),
+                            //   fit: BoxFit.cover,
+                            // );
                           }
-                          return Center(
-                            child: circleEditableAvatar,
-                          );
+                          // return Center(child: circleEditableAvatar);
                         },
                       ),
                       // FutureBuilder(

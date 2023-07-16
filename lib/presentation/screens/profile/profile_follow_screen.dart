@@ -426,7 +426,7 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                                         : Localization.of(context)
                                             .string("wall_followers_follow"),
                                     style: TextStyle(
-                                      fontSize: responsive.diagonalPercent(1.7),
+                                      fontSize: responsive.diagonalPercent(1.5),
                                     ),
                                   ),
                                   textColor: (isFollowing)

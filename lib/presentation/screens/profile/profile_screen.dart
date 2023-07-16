@@ -440,7 +440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Divider(),
               SizedBox(height: responsive.heightPercent(1.5)),
 
-              //---------------Publicaciones, retos y guardados------------------
+              //--------------------------Publicaciones-------------------------
               (widget.userPosts.isEmpty)
                   ? Padding(
                       padding: const EdgeInsets.only(
@@ -466,8 +466,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => PostsListScreen(
-                                title: Localization.of(context)
-                                    .string('posts_screen_my_posts'),
+                                title: Localization.of(context).string(
+                                  'posts_screen_my_posts',
+                                ),
                                 posts: widget.userPosts,
                               ),
                             ),
@@ -475,7 +476,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         posts: widget.userPosts,
                       ),
-                    )
+                    ),
             ],
           ),
         ),
