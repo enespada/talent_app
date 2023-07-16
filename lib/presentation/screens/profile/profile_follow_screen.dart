@@ -312,14 +312,8 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         if (userService.userApp == null) return Container();
                         bool isFollowing = false;
-                        // String stringToCompare = '';
                         for (DocumentReference? idFollowing
                             in userService.userApp!.following!) {
-                          // stringToCompare = idFollowing
-                          //     .toString()
-                          //     .split('(')[1]
-                          //     .split(')')[0]
-                          //     .split('/')[1];
                           if (idFollowing == usersToShow[index].id) {
                             isFollowing = true;
                             break;
@@ -417,8 +411,9 @@ class _ProfileFollowScreenState extends State<ProfileFollowScreen> {
 
                               //-------------Boton seguir/siguiendo----------------
                               SizedBox(
-                                width: responsive.widthPercent(25),
+                                // width: responsive.widthPercent(28),
                                 child: MaterialButton(
+                                  padding: EdgeInsets.zero,
                                   child: Text(
                                     (isFollowing)
                                         ? Localization.of(context)

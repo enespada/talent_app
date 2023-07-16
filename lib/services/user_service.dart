@@ -238,12 +238,18 @@ class UserService extends ChangeNotifier {
     await userApp!.id!.update({
       "following": FieldValue.arrayRemove([userToUnfollow.id]),
     });
-    userApp!.following!.removeWhere((element) => element == userToUnfollow.id);
+    userApp!.following!.removeWhere((DocumentReference<Object?> element) {
+      return element == userToUnfollow.id;
+    });
     userToUnfollow.followers!.remove(userApp!.id);
     if (following == null) {
       await getFollowing();
     } else {
-      following!.remove(userToUnfollow);
+      following!.removeWhere(
+        (UserApp u) {
+          return u.id == userToUnfollow.id;
+        },
+      );
     }
     // await postsService.getFollowingPosts(userApp!);
     notifyListeners();
